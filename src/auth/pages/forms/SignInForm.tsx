@@ -58,14 +58,13 @@ const SignInForm = () => {
         <div className="sm:mx-auto sm:w-full sm:max-w-sm items-center justify-center text-center">
           <h1 className="font-bold text-2xl text-black">
             {/* Lipila-Later MicroFins Portal */}
-            <div className=" text-center pr-2 ">
-              <div className="p-1 flex items-center   gap-2 justify-start mb-2 ml-4 mt-4">
+            <div className=" text-center pr-6 ">
+              <div className="pl-16 flex items-center   gap-2 justify-start mb-2 ml-4 mt-4">
                 <img
                   src="../../../public/images/lipilaLater.png"
                   alt="logo"
                   style={{ width: "50%" }}
                 />
-                <p className=" text-slate-600">MicroFins</p>
               </div>
             </div>
           </h1>

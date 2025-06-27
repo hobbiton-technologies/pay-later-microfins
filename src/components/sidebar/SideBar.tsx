@@ -33,7 +33,6 @@ export const Sidebar = () => {
             alt="logo"
             style={{ width: "50%" }}
           />
-          <p className=" text-slate-600">MicroFins</p>
         </div>
       </div>
       <div className="flex flex-col flex-grow overflow-y-auto bg-white  ">

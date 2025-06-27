@@ -17,7 +17,7 @@ export const SignIn: React.FC = () => {
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.5 }}
         >
-          <section className="w-3/5 h-full min-h-screen bg-blue-500 bg-cover bg-center bg-no-repeat bg-blend-overlay  "></section>
+          <section className="w-3/5 h-full min-h-screen bg-blue-950 bg-cover bg-center bg-no-repeat bg-blend-overlay  "></section>
           <section className=" w-2/5">
             <SignInForm />
           </section>
