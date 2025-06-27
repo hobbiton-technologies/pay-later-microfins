@@ -1,8 +1,15 @@
+import {
+  CreditCardOutlined,
+  BankOutlined,
+  StopOutlined,
+  RiseOutlined,
+} from "@ant-design/icons";
+
 const SummaryStats = () => {
   const statItems = [
     {
       label: "First Stat",
-      icon: "",
+      icon: CreditCardOutlined,
       values: {
         dtd: "23445",
         mtd: "23345677",
@@ -11,7 +18,7 @@ const SummaryStats = () => {
     },
     {
       label: "Second Stat",
-      icon: "",
+      icon: BankOutlined,
       values: {
         dtd: "23445",
         mtd: "23345677",
@@ -20,7 +27,7 @@ const SummaryStats = () => {
     },
     {
       label: "Third Stat",
-      icon: "",
+      icon: StopOutlined,
       values: {
         dtd: "23445",
         mtd: "23345677",
@@ -29,7 +36,7 @@ const SummaryStats = () => {
     },
     {
       label: "Fourth Stat",
-      icon: "",
+      icon: RiseOutlined,
       values: {
         dtd: "23445",
         mtd: "23345677",
@@ -38,30 +45,32 @@ const SummaryStats = () => {
     },
   ];
   return (
-    <div>
+    <div className=" grid grid-cols-4 gap-6">
       {statItems.map(({ label, icon: Icon, values }) => (
-        <div key={label}>
-          <div>
-            <Icon />
-            <span>{label}</span>
-          </div>
-          <div>
-            <div>
-              <span>DTD</span>
+        <div
+          className=" bg-white p-4 rounded-xl shadow  transition-all duration-300 flex flex-col justify-between"
+          key={label}
+        >
+          <div className=" text-xs text-gray-600 space-y-1">
+            <div className=" flex items-center gap-2 text-lg font-semibold mb-2">
+              <Icon />
+              <span>{label}</span>
+            </div>
+            <div className=" flex gap-2 ">
+              <span>DTD: </span>
               <div>{values.dtd}</div>
             </div>
-            <div>
-              <span>MTD</span>
+            <div className=" flex gap-2">
+              <span>MTD: </span>
               <div>{values.mtd}</div>
             </div>
-            <div>
-              <span>YTD</span>
+            <div className=" flex gap-2">
+              <span>YTD: </span>
               <div>{values.ytd}</div>
             </div>
           </div>
         </div>
       ))}
-      ;
     </div>
   );
 };

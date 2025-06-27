@@ -5,9 +5,10 @@ import {
 } from "react-router-dom";
 import NotFound from "../components/NotFound";
 import Layout from "../layout";
-import Summary from "../modules/Summary";
+
 import { SignIn } from "../auth/pages/Signin";
 import ProtectedRoute from "../auth/protectedRoutes";
+import Summary from "../modules/summary/Summary";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
