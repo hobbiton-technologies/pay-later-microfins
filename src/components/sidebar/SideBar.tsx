@@ -24,7 +24,7 @@ export const Sidebar = () => {
         height: collapsed ? "calc(100% - 3rem)" : "100%",
       }}
       transition={{ duration: 0.05 }}
-      className="hidden md:flex flex-col min-h-screen !bg-white border-r border-slate-300 shadow-sm"
+      className="hidden md:flex flex-col min-h-screen !bg-white border-r border-slate-300 shadow-sm  "
     >
       <div className=" text-center pr-2 ">
         <div className="p-1 flex items-center  border-b border-slate-300  gap-2 justify-start mb-2 ml-4 mt-4">
@@ -35,7 +35,7 @@ export const Sidebar = () => {
           />
         </div>
       </div>
-      <div className="flex flex-col flex-grow overflow-y-auto bg-white  ">
+      <div className="flex flex-col flex-grow overflow-y-auto pt-4   ">
         <Menu
           defaultSelectedKeys={["1"]}
           defaultOpenKeys={["sub1"]}

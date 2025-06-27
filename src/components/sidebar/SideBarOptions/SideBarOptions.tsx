@@ -3,8 +3,6 @@ import {
   PieChartOutlined,
   DesktopOutlined,
   ContainerOutlined,
-  MailOutlined,
-  AppstoreOutlined,
   BarChartOutlined,
 } from "@ant-design/icons";
 
