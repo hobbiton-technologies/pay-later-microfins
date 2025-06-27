@@ -15,7 +15,7 @@ export const MenuItems: MenuItem[] = [
     icon: <PieChartOutlined />,
     children: [
       { key: "/", label: "Overview" },
-      { key: "/", label: "Products" },
+      { key: "/products", label: "Products" },
     ],
   },
   {
@@ -23,9 +23,9 @@ export const MenuItems: MenuItem[] = [
     label: "Business",
     icon: <DesktopOutlined />,
     children: [
-      { key: "/", label: "Business" },
-      { key: "/", label: "Organisations" },
-      { key: "/", label: "MOUs" },
+      { key: "/business", label: "Business" },
+      { key: "/organisations", label: "Organisations" },
+      { key: "/mous", label: "MOUs" },
     ],
   },
   {
@@ -33,8 +33,8 @@ export const MenuItems: MenuItem[] = [
     label: "Money Lenders",
     icon: <ContainerOutlined />,
     children: [
-      { key: "/", label: "Clients" },
-      { key: "/", label: "Loans" },
+      { key: "/clients", label: "Clients" },
+      { key: "/loans", label: "Loans" },
     ],
   },
   {
@@ -42,9 +42,9 @@ export const MenuItems: MenuItem[] = [
     label: "Financials",
     icon: <BarChartOutlined />,
     children: [
-      { key: "/", label: "Salary Loans" },
-      { key: "/", label: "Reccovery Schedules" },
-      { key: "/", label: "Reporting" },
+      { key: "/salary-loans", label: "Salary Loans" },
+      { key: "/recovery-schedules", label: "Recovery Schedules" },
+      { key: "/reporting", label: "Reporting" },
     ],
   },
 ];

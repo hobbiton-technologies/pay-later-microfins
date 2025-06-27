@@ -117,7 +117,7 @@ const SummaryStats = () => {
             </div>
             <div className=" border-t border-slate-300 pt-2">
               <div className=" flex gap-2 justify-between ">
-                <span>This Year </span>
+                <span>Today </span>
                 <div>{values.dtd}</div>
               </div>
               <div className=" flex gap-2 justify-between">
