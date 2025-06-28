@@ -101,6 +101,7 @@ const SummaryStats = () => {
   ];
   return (
     <div className=" grid grid-cols-5 gap-6 pt-4">
+      {" "}
       {statItems.map(({ label, icon: Icon, values }) => (
         <div
           className=" bg-white p-4 rounded-xl shadow  transition-all duration-300 flex flex-col justify-between"
