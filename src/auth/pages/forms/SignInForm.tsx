@@ -56,18 +56,16 @@ const SignInForm = () => {
     <div className="flex flex-col min-h-screen items-center justify-center ">
       <div className="relative w-full max-w-md p-8 rounded-lg shadow-sm bg-white/10 backdrop-blur-md border border-white/20">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm items-center justify-center text-center">
-          <h1 className="font-bold text-2xl text-black">
-            {/* Lipila-Later MicroFins Portal */}
-            <div className=" text-center pr-6 ">
-              <div className="pl-16 flex items-center   gap-2 justify-start mb-2 ml-4 mt-4">
-                <img
-                  src="../../../public/images/lipilaLater.png"
-                  alt="logo"
-                  style={{ width: "50%" }}
-                />
-              </div>
+          {/* Lipila-Later MicroFins Portal */}
+          <div className=" ">
+            <div className="md:pl-22 flex items-center   gap-2 justify-start mb-2 ml-4 mt-4">
+              <img
+                src="../../../public/images/lipilaLater.png"
+                alt="logo"
+                style={{ width: "60%" }}
+              />
             </div>
-          </h1>
+          </div>
 
           <h2 className="mt-5 text-center text-sm font-medium leading-5 tracking-tight text-gray-700">
             Sign in to your account

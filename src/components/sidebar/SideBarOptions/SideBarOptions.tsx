@@ -23,7 +23,7 @@ export const MenuItems: MenuItem[] = [
     label: "Business",
     icon: <DesktopOutlined />,
     children: [
-      { key: "/business", label: "Business" },
+      { key: "/staff-members", label: "Staff Members" },
       { key: "/organisations", label: "Organisations" },
       { key: "/mous", label: "MOUs" },
     ],

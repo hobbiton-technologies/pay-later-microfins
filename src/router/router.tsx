@@ -12,6 +12,14 @@ import Summary from "../modules/summary/Summary";
 import { StaffMembers } from "../modules/business/StaffMembers";
 import { Financials } from "../modules/financials/Financials";
 import { MoneyLenders } from "../modules/moneylenders/MoneyLenders";
+import { Organisation } from "../modules/business/Organisation";
+import { MOUs } from "../modules/business/MOUs";
+import { Clients } from "../modules/moneylenders/Clients";
+import { Loans } from "../modules/moneylenders/Loans";
+import { SalaryLoans } from "../modules/financials/SalaryLoans";
+import { RecoverySchedules } from "../modules/financials/RecoverySchedules";
+import { Reporting } from "../modules/financials/Reporting";
+import { Products } from "../modules/summary/Products";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -27,10 +35,74 @@ export const router = createBrowserRouter(
           }
         />
         <Route
-          path="/"
+          path="/products"
+          element={
+            <ProtectedRoute>
+              <Products />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/staff-members"
           element={
             <ProtectedRoute>
               <StaffMembers />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/organisations"
+          element={
+            <ProtectedRoute>
+              <Organisation />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/mous"
+          element={
+            <ProtectedRoute>
+              <MOUs />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/clients"
+          element={
+            <ProtectedRoute>
+              <Clients />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/loans"
+          element={
+            <ProtectedRoute>
+              <Loans />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/salary-loans"
+          element={
+            <ProtectedRoute>
+              <SalaryLoans />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/recovery-schedules"
+          element={
+            <ProtectedRoute>
+              <RecoverySchedules />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/reporting"
+          element={
+            <ProtectedRoute>
+              <Reporting />
             </ProtectedRoute>
           }
         />
