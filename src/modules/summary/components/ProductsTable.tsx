@@ -3,8 +3,11 @@ import {
   useGetGovernmentBondsRequestQuery,
 } from "@/api/queries/summaryQueries";
 import { customLoader } from "@/components/table-loader";
+import DebouncedInputField from "@/modules/components/DebouncedInput";
+import { Button, message } from "antd";
 import Table, { ColumnsType } from "antd/es/table";
 import { useEffect, useState } from "react";
+import { ExportOutlined } from "@ant-design/icons";
 
 export const productsColumns: ColumnsType<ProductsData> = [
   {
@@ -84,9 +87,39 @@ export const ProductsTable = () => {
     setPageSize(pagination.pageSize);
   };
 
+  const handleSearch = () => {
+    setSearchId(id);
+  };
+
+  const handleSearchClear = () => {
+    setSearchId("");
+  };
   return (
     <div className=" mt-2">
       {" "}
+      <section className="w-full h-full py-3 flex   gap-2 mt-20">
+        <div className="w-full">
+          <DebouncedInputField
+            placeholder="Search for Product"
+            onSearch={handleSearch}
+            onClear={handleSearchClear}
+            allowClear={true}
+          />
+        </div>
+        <div className=" flex gap-3">
+          {/* <Button onClick={exportCSV} className="bg-green-700 text-gray-100">
+            <ExportOutlined className="text-white" />
+            Export to CSV
+          </Button> */}
+          <Button
+            onClick={() => message.success("Button clicked")}
+            className="bg-blue-700 text-gray-100"
+          >
+            <ExportOutlined className=" text-gray-200" />
+            Create Government Bond
+          </Button>
+        </div>
+      </section>
       <section className="w-full h-full hidden md:flex md:flex-col">
         <Table
           dataSource={productsResponse?.data || []}
