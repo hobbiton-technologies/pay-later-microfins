@@ -1,7 +1,16 @@
+import { Tabs, TabsProps } from "antd";
 import AnimatedHeader from "../components/AnimatedHeader";
 import ProductStats from "./components/ProductStats";
+import { CreditCardOutlined } from "@ant-design/icons";
 
 export const Products = () => {
+  const items: TabsProps["items"] = [
+    {
+      key: "1",
+      label: "Loan Products",
+      icon: <CreditCardOutlined />,
+    },
+  ];
   return (
     <div>
       <div>
@@ -10,6 +19,14 @@ export const Products = () => {
       </div>
       <div>
         <ProductStats />
+        <div>
+          <section className="w-full h-full hidden md:flex md:flex-col pt-4">
+            <Tabs defaultActiveKey="1" items={items} />
+          </section>
+        </div>
+        <div>
+          <p>Loan Products</p>
+        </div>
       </div>
     </div>
   );

@@ -12,25 +12,25 @@ const ProductStats = () => {
       title: "Loan Products",
       icon: <BarChartOutlined />,
       amount: 2000,
-      descriptionText: "Total number of products",
+      descriptionText: "Total number of loan products",
     },
     {
       title: "Saving Products",
       icon: <BarChartOutlined />,
       amount: 2000,
-      descriptionText: "Total number of products",
+      descriptionText: "Total number of saving products",
     },
     {
       title: "Active Loan Products",
       icon: <BarChartOutlined />,
       amount: 2000,
-      descriptionText: "Total number of products",
+      descriptionText: "Total number of active loan products",
     },
     {
       title: "Active Saving Products",
       icon: <BarChartOutlined />,
       amount: 2000,
-      descriptionText: "Total number of products",
+      descriptionText: "Total number of active saving  products",
     },
   ];
   return (
@@ -45,7 +45,7 @@ const ProductStats = () => {
             <div className=" text-lg">{Icon}</div>
           </div>
           <div className=" text-2xl font-bold">{amount}</div>
-          <div>{descriptionText}</div>
+          <div className=" text-sm">{descriptionText}</div>
         </div>
       ))}
     </div>
