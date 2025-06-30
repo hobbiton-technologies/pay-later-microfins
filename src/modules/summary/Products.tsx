@@ -2,6 +2,7 @@ import { Tabs, TabsProps } from "antd";
 import AnimatedHeader from "../components/AnimatedHeader";
 import ProductStats from "./components/ProductStats";
 import { CreditCardOutlined } from "@ant-design/icons";
+import { ProductsTable } from "./components/ProductsTable";
 
 export const Products = () => {
   const items: TabsProps["items"] = [
@@ -26,6 +27,7 @@ export const Products = () => {
         </div>
         <div>
           <p>Loan Products</p>
+          <ProductsTable />
         </div>
       </div>
     </div>
