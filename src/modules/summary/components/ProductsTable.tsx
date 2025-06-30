@@ -4,10 +4,10 @@ import {
 } from "@/api/queries/summaryQueries";
 import { customLoader } from "@/components/table-loader";
 import DebouncedInputField from "@/modules/components/DebouncedInput";
-import { Button, message } from "antd";
+import { Button, Dropdown, MenuProps, message, Space } from "antd";
 import Table, { ColumnsType } from "antd/es/table";
 import { useEffect, useState } from "react";
-import { ExportOutlined } from "@ant-design/icons";
+import { CopyOutlined, ExportOutlined, EyeOutlined } from "@ant-design/icons";
 
 export const productsColumns: ColumnsType<ProductsData> = [
   {
@@ -55,6 +55,33 @@ export const productsColumns: ColumnsType<ProductsData> = [
     dataIndex: "tenor",
     key: "tenor",
   },
+  {
+    title: "Actions",
+    key: "actions",
+    render: (record: ProductsData) => {
+      const items: MenuProps["items"] = [
+        {
+          key: "4",
+          label: (
+            <span className="flex gap-2" onClick={() => alert("working")}>
+              <EyeOutlined />
+              View
+            </span>
+          ),
+        },
+      ];
+
+      return (
+        <Space>
+          <Dropdown menu={{ items }} placement="bottomRight">
+            <Button className="dark:border-gray-800  dark:text-white">
+              <EyeOutlined />
+            </Button>
+          </Dropdown>
+        </Space>
+      );
+    },
+  },
 ];
 
 export const ProductsTable = () => {
@@ -97,7 +124,7 @@ export const ProductsTable = () => {
   return (
     <div className=" mt-2">
       {" "}
-      <section className="w-full h-full py-3 flex   gap-2 mt-20">
+      <section className="w-full h-full py-3 flex   gap-2 ">
         <div className="w-full">
           <DebouncedInputField
             placeholder="Search for Product"
@@ -116,7 +143,7 @@ export const ProductsTable = () => {
             className="bg-blue-700 text-gray-100"
           >
             <ExportOutlined className=" text-gray-200" />
-            Create Government Bond
+            Add Product
           </Button>
         </div>
       </section>

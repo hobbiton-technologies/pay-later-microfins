@@ -34,7 +34,7 @@ const DebouncedInputField: React.FC<InputFieldProps> = ({
         loading ? (
           <Spin size="small" />
         ) : (
-          <SearchOutlined className="text-green-700" />
+          <SearchOutlined className="text-blue-700" />
         )
       }
       onClear={onClear}
