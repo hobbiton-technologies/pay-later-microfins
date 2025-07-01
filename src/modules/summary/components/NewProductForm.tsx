@@ -1,4 +1,4 @@
-import { Form, Input, Select } from "antd";
+import { Checkbox, Form, Input, Select } from "antd";
 import { Option } from "antd/es/mentions";
 
 export const NewProductForm = () => {
@@ -67,6 +67,7 @@ export const NewProductForm = () => {
             </Select>
           </Form.Item>
         </div>
+
         <div className="grid grid-cols-2 gap-4  p-4 rounded-sm shadow-sm">
           <Form.Item
             label="Minimum Repayment Period"
@@ -106,44 +107,180 @@ export const NewProductForm = () => {
             </Select>
           </Form.Item>
         </div>
-        <div className="grid grid-cols-2 gap-4  p-4 rounded-sm shadow-sm">
+
+        <div className="grid grid-cols-2 gap-4  p-4 rounded-sm shadow-sm items-center">
           <Form.Item
-            label="Minimum Repayment Period"
-            name="minimumRepaymentPeriod"
+            label="Minimum Interest Rate"
+            name="minimumInterestRate"
             rules={[{ required: false }]}
           >
-            <Input placeholder="enter repayment period" />
+            <Input placeholder="enter minimum interest rate" />
           </Form.Item>
-
           <Form.Item
-            label="Maximum Repayment Period"
-            name="maximumRepaymentPeriod"
-            rules={[{ required: false }]}
-          >
-            <Input placeholder="enter repayment period" />
-          </Form.Item>
-
-          <Form.Item
-            label="Grace Period InDays"
-            name="gracePeriodInDays"
+            label="Maximum Interest Rate"
+            name="maximumInterestRate"
             rules={[{ required: true }]}
           >
-            <Input placeholder="enter grace period" />
+            <Input placeholder="enter maximum interest rate" />
           </Form.Item>
-
           <Form.Item
-            label="Repayment Cycles"
-            name="repaymentCycles"
+            label="Minimum Interest Amount"
+            name="minimumInterestAmount"
+            rules={[{ required: false }]}
+          >
+            <Input placeholder="enter minimum interest amount" />
+          </Form.Item>
+          <Form.Item
+            label="Maximum Interest Amount"
+            name="maximumInterestAmount"
+            rules={[{ required: true }]}
+          >
+            <Input placeholder="enter maximum interest amount" />
+          </Form.Item>{" "}
+          <Form.Item
+            label="Interest Type"
+            name="interestType"
             rules={[{ required: false }]}
           >
             <Select placeholder="Select type" id="">
-              <Option value="">Daily</Option>
-              <Option value="">Monthly</Option>
-              <Option value="">Quarterly</Option>
-              <Option value="">Yearly</Option>
-              <Option value="">LumpSum</Option>
+              <Option value="">FlatRate </Option>
+              <Option value="">ReducingBalance</Option>
             </Select>
           </Form.Item>
+          <div className=" pt-6">
+            <Form.Item
+              name="calculateInterestByRate"
+              valuePropName="checked"
+              className=" pt-8"
+            >
+              <Checkbox>Calculate Interest By Rate</Checkbox>
+            </Form.Item>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4  p-4 rounded-sm shadow-sm items-center">
+          <Form.Item
+            label="Penalty Rate"
+            name="penaltyRate"
+            rules={[{ required: false }]}
+          >
+            <Input placeholder="enter penalty rate" />
+          </Form.Item>
+          <Form.Item
+            label="Penalty Amount"
+            name="penaltyAmount"
+            rules={[{ required: true }]}
+          >
+            <Input placeholder="enter penalty amount" />
+          </Form.Item>
+
+          <div className=" pt-6">
+            <Form.Item
+              name="calculatePenalty"
+              valuePropName="checked"
+              className=" pt-8"
+            >
+              <Checkbox>Calculate Penalty</Checkbox>
+            </Form.Item>
+          </div>
+          <div className=" pt-6">
+            <Form.Item
+              name="calculatePenaltyByRate"
+              valuePropName="checked"
+              className=" pt-8"
+            >
+              <Checkbox>Calculate Penalty By Rate</Checkbox>
+            </Form.Item>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4  p-4 rounded-sm shadow-sm items-center">
+          <Form.Item
+            label="Loan Product Charges"
+            name="loanProductCharges"
+            rules={[{ required: false }]}
+          >
+            <Input placeholder="enter loan product charges" />
+          </Form.Item>
+          <Form.Item
+            label="Loan Product Charges"
+            name="loanProductCharges"
+            rules={[{ required: false }]}
+          >
+            <Input placeholder="enter loan product charges" />
+          </Form.Item>
+        </div>
+
+        <div className="mt-6 bg-gray-50 p-4 rounded">
+          <h3 className="font-semibold text-lg mb-2">Loan Product Charges</h3>
+          <Form.List name="contactPersons" initialValue={[{}]}>
+            {(fields, { add, remove }) => (
+              <>
+                {fields.map(({ key, name, ...restField }, index) => (
+                  <div
+                    key={key}
+                    className="grid grid-cols-2 gap-4 mb-4 border p-4 rounded relative bg-white"
+                  >
+                    <div className="col-span-2 font-semibold text-sm mb-2">
+                      Name {index + 1}
+                    </div>
+                    <Form.Item
+                      {...restField}
+                      name={[name, "name"]}
+                      label="Name"
+                      rules={[{ required: false }]}
+                    >
+                      <Input placeholder="enter name" />
+                    </Form.Item>
+                    <Form.Item
+                      {...restField}
+                      name={[name, "contact"]}
+                      label="Contact"
+                      rules={[{ required: false }]}
+                    >
+                      <Input placeholder="Key Contact number" />
+                    </Form.Item>
+                    <Form.Item
+                      {...restField}
+                      name={[name, "email"]}
+                      label="Email"
+                      rules={[{ required: false, type: "email" }]}
+                    >
+                      <Input placeholder="Key Contact Email address" />
+                    </Form.Item>
+                    <Form.Item
+                      {...restField}
+                      name={[name, "role"]}
+                      label="Role"
+                      rules={[{ required: false }]}
+                    >
+                      <Input placeholder=" Key Contact Role" />
+                    </Form.Item>
+
+                    {fields.length > 1 && (
+                      <Button
+                        type="text"
+                        icon={<MinusCircleOutlined />}
+                        onClick={() => remove(name)}
+                        className="absolute top-2 right-2 text-red-600"
+                      />
+                    )}
+                  </div>
+                ))}
+
+                <Form.Item>
+                  <Button
+                    type="dashed"
+                    onClick={() => add()}
+                    block
+                    icon={<PlusOutlined />}
+                  >
+                    Add Contact Person
+                  </Button>
+                </Form.Item>
+              </>
+            )}
+          </Form.List>
         </div>
       </Form>
     </div>
