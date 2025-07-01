@@ -4,10 +4,11 @@ import {
 } from "@/api/queries/summaryQueries";
 import { customLoader } from "@/components/table-loader";
 import DebouncedInputField from "@/modules/components/DebouncedInput";
-import { Button, Dropdown, MenuProps, message, Space } from "antd";
+import { Button, Drawer, Dropdown, MenuProps, message, Space } from "antd";
 import Table, { ColumnsType } from "antd/es/table";
 import { useEffect, useState } from "react";
 import { ExportOutlined, EyeOutlined } from "@ant-design/icons";
+import { NewProductForm } from "./NewProductForm";
 
 export const productsColumns: ColumnsType<ProductsData> = [
   {
@@ -91,6 +92,7 @@ export const ProductsTable = () => {
   const [products, setProducts] = useState<ProductsData[]>([]);
   const [totalData, setTotalData] = useState<number>(0);
   const [pageAmount, setPageAmount] = useState<number>(0);
+  const [isCreateDrawerVisible, setIsCreateDrawerVisible] = useState(false);
 
   const {
     data: productsResponse,
@@ -140,7 +142,7 @@ export const ProductsTable = () => {
           </Button> */}
           <Button
             type="primary"
-            onClick={() => message.success("Button clicked")}
+            onClick={() => setIsCreateDrawerVisible(true)}
             className=""
           >
             <ExportOutlined className="" />
@@ -184,6 +186,14 @@ export const ProductsTable = () => {
           }}
         />
       </section>
+      <Drawer
+        title="Create Loan Product"
+        open={isCreateDrawerVisible}
+        onClose={() => setIsCreateDrawerVisible(false)}
+        width="55%"
+      >
+        <NewProductForm />
+      </Drawer>
     </div>
   );
 };
