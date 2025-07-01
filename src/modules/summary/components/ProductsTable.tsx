@@ -7,7 +7,7 @@ import DebouncedInputField from "@/modules/components/DebouncedInput";
 import { Button, Dropdown, MenuProps, message, Space } from "antd";
 import Table, { ColumnsType } from "antd/es/table";
 import { useEffect, useState } from "react";
-import { CopyOutlined, ExportOutlined, EyeOutlined } from "@ant-design/icons";
+import { ExportOutlined, EyeOutlined } from "@ant-design/icons";
 
 export const productsColumns: ColumnsType<ProductsData> = [
   {
@@ -139,10 +139,11 @@ export const ProductsTable = () => {
             Export to CSV
           </Button> */}
           <Button
+            type="primary"
             onClick={() => message.success("Button clicked")}
-            className="bg-blue-700 text-gray-100"
+            className=""
           >
-            <ExportOutlined className=" text-gray-200" />
+            <ExportOutlined className="" />
             Add Product
           </Button>
         </div>

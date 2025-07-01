@@ -26,7 +26,7 @@ export const Products = () => {
           </section>
         </div>
         <div>
-          <p>Loan Products</p>
+          <p className=" !font-normal wrap-normal">Loan Products</p>
           <ProductsTable />
         </div>
       </div>
