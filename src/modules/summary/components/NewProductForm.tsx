@@ -1,4 +1,5 @@
-import { Checkbox, Form, Input, Select } from "antd";
+import { Button, Checkbox, Form, Input, Select } from "antd";
+import { PlusOutlined, MinusCircleOutlined } from "@ant-design/icons";
 import { Option } from "antd/es/mentions";
 
 export const NewProductForm = () => {
@@ -183,6 +184,7 @@ export const NewProductForm = () => {
               <Checkbox>Calculate Penalty</Checkbox>
             </Form.Item>
           </div>
+
           <div className=" pt-6">
             <Form.Item
               name="calculatePenaltyByRate"
@@ -219,10 +221,10 @@ export const NewProductForm = () => {
                 {fields.map(({ key, name, ...restField }, index) => (
                   <div
                     key={key}
-                    className="grid grid-cols-2 gap-4 mb-4 border p-4 rounded relative bg-white"
+                    className="grid grid-cols-2 gap-4 mb-4 shadow-sm p-4 rounded relative bg-white"
                   >
                     <div className="col-span-2 font-semibold text-sm mb-2">
-                      Name {index + 1}
+                      Loan Product Charge {index + 1}
                     </div>
                     <Form.Item
                       {...restField}
@@ -232,29 +234,30 @@ export const NewProductForm = () => {
                     >
                       <Input placeholder="enter name" />
                     </Form.Item>
+                    <div className=" pt-6">
+                      <Form.Item
+                        name="calculateByRate"
+                        valuePropName="checked"
+                        className=" pt-8"
+                      >
+                        <Checkbox>Calculate By Rate</Checkbox>
+                      </Form.Item>
+                    </div>
                     <Form.Item
                       {...restField}
-                      name={[name, "contact"]}
-                      label="Contact"
+                      name={[name, "amount"]}
+                      label="Amount"
                       rules={[{ required: false }]}
                     >
-                      <Input placeholder="Key Contact number" />
+                      <Input placeholder="enter amount" />
                     </Form.Item>
                     <Form.Item
                       {...restField}
-                      name={[name, "email"]}
-                      label="Email"
-                      rules={[{ required: false, type: "email" }]}
-                    >
-                      <Input placeholder="Key Contact Email address" />
-                    </Form.Item>
-                    <Form.Item
-                      {...restField}
-                      name={[name, "role"]}
-                      label="Role"
+                      name={[name, "rate"]}
+                      label="Rate"
                       rules={[{ required: false }]}
                     >
-                      <Input placeholder=" Key Contact Role" />
+                      <Input placeholder="enter rate" />
                     </Form.Item>
 
                     {fields.length > 1 && (
@@ -275,7 +278,7 @@ export const NewProductForm = () => {
                     block
                     icon={<PlusOutlined />}
                   >
-                    Add Contact Person
+                    Add Loan Product Charge
                   </Button>
                 </Form.Item>
               </>
