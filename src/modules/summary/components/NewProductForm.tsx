@@ -69,57 +69,79 @@ export const NewProductForm = () => {
         </div>
         <div className="grid grid-cols-2 gap-4  p-4 rounded-sm shadow-sm">
           <Form.Item
-            label="Product Name"
-            name="productName"
+            label="Minimum Repayment Period"
+            name="minimumRepaymentPeriod"
+            rules={[{ required: false }]}
+          >
+            <Input placeholder="enter repayment period" />
+          </Form.Item>
+
+          <Form.Item
+            label="Maximum Repayment Period"
+            name="maximumRepaymentPeriod"
+            rules={[{ required: false }]}
+          >
+            <Input placeholder="enter repayment period" />
+          </Form.Item>
+
+          <Form.Item
+            label="Grace Period InDays"
+            name="gracePeriodInDays"
             rules={[{ required: true }]}
           >
-            <Input placeholder="enter product name" />
+            <Input placeholder="enter grace period" />
           </Form.Item>
+
           <Form.Item
-            label="Product Type"
-            name="institutionType"
-            rules={[{ required: true }]}
+            label="Repayment Cycles"
+            name="repaymentCycles"
+            rules={[{ required: false }]}
           >
             <Select placeholder="Select type" id="">
-              <Option value="">Emergency Advance</Option>
-              <Option value="">Short Term Loan </Option>
+              <Option value="">Daily</Option>
+              <Option value="">Monthly</Option>
+              <Option value="">Quarterly</Option>
+              <Option value="">Yearly</Option>
+              <Option value="">LumpSum</Option>
             </Select>
           </Form.Item>
+        </div>
+        <div className="grid grid-cols-2 gap-4  p-4 rounded-sm shadow-sm">
           <Form.Item
-            label="Minimum Loan Amount"
-            name="minimumLoanAmount"
-            rules={[{ required: true }]}
+            label="Minimum Repayment Period"
+            name="minimumRepaymentPeriod"
+            rules={[{ required: false }]}
           >
-            <Input placeholder="enter min loan amount" />
+            <Input placeholder="enter repayment period" />
           </Form.Item>
+
           <Form.Item
-            label="Maxmimum Loan Amount"
-            name="maximumLoanAmount"
-            rules={[{ required: true }]}
+            label="Maximum Repayment Period"
+            name="maximumRepaymentPeriod"
+            rules={[{ required: false }]}
           >
-            <Input placeholder="enter max loan amount" />
+            <Input placeholder="enter repayment period" />
           </Form.Item>
+
           <Form.Item
-            label="Distribution Channels"
-            name="distributionChannels"
+            label="Grace Period InDays"
+            name="gracePeriodInDays"
             rules={[{ required: true }]}
           >
-            <Select placeholder="Select Dist Channel" id="">
-              <Option value=""> Ussd</Option>
-              <Option value=""> Web</Option>
-              <Option value=""> MobileApp</Option>
-            </Select>
+            <Input placeholder="enter grace period" />
           </Form.Item>
+
           <Form.Item
-            label="Loan Disbursement Types"
-            name="loanDisbursementTypes"
-            rules={[{ required: true }]}
+            label="Repayment Cycles"
+            name="repaymentCycles"
+            rules={[{ required: false }]}
           >
-            <Select placeholder="Select Disb Type" id="">
-              <Option value=""> Bank</Option>
-              <Option value=""> Cash</Option>
-              <Option value=""> Mobile</Option>
-              <Option value=""> Other Transfer</Option>
+            <Select placeholder="Select type" id="">
+              <Option value="">Daily</Option>
+              <Option value="">Monthly</Option>
+              <Option value="">Quarterly</Option>
+              <Option value="">Yearly</Option>
+              <Option value="">LumpSum</Option>
             </Select>
           </Form.Item>
         </div>
