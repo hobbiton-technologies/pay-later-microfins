@@ -213,7 +213,29 @@ export const NewProductForm = () => {
           </Form.Item>
         </div>
 
-        <div className="mt-6 bg-gray-50 p-4 rounded">
+        <div className="grid grid-cols-2 gap-4  p-4 rounded-sm shadow-sm items-center">
+          <Form.Item
+            label="Product Status"
+            name="productStatus"
+            rules={[{ required: false }]}
+          >
+            <Select placeholder="">
+              <Option>Inactive</Option>
+              <Option>Active</Option>
+            </Select>
+          </Form.Item>
+          <div className=" pt-6">
+            <Form.Item
+              name="IsCollateralBased"
+              valuePropName="checked"
+              rules={[{ required: false }]}
+            >
+              <Checkbox>Is Collateral Based</Checkbox>
+            </Form.Item>
+          </div>
+        </div>
+
+        <div className=" bg-gray-50 p-4 rounded">
           <h3 className="font-semibold text-lg mb-2">Loan Product Charges</h3>
           <Form.List name="contactPersons" initialValue={[{}]}>
             {(fields, { add, remove }) => (
@@ -279,6 +301,63 @@ export const NewProductForm = () => {
                     icon={<PlusOutlined />}
                   >
                     Add Loan Product Charge
+                  </Button>
+                </Form.Item>
+              </>
+            )}
+          </Form.List>
+        </div>
+
+        <div className=" bg-gray-50 p-4 rounded">
+          <h3 className="font-semibold text-lg mb-2">Loan Product Charges</h3>
+          <Form.List name="contactPersons" initialValue={[{}]}>
+            {(fields, { add, remove }) => (
+              <>
+                {fields.map(({ key, name, ...restField }, index) => (
+                  <div
+                    key={key}
+                    className="grid grid-cols-2 gap-4 mb-4 shadow-sm p-4 rounded relative bg-white"
+                  >
+                    <div className="col-span-2 font-semibold text-sm mb-2">
+                      Loan Documents {index + 1}
+                    </div>
+                    <Form.Item
+                      {...restField}
+                      name={[name, "name"]}
+                      label="Name"
+                      rules={[{ required: false }]}
+                    >
+                      <Input placeholder="enter name" />
+                    </Form.Item>
+                    <div className=" pt-6">
+                      <Form.Item
+                        name="isRequired"
+                        valuePropName="checked"
+                        className=" pt-8"
+                      >
+                        <Checkbox>Is Required</Checkbox>
+                      </Form.Item>
+                    </div>
+
+                    {fields.length > 1 && (
+                      <Button
+                        type="text"
+                        icon={<MinusCircleOutlined />}
+                        onClick={() => remove(name)}
+                        className="absolute top-2 right-2 text-red-600"
+                      />
+                    )}
+                  </div>
+                ))}
+
+                <Form.Item>
+                  <Button
+                    type="dashed"
+                    onClick={() => add()}
+                    block
+                    icon={<PlusOutlined />}
+                  >
+                    Add Loan Document
                   </Button>
                 </Form.Item>
               </>
