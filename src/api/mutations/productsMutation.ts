@@ -1,3 +1,4 @@
+import { url } from "inspector";
 import Api from "../apiSlice";
 
 export interface ProductsBody {
@@ -44,12 +45,17 @@ export interface ProductsBody {
 
 const ProductsMutation = Api.injectEndpoints({
   endpoints: (builder) => ({
-    CreateLoadProduct: builder.query<any, any>({
-      query: () => {
-        return `;`;
-      },
+    CreateLoadProduct: builder.mutation<any, any>({
+      query: (loanProductData) => ({
+        url: ``,
+        method: "POST",
+        body: loanProductData,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
     }),
   }),
 });
 
-export const { useCreateLoadProductQuery } = ProductsMutation;
+export const { useCreateLoadProductMutation } = ProductsMutation;
