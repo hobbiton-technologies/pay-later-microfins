@@ -1,4 +1,12 @@
-import { Button, Checkbox, Form, FormInstance, Input, Select } from "antd";
+import {
+  Button,
+  Checkbox,
+  Form,
+  FormInstance,
+  Input,
+  message,
+  Select,
+} from "antd";
 import { PlusOutlined, MinusCircleOutlined } from "@ant-design/icons";
 import { Option } from "antd/es/mentions";
 
@@ -161,13 +169,20 @@ export const NewProductForm = () => {
   const isAnyProductDocumentEnabled = productDocumentList.some(
     (item: any) => item?.isLoanDocument
   );
+
+  const handleProductSubmit = async (values: any) => {
+    console.log("Form values:", values);
+    await message.success("Product Successfully Created");
+  };
+
   return (
     <div className=" px-4">
       <Form
         form={form}
         layout="vertical"
         style={{ maxWidth: 1000, marginTop: 24 }}
-        className=" grid grid-cols-1 gap-8"
+        className=" grid grid-cols-1 gap-8 items-center"
+        onFinish={handleProductSubmit}
       >
         <div>
           <p className=" font-semibold pb-2 text-lg">Loan Details</p>
@@ -260,7 +275,7 @@ export const NewProductForm = () => {
             <Form.Item
               label="Grace Period InDays"
               name="gracePeriodInDays"
-              rules={[{ required: true }]}
+              rules={[{ required: false }]}
             >
               <Input placeholder="enter grace period" />
             </Form.Item>
@@ -315,7 +330,7 @@ export const NewProductForm = () => {
               <Form.Item
                 label="Maximum Interest Rate"
                 name="maximumInterestRate"
-                rules={[{ required: true }]}
+                rules={[{ required: false }]}
               >
                 <Input
                   placeholder="enter maximum interest rate"
@@ -335,7 +350,7 @@ export const NewProductForm = () => {
               <Form.Item
                 label="Maximum Interest Amount"
                 name="maximumInterestAmount"
-                rules={[{ required: true }]}
+                rules={[{ required: false }]}
               >
                 <Input
                   placeholder="enter maximum interest amount"
@@ -398,7 +413,7 @@ export const NewProductForm = () => {
               <Form.Item
                 label="Penalty Amount"
                 name="penaltyAmount"
-                rules={[{ required: true }]}
+                rules={[{ required: false }]}
               >
                 <Input
                   placeholder="enter penalty amount"
@@ -459,25 +474,6 @@ export const NewProductForm = () => {
             </Form.Item>
           </div>
         </div>
-
-        {/* <div className="grid grid-cols-1 gap-4">
-          <div>
-            <p className=" font-semibold">Product Status</p>
-          </div>
-          <div className=" grid grid-cols-2 gap-4  p-4 rounded-sm shadow-sm items-center">
-            <Form.Item
-              label="Product Status"
-              name="productStatus"
-              rules={[{ required: false }]}
-            >
-              <Select placeholder="">
-                <Option>Inactive</Option>
-                <Option>Active</Option>
-              </Select>
-            </Form.Item>
-            
-          </div>
-        </div> */}
 
         <div className=" bg-gray-50  rounded">
           <h3 className="font-semibold  mb-2 text-lg">Loan Product Charges</h3>
@@ -543,6 +539,11 @@ export const NewProductForm = () => {
             )}
           </Form.List>
         </div>
+        <Form.Item className="mt-6">
+          <Button className=" w-full" type="primary" htmlType="submit">
+            Submit
+          </Button>
+        </Form.Item>
       </Form>
     </div>
   );
