@@ -250,10 +250,10 @@ export const NewProductForm = () => {
         penaltyAmount: values.penaltyAmount,
         penaltyCalculationMethod: values.penaltyCalculationMethod,
         loanProductCharges: transformedProductCharges,
-        productStatus: values.productStatus, //
+        productStatus: values.productStatus,
         loanDocuments: transformedLoadDocuments,
-        isMouBased: values.isMouBased, //
-        microfinBranches: values.microfinBranches, //
+        isMouBased: values.isMouBased,
+        microfinBranches: values.microfinBranches,
       };
       console.log("Form values:", values);
       message.success("Product Successfully Created");
@@ -541,28 +541,6 @@ export const NewProductForm = () => {
           </div>
         </div>
 
-        {/* <div className=" grid grid-cols-1 gap-4">
-          <div>
-            <p className=" font-semibold text-lg">Other Charges</p>
-          </div>
-          <div className=" grid grid-cols-2 gap-4  p-4 rounded-sm shadow-sm items-center">
-            <Form.Item
-              label="Loan Product Name"
-              name="loanProductName"
-              rules={[{ required: false }]}
-            >
-              <Input placeholder="enter loan product name" />
-            </Form.Item>
-            <Form.Item
-              label="Loan Product Amount"
-              name="loanProductAmount"
-              rules={[{ required: false }]}
-            >
-              <Input placeholder="enter loan product amount" />
-            </Form.Item>
-          </div>
-        </div> */}
-
         <div className=" bg-gray-50  rounded">
           <h3 className="font-semibold  mb-2 text-lg">Loan Product Charges</h3>
           <Form.List name="loanProductCharges" initialValue={[{}]}>
@@ -626,6 +604,43 @@ export const NewProductForm = () => {
               </>
             )}
           </Form.List>
+        </div>
+
+        <div className=" grid grid-cols-1 gap-4">
+          <div>
+            <p className=" font-semibold text-lg">Others</p>
+          </div>
+          <div className=" grid grid-cols-2 gap-4  p-4 rounded-sm shadow-sm items-center">
+            <Form.Item
+              label="Product Status"
+              name="productStatus"
+              rules={[{ required: false }]}
+            >
+              <Input placeholder="enter loan product name" />
+            </Form.Item>
+            <div className=" pt-6">
+              <Form.Item
+                name="isMouBased"
+                valuePropName="checked"
+                rules={[{ required: false }]}
+              >
+                <Checkbox>Is MOU Based</Checkbox>
+              </Form.Item>
+            </div>
+            <Form.Item
+              label="Microfin Branches"
+              name="microfinBranches"
+              rules={[{ required: false }]}
+            >
+              <Select placeholder="Select type" id="">
+                <Option value="1">Branch 1</Option>
+                <Option value="2">Branch 2</Option>
+                <Option value="3">Branch 3</Option>
+                <Option value="4">Branch 4</Option>
+                <Option value="5">Branch 5</Option>
+              </Select>
+            </Form.Item>
+          </div>
         </div>
         <Form.Item className="mt-6">
           <Button className=" w-full" type="primary" htmlType="submit">
