@@ -170,9 +170,97 @@ export const NewProductForm = () => {
     (item: any) => item?.isLoanDocument
   );
 
-  const handleProductSubmit = async (values: any) => {
-    console.log("Form values:", values);
-    await message.success("Product Successfully Created");
+  const handleProductSubmit = async (values: {
+    name: string;
+    loanProductType: string;
+    minimumLoanAmount: number;
+    maximumLoanAmount: number;
+    distributionChannels: string[];
+    loanDisbursementTypes: string[];
+    minimumRepaymentPeriod: number;
+    maximumRepaymentPeriod: number;
+    gracePeriodInDays: number;
+    repaymentCycles: string[];
+    calculateInterestByRate: boolean;
+    minimumInterestRate: number;
+    maximumInterestRate: number;
+    minimumInterestAmount: number;
+    maximumInterestAmount: number;
+    interestType: string;
+    calculatePenalty: boolean;
+    calculatePenaltyByRate: boolean;
+    penaltyRate: number;
+    penaltyAmount: number;
+    penaltyCalculationMethod: string;
+    loanProductCharges: [
+      {
+        name: string;
+        calculateByRate: boolean;
+        amount: number;
+        rate: number;
+      }
+    ];
+    productStatus: string;
+    isCollateralBased: boolean;
+    loanDocuments: [
+      {
+        name: string;
+        isRequired: boolean;
+      }
+    ];
+    isMouBased: boolean;
+    microfinBranches: number[];
+  }) => {
+    try {
+      const transformedProductCharges =
+        values.loanProductCharges?.map((l: any) => ({
+          name: l.name,
+          calculateByRate: l.calculateByRate,
+          amount: l.amount,
+          rate: l.amount,
+        })) || [];
+
+      const transformedLoadDocuments =
+        values.loanDocuments?.map((lc: any) => ({
+          name: lc.name,
+          isRequired: lc.isRequired,
+        })) || [];
+
+      const loanProductData = {
+        name: values.name,
+        loanProductType: values.loanProductType,
+        minimumLoanAmount: values.minimumLoanAmount,
+        maximumLoanAmount: values.maximumLoanAmount,
+        distributionChannels: values.distributionChannels,
+        loanDisbursementTypes: values.loanDisbursementTypes,
+        minimumRepaymentPeriod: values.minimumRepaymentPeriod,
+        maximumRepaymentPeriod: values.maximumRepaymentPeriod,
+        gracePeriodInDays: values.gracePeriodInDays,
+        repaymentCycles: values.repaymentCycles,
+        calculateInterestByRate: values.calculateInterestByRate,
+        minimumInterestRate: values.minimumInterestRate,
+        maximumInterestRate: values.maximumInterestRate,
+        minimumInterestAmount: values.minimumInterestAmount,
+        maximumInterestAmount: values.maximumInterestAmount,
+        interestType: values.interestType,
+        calculatePenalty: values.calculatePenalty,
+        calculatePenaltyByRate: values.calculatePenaltyByRate,
+        penaltyRate: values.penaltyRate,
+        penaltyAmount: values.penaltyAmount,
+        penaltyCalculationMethod: values.penaltyCalculationMethod,
+        loanProductCharges: transformedProductCharges,
+        productStatus: values.productStatus,
+        isCollateralBased: values.isCollateralBased,
+        loanDocuments: transformedLoadDocuments,
+        isMouBased: values.isMouBased,
+        microfinBranches: values.microfinBranches,
+      };
+      console.log("Form values:", values);
+      message.success("Product Successfully Created");
+    } catch (error) {
+      console.error("Failed to create Loan Product", error);
+      message.error("Failed to create Loan Product");
+    }
   };
 
   return (
