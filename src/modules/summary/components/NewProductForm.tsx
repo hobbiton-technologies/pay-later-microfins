@@ -1,9 +1,166 @@
-import { Button, Checkbox, Form, Input, Select } from "antd";
+import { Button, Checkbox, Form, FormInstance, Input, Select } from "antd";
 import { PlusOutlined, MinusCircleOutlined } from "@ant-design/icons";
 import { Option } from "antd/es/mentions";
 
+type ProductChargeItemProps = {
+  name: number;
+  fieldKey: React.Key;
+  remove: (index: number | number[]) => void;
+  index: number;
+  form: FormInstance;
+};
+
+const ProductChargeItem: React.FC<ProductChargeItemProps> = ({
+  name,
+  fieldKey,
+  remove,
+  index,
+  form,
+}) => {
+  const isProductChargesEnabled = Form.useWatch(
+    ["productCharges", name, "isProductCharges"],
+    form
+  );
+  const calculateByRate = Form.useWatch(
+    ["productCharges", name, "calculateByRate"],
+    form
+  );
+
+  return (
+    <div
+      key={fieldKey}
+      className="grid grid-cols-1 gap-4 mb-4 shadow-sm p-4 rounded relative bg-white"
+    >
+      <div className="col-span-2 font-semibold text-sm mb-2">
+        Loan Product Charge #{index + 1}
+      </div>
+      <div>
+        <Form.Item name={[name, "isProductCharges"]} valuePropName="checked">
+          <Checkbox>Product Charges</Checkbox>
+        </Form.Item>
+
+        <div className="grid grid-cols-2 gap-4">
+          <Form.Item name={[name, "name"]} label="Name">
+            <Input
+              placeholder="enter name"
+              disabled={!isProductChargesEnabled}
+            />
+          </Form.Item>
+          <div className="pt-6">
+            <Form.Item
+              name={[name, "calculateByRate"]}
+              valuePropName="checked"
+              className="pt-8"
+            >
+              <Checkbox disabled={!isProductChargesEnabled}>
+                Calculate By Rate
+              </Checkbox>
+            </Form.Item>
+          </div>
+          <Form.Item name={[name, "amount"]} label="Amount">
+            <Input
+              placeholder="enter amount"
+              disabled={!isProductChargesEnabled}
+            />
+          </Form.Item>
+          <Form.Item name={[name, "rate"]} label="Rate">
+            <Input
+              placeholder="enter rate"
+              disabled={!isProductChargesEnabled || !calculateByRate}
+            />
+          </Form.Item>
+
+          {remove && (
+            <Button
+              type="text"
+              icon={<MinusCircleOutlined />}
+              onClick={() => remove(name)}
+              className="absolute top-2 right-2 text-red-600"
+              disabled={!isProductChargesEnabled}
+            />
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const LoanDocumentItem: React.FC<ProductChargeItemProps> = ({
+  name,
+  fieldKey,
+  remove,
+  index,
+  form,
+}) => {
+  const isLoanDocument = Form.useWatch(
+    ["loanDocument", name, "isLoanDocument"],
+    form
+  );
+
+  return (
+    <div
+      key={fieldKey}
+      className="grid grid-cols-1 gap-4 mb-4 shadow-sm p-4 rounded relative bg-white"
+    >
+      <div className="col-span-2 font-semibold text-sm mb-2">
+        Loan Document #{index + 1}
+      </div>
+      <div>
+        <Form.Item
+          name={[name, "isLoanDocument"]}
+          valuePropName="checked"
+          rules={[{ required: false }]}
+        >
+          <Checkbox>Loan Document</Checkbox>
+        </Form.Item>
+
+        <div className="grid grid-cols-2 gap-4">
+          <Form.Item name={[name, "name"]} label="Name">
+            <Input placeholder="enter name" disabled={!isLoanDocument} />
+          </Form.Item>
+          <div className="pt-6">
+            <Form.Item
+              name={[name, "isRequired"]}
+              valuePropName="checked"
+              className="pt-8"
+            >
+              <Checkbox disabled={!isLoanDocument}>Is Required</Checkbox>
+            </Form.Item>
+          </div>
+
+          {remove && (
+            <Button
+              type="text"
+              icon={<MinusCircleOutlined />}
+              onClick={() => remove(name)}
+              className="absolute top-2 right-2 text-red-600"
+              disabled={!isLoanDocument}
+            />
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export const NewProductForm = () => {
   const [form] = Form.useForm();
+  const calculateInterestByRate = Form.useWatch(
+    "calculateInterestByRate",
+    form
+  );
+  const calculatePenalty = Form.useWatch("calculatePenalty", form);
+  const calculatePenaltyByRate = Form.useWatch("calculatePenaltyByRate", form);
+
+  const productChargesList = Form.useWatch("productCharges", form) || [];
+  const isAnyProductChargeEnabled = productChargesList.some(
+    (item: any) => item?.isProductCharges
+  );
+
+  const productDocumentList = Form.useWatch("loanDocument", form) || [];
+  const isAnyProductDocumentEnabled = productDocumentList.some(
+    (item: any) => item?.isLoanDocument
+  );
   return (
     <div className=" px-4">
       <Form
@@ -12,285 +169,330 @@ export const NewProductForm = () => {
         style={{ maxWidth: 1000, marginTop: 24 }}
         className=" grid grid-cols-1 gap-8"
       >
-        <div className="grid grid-cols-2 gap-4  p-4 rounded-sm shadow-sm">
-          <Form.Item
-            label="Product Name"
-            name="productName"
-            rules={[{ required: true }]}
-          >
-            <Input placeholder="enter product name" />
-          </Form.Item>
-          <Form.Item
-            label="Product Type"
-            name="institutionType"
-            rules={[{ required: true }]}
-          >
-            <Select placeholder="Select type" id="">
-              <Option value="">Emergency Advance</Option>
-              <Option value="">Short Term Loan </Option>
-            </Select>
-          </Form.Item>
-          <Form.Item
-            label="Minimum Loan Amount"
-            name="minimumLoanAmount"
-            rules={[{ required: true }]}
-          >
-            <Input placeholder="enter min loan amount" />
-          </Form.Item>
-          <Form.Item
-            label="Maxmimum Loan Amount"
-            name="maximumLoanAmount"
-            rules={[{ required: true }]}
-          >
-            <Input placeholder="enter max loan amount" />
-          </Form.Item>
-          <Form.Item
-            label="Distribution Channels"
-            name="distributionChannels"
-            rules={[{ required: true }]}
-          >
-            <Select placeholder="Select Dist Channel" id="">
-              <Option value=""> Ussd</Option>
-              <Option value=""> Web</Option>
-              <Option value=""> MobileApp</Option>
-            </Select>
-          </Form.Item>
-          <Form.Item
-            label="Loan Disbursement Types"
-            name="loanDisbursementTypes"
-            rules={[{ required: true }]}
-          >
-            <Select placeholder="Select Disb Type" id="">
-              <Option value=""> Bank</Option>
-              <Option value=""> Cash</Option>
-              <Option value=""> Mobile</Option>
-              <Option value=""> Other Transfer</Option>
-            </Select>
-          </Form.Item>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4  p-4 rounded-sm shadow-sm">
-          <Form.Item
-            label="Minimum Repayment Period"
-            name="minimumRepaymentPeriod"
-            rules={[{ required: false }]}
-          >
-            <Input placeholder="enter repayment period" />
-          </Form.Item>
-
-          <Form.Item
-            label="Maximum Repayment Period"
-            name="maximumRepaymentPeriod"
-            rules={[{ required: false }]}
-          >
-            <Input placeholder="enter repayment period" />
-          </Form.Item>
-
-          <Form.Item
-            label="Grace Period InDays"
-            name="gracePeriodInDays"
-            rules={[{ required: true }]}
-          >
-            <Input placeholder="enter grace period" />
-          </Form.Item>
-
-          <Form.Item
-            label="Repayment Cycles"
-            name="repaymentCycles"
-            rules={[{ required: false }]}
-          >
-            <Select placeholder="Select type" id="">
-              <Option value="">Daily</Option>
-              <Option value="">Monthly</Option>
-              <Option value="">Quarterly</Option>
-              <Option value="">Yearly</Option>
-              <Option value="">LumpSum</Option>
-            </Select>
-          </Form.Item>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4  p-4 rounded-sm shadow-sm items-center">
-          <Form.Item
-            label="Minimum Interest Rate"
-            name="minimumInterestRate"
-            rules={[{ required: false }]}
-          >
-            <Input placeholder="enter minimum interest rate" />
-          </Form.Item>
-          <Form.Item
-            label="Maximum Interest Rate"
-            name="maximumInterestRate"
-            rules={[{ required: true }]}
-          >
-            <Input placeholder="enter maximum interest rate" />
-          </Form.Item>
-          <Form.Item
-            label="Minimum Interest Amount"
-            name="minimumInterestAmount"
-            rules={[{ required: false }]}
-          >
-            <Input placeholder="enter minimum interest amount" />
-          </Form.Item>
-          <Form.Item
-            label="Maximum Interest Amount"
-            name="maximumInterestAmount"
-            rules={[{ required: true }]}
-          >
-            <Input placeholder="enter maximum interest amount" />
-          </Form.Item>{" "}
-          <Form.Item
-            label="Interest Type"
-            name="interestType"
-            rules={[{ required: false }]}
-          >
-            <Select placeholder="Select type" id="">
-              <Option value="">FlatRate </Option>
-              <Option value="">ReducingBalance</Option>
-            </Select>
-          </Form.Item>
-          <div className=" pt-6">
+        <div>
+          <p className=" font-semibold pb-2 text-lg">Loan Details</p>
+          <div className="grid grid-cols-2 gap-4  p-4 rounded-sm shadow-sm">
             <Form.Item
-              name="calculateInterestByRate"
-              valuePropName="checked"
-              className=" pt-8"
+              label="Product Name"
+              name="productName"
+              rules={[{ required: true }]}
             >
-              <Checkbox>Calculate Interest By Rate</Checkbox>
+              <Input placeholder="enter product name" />
             </Form.Item>
+            <Form.Item
+              label="Product Type"
+              name="institutionType"
+              rules={[{ required: true }]}
+            >
+              <Select placeholder="Select type" id="" mode="multiple">
+                <Option value="1">Emergency Advance</Option>
+                <Option value="2">Short Term Loan </Option>
+              </Select>
+            </Form.Item>
+            <Form.Item
+              label="Minimum Loan Amount"
+              name="minimumLoanAmount"
+              rules={[{ required: true }]}
+            >
+              <Input placeholder="enter min loan amount" />
+            </Form.Item>
+            <Form.Item
+              label="Maxmimum Loan Amount"
+              name="maximumLoanAmount"
+              rules={[{ required: true }]}
+            >
+              <Input placeholder="enter max loan amount" />
+            </Form.Item>
+            <Form.Item
+              label="Distribution Channels"
+              name="distributionChannels"
+              rules={[{ required: true }]}
+            >
+              <Select placeholder="Select Dist Channel" id="" mode="multiple">
+                <Option value="1"> Ussd</Option>
+                <Option value="2"> Web</Option>
+                <Option value="3"> Mobile App</Option>
+              </Select>
+            </Form.Item>
+            <Form.Item
+              label="Loan Disbursement Types"
+              name="loanDisbursementTypes"
+              rules={[{ required: true }]}
+            >
+              <Select placeholder="Select Disb Type" id="" mode="multiple">
+                <Option value="1"> Bank</Option>
+                <Option value="2"> Cash</Option>
+                <Option value="3"> Mobile</Option>
+                <Option value="4"> Other Transfer</Option>
+              </Select>
+            </Form.Item>
+            <div className="">
+              <Form.Item
+                name="IsCollateralBased"
+                valuePropName="checked"
+                rules={[{ required: false }]}
+              >
+                <Checkbox>Is Collateral Based</Checkbox>
+              </Form.Item>
+            </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4  p-4 rounded-sm shadow-sm items-center">
-          <Form.Item
-            label="Penalty Rate"
-            name="penaltyRate"
-            rules={[{ required: false }]}
-          >
-            <Input placeholder="enter penalty rate" />
-          </Form.Item>
-          <Form.Item
-            label="Penalty Amount"
-            name="penaltyAmount"
-            rules={[{ required: true }]}
-          >
-            <Input placeholder="enter penalty amount" />
-          </Form.Item>
-
-          <div className=" pt-6">
+        <div>
+          <p className=" font-semibold pb-2 text-lg">Payment Period</p>{" "}
+          <div className="grid grid-cols-2 gap-4  p-4 rounded-sm shadow-sm">
             <Form.Item
-              name="calculatePenalty"
-              valuePropName="checked"
-              className=" pt-8"
-            >
-              <Checkbox>Calculate Penalty</Checkbox>
-            </Form.Item>
-          </div>
-
-          <div className=" pt-6">
-            <Form.Item
-              name="calculatePenaltyByRate"
-              valuePropName="checked"
-              className=" pt-8"
-            >
-              <Checkbox>Calculate Penalty By Rate</Checkbox>
-            </Form.Item>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4  p-4 rounded-sm shadow-sm items-center">
-          <Form.Item
-            label="Loan Product Charges"
-            name="loanProductCharges"
-            rules={[{ required: false }]}
-          >
-            <Input placeholder="enter loan product charges" />
-          </Form.Item>
-          <Form.Item
-            label="Loan Product Charges"
-            name="loanProductCharges"
-            rules={[{ required: false }]}
-          >
-            <Input placeholder="enter loan product charges" />
-          </Form.Item>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4  p-4 rounded-sm shadow-sm items-center">
-          <Form.Item
-            label="Product Status"
-            name="productStatus"
-            rules={[{ required: false }]}
-          >
-            <Select placeholder="">
-              <Option>Inactive</Option>
-              <Option>Active</Option>
-            </Select>
-          </Form.Item>
-          <div className=" pt-6">
-            <Form.Item
-              name="IsCollateralBased"
-              valuePropName="checked"
+              label="Minimum Repayment Period"
+              name="minimumRepaymentPeriod"
               rules={[{ required: false }]}
             >
-              <Checkbox>Is Collateral Based</Checkbox>
+              <Input placeholder="enter repayment period" />
+            </Form.Item>
+
+            <Form.Item
+              label="Maximum Repayment Period"
+              name="maximumRepaymentPeriod"
+              rules={[{ required: false }]}
+            >
+              <Input placeholder="enter repayment period" />
+            </Form.Item>
+
+            <Form.Item
+              label="Grace Period InDays"
+              name="gracePeriodInDays"
+              rules={[{ required: true }]}
+            >
+              <Input placeholder="enter grace period" />
+            </Form.Item>
+
+            <Form.Item
+              label="Repayment Cycles"
+              name="repaymentCycles"
+              rules={[{ required: false }]}
+            >
+              <Select placeholder="Select type" id="" mode="multiple">
+                <Option value="1">Daily</Option>
+                <Option value="2">Monthly</Option>
+                <Option value="3">Quarterly</Option>
+                <Option value="4">Yearly</Option>
+                <Option value="5">LumpSum</Option>
+              </Select>
             </Form.Item>
           </div>
         </div>
 
-        <div className=" bg-gray-50 p-4 rounded">
-          <h3 className="font-semibold text-lg mb-2">Loan Product Charges</h3>
-          <Form.List name="contactPersons" initialValue={[{}]}>
+        <div className=" grid grid-cols-1 gap-4">
+          <p className=" font-semibold text-lg">Interest Calculations</p>{" "}
+          <div className="grid grid-cols-1 gap-4  p-4 rounded-sm shadow-sm items-center">
+            <div className=" ">
+              <div>
+                <p className=" text-xs text-slate-600">
+                  Check box to calculate by interest rate
+                </p>
+              </div>
+              <div>
+                <Form.Item
+                  name="calculateInterestByRate"
+                  valuePropName="checked"
+                  className=" pt-8"
+                >
+                  <Checkbox>Calculate Interest By Rate</Checkbox>
+                </Form.Item>
+              </div>
+            </div>
+            <div className=" grid grid-cols-2 gap-2">
+              {" "}
+              <Form.Item
+                label="Minimum Interest Rate"
+                name="minimumInterestRate"
+                rules={[{ required: false }]}
+              >
+                <Input
+                  placeholder="enter minimum interest rate"
+                  disabled={!calculateInterestByRate}
+                />
+              </Form.Item>
+              <Form.Item
+                label="Maximum Interest Rate"
+                name="maximumInterestRate"
+                rules={[{ required: true }]}
+              >
+                <Input
+                  placeholder="enter maximum interest rate"
+                  disabled={!calculateInterestByRate}
+                />
+              </Form.Item>
+              <Form.Item
+                label="Minimum Interest Amount"
+                name="minimumInterestAmount"
+                rules={[{ required: false }]}
+              >
+                <Input
+                  placeholder="enter minimum interest amount"
+                  disabled={calculateInterestByRate}
+                />
+              </Form.Item>
+              <Form.Item
+                label="Maximum Interest Amount"
+                name="maximumInterestAmount"
+                rules={[{ required: true }]}
+              >
+                <Input
+                  placeholder="enter maximum interest amount"
+                  disabled={calculateInterestByRate}
+                />
+              </Form.Item>{" "}
+              <Form.Item
+                label="Interest Type"
+                name="interestType"
+                rules={[{ required: false }]}
+              >
+                <Select placeholder="Select type" id="">
+                  <Option value="1">Flat Rate </Option>
+                  <Option value="2">Reducing Balance</Option>
+                </Select>
+              </Form.Item>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-4   ">
+          <p className=" font-semibold text-lg">Penalty Calculations</p>
+          <div className=" grid grid-cols-1 gap-2 rounded-sm shadow-sm p-4">
+            <div className=" ">
+              <div>
+                <p className=" text-xs text-slate-600">
+                  Check box to calculate penalty
+                </p>
+              </div>
+              <div>
+                <Form.Item
+                  name="calculatePenalty"
+                  valuePropName="checked"
+                  className=" pt-8"
+                >
+                  <Checkbox>Calculate Penalty</Checkbox>
+                </Form.Item>
+              </div>
+            </div>
+            <div className=" grid grid-cols-2 gap-4  ">
+              <div className=" grid grid-cols-1 gap-2">
+                <div>
+                  <p className=" text-xs text-slate-600">
+                    Check box to calculate penalty by rate
+                  </p>
+                </div>
+                <div className=" ">
+                  <Form.Item
+                    name="calculatePenaltyByRate"
+                    valuePropName="checked"
+                    className=" "
+                  >
+                    <Checkbox disabled={!calculatePenalty}>
+                      Calculate Penalty By Rate
+                    </Checkbox>
+                  </Form.Item>
+                </div>
+              </div>
+
+              <Form.Item
+                label="Penalty Amount"
+                name="penaltyAmount"
+                rules={[{ required: true }]}
+              >
+                <Input
+                  placeholder="enter penalty amount"
+                  disabled={!calculatePenaltyByRate}
+                />
+              </Form.Item>
+
+              <Form.Item
+                label="Penalty Rate"
+                name="penaltyRate"
+                rules={[{ required: false }]}
+              >
+                <Input
+                  placeholder="enter penalty rate"
+                  disabled={!calculatePenaltyByRate}
+                />
+              </Form.Item>
+
+              <Form.Item
+                label="Penalty Calculation Method"
+                name="repaymentCycles"
+                rules={[{ required: false }]}
+              >
+                <Select
+                  placeholder="Select type"
+                  id=""
+                  disabled={!calculatePenaltyByRate}
+                >
+                  <Option value="1">Initial principle</Option>
+                  <Option value="2">Outstanding principle</Option>
+                  <Option value="3">Initial principle plus interest</Option>
+                  <Option value="4">Outstanding principle plus interest</Option>
+                  <Option value="5">Interest</Option>
+                </Select>
+              </Form.Item>
+            </div>
+          </div>
+        </div>
+
+        <div className=" grid grid-cols-1 gap-4">
+          <div>
+            <p className=" font-semibold text-lg">Other Charges</p>
+          </div>
+          <div className=" grid grid-cols-2 gap-4  p-4 rounded-sm shadow-sm items-center">
+            <Form.Item
+              label="Loan Product Name"
+              name="loanProductName"
+              rules={[{ required: false }]}
+            >
+              <Input placeholder="enter loan product name" />
+            </Form.Item>
+            <Form.Item
+              label="Loan Product Amount"
+              name="loanProductAmount"
+              rules={[{ required: false }]}
+            >
+              <Input placeholder="enter loan product amount" />
+            </Form.Item>
+          </div>
+        </div>
+
+        {/* <div className="grid grid-cols-1 gap-4">
+          <div>
+            <p className=" font-semibold">Product Status</p>
+          </div>
+          <div className=" grid grid-cols-2 gap-4  p-4 rounded-sm shadow-sm items-center">
+            <Form.Item
+              label="Product Status"
+              name="productStatus"
+              rules={[{ required: false }]}
+            >
+              <Select placeholder="">
+                <Option>Inactive</Option>
+                <Option>Active</Option>
+              </Select>
+            </Form.Item>
+            
+          </div>
+        </div> */}
+
+        <div className=" bg-gray-50  rounded">
+          <h3 className="font-semibold  mb-2 text-lg">Loan Product Charges</h3>
+          <Form.List name="productCharges" initialValue={[{}]}>
             {(fields, { add, remove }) => (
               <>
-                {fields.map(({ key, name, ...restField }, index) => (
-                  <div
+                {fields.map(({ key, name }, index) => (
+                  <ProductChargeItem
                     key={key}
-                    className="grid grid-cols-2 gap-4 mb-4 shadow-sm p-4 rounded relative bg-white"
-                  >
-                    <div className="col-span-2 font-semibold text-sm mb-2">
-                      Loan Product Charge {index + 1}
-                    </div>
-                    <Form.Item
-                      {...restField}
-                      name={[name, "name"]}
-                      label="Name"
-                      rules={[{ required: false }]}
-                    >
-                      <Input placeholder="enter name" />
-                    </Form.Item>
-                    <div className=" pt-6">
-                      <Form.Item
-                        name="calculateByRate"
-                        valuePropName="checked"
-                        className=" pt-8"
-                      >
-                        <Checkbox>Calculate By Rate</Checkbox>
-                      </Form.Item>
-                    </div>
-                    <Form.Item
-                      {...restField}
-                      name={[name, "amount"]}
-                      label="Amount"
-                      rules={[{ required: false }]}
-                    >
-                      <Input placeholder="enter amount" />
-                    </Form.Item>
-                    <Form.Item
-                      {...restField}
-                      name={[name, "rate"]}
-                      label="Rate"
-                      rules={[{ required: false }]}
-                    >
-                      <Input placeholder="enter rate" />
-                    </Form.Item>
-
-                    {fields.length > 1 && (
-                      <Button
-                        type="text"
-                        icon={<MinusCircleOutlined />}
-                        onClick={() => remove(name)}
-                        className="absolute top-2 right-2 text-red-600"
-                      />
-                    )}
-                  </div>
+                    name={name}
+                    fieldKey={key}
+                    remove={remove}
+                    index={index}
+                    form={form}
+                  />
                 ))}
 
                 <Form.Item>
@@ -299,6 +501,7 @@ export const NewProductForm = () => {
                     onClick={() => add()}
                     block
                     icon={<PlusOutlined />}
+                    disabled={!isAnyProductChargeEnabled}
                   >
                     Add Loan Product Charge
                   </Button>
@@ -308,46 +511,21 @@ export const NewProductForm = () => {
           </Form.List>
         </div>
 
-        <div className=" bg-gray-50 p-4 rounded">
-          <h3 className="font-semibold text-lg mb-2">Loan Product Charges</h3>
-          <Form.List name="contactPersons" initialValue={[{}]}>
+        <div className=" bg-gray-50  rounded">
+          <h3 className="font-semibold  mb-2 text-lg">Loan Product Document</h3>
+
+          <Form.List name="loanDocument" initialValue={[{}]}>
             {(fields, { add, remove }) => (
               <>
-                {fields.map(({ key, name, ...restField }, index) => (
-                  <div
+                {fields.map(({ key, name }, index) => (
+                  <LoanDocumentItem
                     key={key}
-                    className="grid grid-cols-2 gap-4 mb-4 shadow-sm p-4 rounded relative bg-white"
-                  >
-                    <div className="col-span-2 font-semibold text-sm mb-2">
-                      Loan Documents {index + 1}
-                    </div>
-                    <Form.Item
-                      {...restField}
-                      name={[name, "name"]}
-                      label="Name"
-                      rules={[{ required: false }]}
-                    >
-                      <Input placeholder="enter name" />
-                    </Form.Item>
-                    <div className=" pt-6">
-                      <Form.Item
-                        name="isRequired"
-                        valuePropName="checked"
-                        className=" pt-8"
-                      >
-                        <Checkbox>Is Required</Checkbox>
-                      </Form.Item>
-                    </div>
-
-                    {fields.length > 1 && (
-                      <Button
-                        type="text"
-                        icon={<MinusCircleOutlined />}
-                        onClick={() => remove(name)}
-                        className="absolute top-2 right-2 text-red-600"
-                      />
-                    )}
-                  </div>
+                    name={name}
+                    fieldKey={key}
+                    remove={remove}
+                    index={index}
+                    form={form}
+                  />
                 ))}
 
                 <Form.Item>
@@ -356,6 +534,7 @@ export const NewProductForm = () => {
                     onClick={() => add()}
                     block
                     icon={<PlusOutlined />}
+                    disabled={!isAnyProductDocumentEnabled}
                   >
                     Add Loan Document
                   </Button>
