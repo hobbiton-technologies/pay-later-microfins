@@ -9,6 +9,7 @@ import {
 } from "antd";
 import { PlusOutlined, MinusCircleOutlined } from "@ant-design/icons";
 import { Option } from "antd/es/mentions";
+import { useCreateLoadProductMutation } from "@/api/mutations/productsMutation";
 
 type ProductChargeItemProps = {
   name: number;
@@ -170,6 +171,8 @@ export const NewProductForm = () => {
     (item: any) => item?.isLoanDocument
   );
 
+  const [productData] = useCreateLoadProductMutation();
+
   const handleProductSubmit = async (values: {
     name: string;
     loanProductType: string;
@@ -256,6 +259,7 @@ export const NewProductForm = () => {
         microfinBranches: values.microfinBranches,
       };
       console.log("Form values:", values);
+      await productData(loanProductData).unwrap();
       message.success("Product Successfully Created");
     } catch (error) {
       console.error("Failed to create Loan Product", error);
@@ -329,7 +333,7 @@ export const NewProductForm = () => {
                 <Option value="4"> Other Transfer</Option>
               </Select>
             </Form.Item>
-            <div className="">
+            <div className=" pt-6">
               <Form.Item
                 name="isCollateralBased"
                 valuePropName="checked"
@@ -338,6 +342,13 @@ export const NewProductForm = () => {
                 <Checkbox>Is Collateral Based</Checkbox>
               </Form.Item>
             </div>
+            <Form.Item
+              label="Other Transfer"
+              name="otherTranfer"
+              rules={[{ required: false }]}
+            >
+              <Input disabled placeholder="enter max loan amount" />
+            </Form.Item>
           </div>
         </div>
 
