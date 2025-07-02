@@ -1,4 +1,4 @@
-import Api from "../apiSlice";
+import { Api } from "../apiSlice";
 
 // export interface ProductsData {
 //   id: number;
@@ -71,6 +71,7 @@ export const SummaryRequest = Api.injectEndpoints({
 
         return `/investment-management/get-government-bonds?${params.toString()}`;
       },
+      providesTags: ["LoanProducsts"],
     }),
   }),
 });

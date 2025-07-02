@@ -1,5 +1,4 @@
-import { url } from "inspector";
-import Api from "../apiSlice";
+import { Api } from "../apiSlice";
 
 export interface ProductsBody {
   name: string;
@@ -54,6 +53,7 @@ const ProductsMutation = Api.injectEndpoints({
           "Content-Type": "application/json",
         },
       }),
+      invalidatesTags: ["LoanProducsts"],
     }),
   }),
 });
