@@ -26,11 +26,11 @@ const ProductChargeItem: React.FC<ProductChargeItemProps> = ({
   form,
 }) => {
   const isProductChargesEnabled = Form.useWatch(
-    ["productCharges", name, "isProductCharges"],
+    ["loanProductCharges", name, "isProductCharges"],
     form
   );
   const calculateByRate = Form.useWatch(
-    ["productCharges", name, "calculateByRate"],
+    ["loanProductCharges", name, "calculateByRate"],
     form
   );
 
@@ -101,7 +101,7 @@ const LoanDocumentItem: React.FC<ProductChargeItemProps> = ({
   form,
 }) => {
   const isLoanDocument = Form.useWatch(
-    ["loanDocument", name, "isLoanDocument"],
+    ["loanDocuments", name, "isLoanDocument"],
     form
   );
 
@@ -160,12 +160,12 @@ export const NewProductForm = () => {
   const calculatePenalty = Form.useWatch("calculatePenalty", form);
   const calculatePenaltyByRate = Form.useWatch("calculatePenaltyByRate", form);
 
-  const productChargesList = Form.useWatch("productCharges", form) || [];
+  const productChargesList = Form.useWatch("loanProductCharges", form) || [];
   const isAnyProductChargeEnabled = productChargesList.some(
     (item: any) => item?.isProductCharges
   );
 
-  const productDocumentList = Form.useWatch("loanDocument", form) || [];
+  const productDocumentList = Form.useWatch("loanDocuments", form) || [];
   const isAnyProductDocumentEnabled = productDocumentList.some(
     (item: any) => item?.isLoanDocument
   );
@@ -233,6 +233,7 @@ export const NewProductForm = () => {
         maximumLoanAmount: values.maximumLoanAmount,
         distributionChannels: values.distributionChannels,
         loanDisbursementTypes: values.loanDisbursementTypes,
+        isCollateralBased: values.isCollateralBased,
         minimumRepaymentPeriod: values.minimumRepaymentPeriod,
         maximumRepaymentPeriod: values.maximumRepaymentPeriod,
         gracePeriodInDays: values.gracePeriodInDays,
@@ -249,11 +250,10 @@ export const NewProductForm = () => {
         penaltyAmount: values.penaltyAmount,
         penaltyCalculationMethod: values.penaltyCalculationMethod,
         loanProductCharges: transformedProductCharges,
-        productStatus: values.productStatus,
-        isCollateralBased: values.isCollateralBased,
+        productStatus: values.productStatus, //
         loanDocuments: transformedLoadDocuments,
-        isMouBased: values.isMouBased,
-        microfinBranches: values.microfinBranches,
+        isMouBased: values.isMouBased, //
+        microfinBranches: values.microfinBranches, //
       };
       console.log("Form values:", values);
       message.success("Product Successfully Created");
@@ -277,14 +277,14 @@ export const NewProductForm = () => {
           <div className="grid grid-cols-2 gap-4  p-4 rounded-sm shadow-sm">
             <Form.Item
               label="Product Name"
-              name="productName"
+              name="name"
               rules={[{ required: true }]}
             >
               <Input placeholder="enter product name" />
             </Form.Item>
             <Form.Item
               label="Product Type"
-              name="institutionType"
+              name="loanProductType"
               rules={[{ required: true }]}
             >
               <Select placeholder="Select type" id="" mode="multiple">
@@ -331,7 +331,7 @@ export const NewProductForm = () => {
             </Form.Item>
             <div className="">
               <Form.Item
-                name="IsCollateralBased"
+                name="isCollateralBased"
                 valuePropName="checked"
                 rules={[{ required: false }]}
               >
@@ -522,7 +522,7 @@ export const NewProductForm = () => {
 
               <Form.Item
                 label="Penalty Calculation Method"
-                name="repaymentCycles"
+                name="penaltyCalculationMethod"
                 rules={[{ required: false }]}
               >
                 <Select
@@ -541,7 +541,7 @@ export const NewProductForm = () => {
           </div>
         </div>
 
-        <div className=" grid grid-cols-1 gap-4">
+        {/* <div className=" grid grid-cols-1 gap-4">
           <div>
             <p className=" font-semibold text-lg">Other Charges</p>
           </div>
@@ -561,11 +561,11 @@ export const NewProductForm = () => {
               <Input placeholder="enter loan product amount" />
             </Form.Item>
           </div>
-        </div>
+        </div> */}
 
         <div className=" bg-gray-50  rounded">
           <h3 className="font-semibold  mb-2 text-lg">Loan Product Charges</h3>
-          <Form.List name="productCharges" initialValue={[{}]}>
+          <Form.List name="loanProductCharges" initialValue={[{}]}>
             {(fields, { add, remove }) => (
               <>
                 {fields.map(({ key, name }, index) => (
@@ -598,7 +598,7 @@ export const NewProductForm = () => {
         <div className=" bg-gray-50  rounded">
           <h3 className="font-semibold  mb-2 text-lg">Loan Product Document</h3>
 
-          <Form.List name="loanDocument" initialValue={[{}]}>
+          <Form.List name="loanDocuments" initialValue={[{}]}>
             {(fields, { add, remove }) => (
               <>
                 {fields.map(({ key, name }, index) => (
