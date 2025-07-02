@@ -4,7 +4,15 @@ import {
 } from "@/api/queries/summaryQueries";
 import { customLoader } from "@/components/table-loader";
 import DebouncedInputField from "@/modules/components/DebouncedInput";
-import { Button, Drawer, Dropdown, MenuProps, message, Space } from "antd";
+import {
+  Button,
+  Drawer,
+  Dropdown,
+  MenuProps,
+  message,
+  Select,
+  Space,
+} from "antd";
 import Table, { ColumnsType } from "antd/es/table";
 import { useEffect, useState } from "react";
 import { ExportOutlined, EyeOutlined } from "@ant-design/icons";
@@ -140,6 +148,11 @@ export const ProductsTable = () => {
             <ExportOutlined className="text-white" />
             Export to CSV
           </Button> */}
+          <Select placeholder="Status" className="min-w-32" allowClear={true}>
+            <Select.Option value={105}>Pending</Select.Option>
+            <Select.Option value={109}>Failed</Select.Option>
+            <Select.Option value={100}>Successful</Select.Option>
+          </Select>
           <Button
             type="primary"
             onClick={() => setIsCreateDrawerVisible(true)}
