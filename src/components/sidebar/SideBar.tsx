@@ -1,20 +1,20 @@
-import { Menu, Popover } from "antd";
+import { Menu } from "antd";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { MenuItems } from "./SideBarOptions/SideBarOptions";
-import { LogoutOutlined, SettingOutlined } from "@ant-design/icons";
-import { Offline, Online } from "react-detect-offline";
-import { useAuth } from "../../auth/authContext";
+// import { LogoutOutlined, SettingOutlined } from "@ant-design/icons";
+// import { Offline, Online } from "react-detect-offline";
+// import { useAuth } from "../../auth/authContext";
 // import logo from "../../../public/images/lipilaLater.png";
 
 export const Sidebar = () => {
-  const [collapsed, setCollapsed] = useState(false);
-  const { isAuthenticated, logout } = useAuth();
+  const [collapsed] = useState(false);
+  // const { isAuthenticated, logout } = useAuth();
 
-  const toggleCollapsed = () => {
-    setCollapsed(!collapsed);
-  };
+  // const toggleCollapsed = () => {
+  //   setCollapsed(!collapsed);
+  // };
 
   const nav = useNavigate();
   return (

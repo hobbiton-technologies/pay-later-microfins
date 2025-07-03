@@ -180,9 +180,9 @@ export const NewProductForm = () => {
     (item: any) => item?.isLoanDocument
   );
 
-  const [microfins, setMicrofinBranches] = useState<BranchesData>();
-  const [pageNumber, setPageNumber] = useState<number | null>(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [, setMicrofinBranches] = useState<BranchesData>();
+  const [pageNumber] = useState<number | null>(1);
+  const [pageSize] = useState(10);
 
   const [productData] = useCreateLoadProductMutation();
   const { data: microfinBranches, isFetching } =
@@ -206,7 +206,7 @@ export const NewProductForm = () => {
 
   const handleProductSubmit = async (values: any) => {
     try {
-      console.log("Raw form values:", values);
+      // console.log("Raw form values:", values);
 
       const transformedProductCharges =
         values.loanProductCharges
@@ -265,16 +265,16 @@ export const NewProductForm = () => {
         ),
       };
 
-      console.log("Transformed data:", loanProductData);
-      console.log("Product charges:", transformedProductCharges);
-      console.log("Loan documents:", transformedLoanDocuments);
+      // console.log("Transformed data:", loanProductData);
+      // console.log("Product charges:", transformedProductCharges);
+      // console.log("Loan documents:", transformedLoanDocuments);
 
-      const response = await productData({
+      await productData({
         organizationId,
         loanProductData,
       }).unwrap();
 
-      console.log("API Response:", response);
+      // console.log("API Response:", response);
       message.success("Product Successfully Created");
 
       form.resetFields();

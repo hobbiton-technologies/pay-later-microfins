@@ -6,7 +6,6 @@ import {
 import NotFound from "../components/NotFound";
 import Layout from "../layout";
 
-import { SignIn } from "../auth/pages/Signin";
 import ProtectedRoute from "../auth/protectedRoutes";
 import Summary from "../modules/summary/Summary";
 import { StaffMembers } from "../modules/business/StaffMembers";
@@ -20,6 +19,8 @@ import { SalaryLoans } from "../modules/financials/SalaryLoans";
 import { RecoverySchedules } from "../modules/financials/RecoverySchedules";
 import { Reporting } from "../modules/financials/Reporting";
 import { Products } from "../modules/summary/Products";
+import { SignIn } from "@/auth/pages/signIn";
+import Branches from "@/modules/business/Branches";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -47,6 +48,14 @@ export const router = createBrowserRouter(
           element={
             <ProtectedRoute>
               <StaffMembers />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/branches"
+          element={
+            <ProtectedRoute>
+              <Branches />
             </ProtectedRoute>
           }
         />
