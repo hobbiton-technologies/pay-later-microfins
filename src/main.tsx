@@ -10,7 +10,6 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ApiProvider api={Api}>
       <AntdApp>
-        {" "}
         <App />
       </AntdApp>
     </ApiProvider>
