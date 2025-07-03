@@ -192,7 +192,7 @@ export const SummaryRequest = Api.injectEndpoints({
         const params = new URLSearchParams();
         params.append("PageSize", pageSize.toString());
         params.append("PageNumber", pageNumber.toString());
-        return `/microfins/${id}/microfin-organizationss?${params.toString()}`;
+        return `/microfins/${id}/microfin-organizations?${params.toString()}`;
       },
     }),
   }),
