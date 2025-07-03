@@ -66,10 +66,10 @@ export const SummaryRequest = Api.injectEndpoints({
 
         if (id) params.append("id", id.toString());
         if (searchQuery) params.append("searchQuery", searchQuery);
-        params.append("pageNumber", pageNumber.toString());
-        params.append("pageSize", pageSize.toString());
+        params.append("PageSize", pageSize.toString());
+        params.append("PageNumber", pageNumber.toString());
 
-        return `/investment-management/get-government-bonds?${params.toString()}`;
+        return `/cash-loan-products?${params.toString()}`;
       },
       providesTags: ["LoanProducsts"],
     }),

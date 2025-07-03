@@ -20,7 +20,7 @@ const AuthRequest = Api.injectEndpoints({
   endpoints: (builder) => ({
     LoginUser: builder.mutation<LoginResponse, LoginRequest>({
       query: (loginData) => ({
-        url: `/api/v1/auth/microfins/login`,
+        url: `auth/microfins/login`,
         method: "POST",
         body: loginData,
         headers: {
