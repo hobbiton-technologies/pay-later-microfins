@@ -6,6 +6,7 @@ import {
   Input,
   message,
   Select,
+  Spin,
 } from "antd";
 import { PlusOutlined, MinusCircleOutlined } from "@ant-design/icons";
 import { Option } from "antd/es/mentions";
@@ -13,6 +14,11 @@ import {
   ProductsBody,
   useCreateLoadProductMutation,
 } from "@/api/mutations/productsMutation";
+import {
+  BranchesData,
+  useGetMicrofinBranchesRequestQuery,
+} from "@/api/queries/summaryQueries";
+import { useEffect, useState } from "react";
 
 type ProductChargeItemProps = {
   name: number;
@@ -174,7 +180,29 @@ export const NewProductForm = () => {
     (item: any) => item?.isLoanDocument
   );
 
+  const [microfins, setMicrofinBranches] = useState<BranchesData>();
+  const [pageNumber, setPageNumber] = useState<number | null>(1);
+  const [pageSize, setPageSize] = useState(10);
+
   const [productData] = useCreateLoadProductMutation();
+  const { data: microfinBranches, isFetching } =
+    useGetMicrofinBranchesRequestQuery({
+      id: Number(localStorage.getItem("organizationId")),
+      pageNumber: pageNumber ?? 1,
+      pageSize: pageSize,
+    });
+
+  useEffect(() => {
+    if (microfinBranches) {
+      setMicrofinBranches(microfinBranches?.data || []);
+    }
+  }, [microfinBranches]);
+
+  const microfinBranchesSelect: BranchesData[] = Array.isArray(
+    microfinBranches?.data
+  )
+    ? microfinBranches.data
+    : [];
 
   const handleProductSubmit = async (values: any) => {
     try {
@@ -648,12 +676,18 @@ export const NewProductForm = () => {
               name="microfinBranches"
               rules={[{ required: false }]}
             >
-              <Select placeholder="Select type" id="" mode="multiple">
-                <Option value="23">Branch 1</Option>
-                <Option value="2">Branch 2</Option>
-                <Option value="3">Branch 3</Option>
-                <Option value="4">Branch 4</Option>
-                <Option value="5">Branch 5</Option>
+              <Select
+                placeholder="Select Microfin Branch"
+                loading={isFetching}
+                notFoundContent={
+                  isFetching ? <Spin size="small" /> : "No Branches"
+                }
+              >
+                {microfinBranchesSelect.map((branch: BranchesData) => (
+                  <Option key={String(branch.id)} value={String(branch.id)}>
+                    {branch.name}
+                  </Option>
+                ))}
               </Select>
             </Form.Item>
           </div>

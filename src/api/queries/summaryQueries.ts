@@ -1,5 +1,22 @@
 import { Api } from "../apiSlice";
 
+export interface BranchesData {
+  id: number;
+  createdAt: string;
+  updatedAt: string;
+  microfin: {
+    id: number;
+    name: string;
+    contactNo: string;
+    address: string;
+    email: string;
+  };
+  name: string;
+  address: string;
+  phoneNumber: string;
+  branchId: string;
+}
+
 export interface ProductsData {
   id: number;
   microfinId: number;
@@ -66,31 +83,6 @@ export interface ProductsData {
   ];
 }
 
-// export interface ProductsData {
-//   id: number;
-//   issueNo: string;
-//   remarks: string;
-//   bidType: string;
-//   payee: string;
-//   investor: string;
-//   investmentType: string;
-//   companyName: string;
-//   refNo: string;
-//   tenderDate: string;
-//   payment: number;
-//   couponRate: number;
-//   faceValue: number;
-//   tenor: number;
-//   issueDate: string;
-//   remainingDays: number;
-//   maturityDate: string;
-//   interestDate: string;
-//   price: number;
-//   withholdingTax: number;
-//   createdAt: string;
-//   updatedAt: string;
-// }
-
 export interface ProductsDataResponse {
   pageNumber: number;
   pageSize: number;
@@ -98,6 +90,16 @@ export interface ProductsDataResponse {
   statusCode: number;
   message: string;
   data: ProductsData[];
+  errors: string[];
+}
+
+export interface BranchesResponse {
+  pageNumber: number;
+  pageSize: number;
+  totalItems: number;
+  statusCode: number;
+  message: string;
+  data: BranchesData;
   errors: string[];
 }
 export const SummaryRequest = Api.injectEndpoints({
@@ -128,7 +130,22 @@ export const SummaryRequest = Api.injectEndpoints({
       },
       providesTags: ["LoanProducsts"],
     }),
+
+    getMicrofinBranchesRequest: builder.query<
+      BranchesResponse,
+      { id: number; pageNumber: number; pageSize: number }
+    >({
+      query: ({ id, pageNumber, pageSize }) => {
+        const params = new URLSearchParams();
+        params.append("PageSize", pageSize.toString());
+        params.append("PageNumber", pageNumber.toString());
+        return `/microfins/${id}/branches?${params.toString()}`;
+      },
+    }),
   }),
 });
 
-export const { useGetGovernmentBondsRequestQuery } = SummaryRequest;
+export const {
+  useGetGovernmentBondsRequestQuery,
+  useGetMicrofinBranchesRequestQuery,
+} = SummaryRequest;
