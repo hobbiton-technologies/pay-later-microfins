@@ -3,9 +3,43 @@ import {
   useGetMicrofinBranchesRequestQuery,
 } from "@/api/queries/summaryQueries";
 import DebouncedInputField from "@/modules/components/DebouncedInput";
-import { Button } from "antd";
+import { Button, Table } from "antd";
 import { useEffect, useState } from "react";
 import { ExportOutlined } from "@ant-design/icons";
+import { customLoader } from "@/components/table-loader";
+import { ColumnsType } from "antd/es/table";
+
+export const branchesColumns: ColumnsType<BranchesData> = [
+  {
+    title: "ID",
+    dataIndex: "id",
+    key: "id",
+  },
+  {
+    title: "Name",
+    dataIndex: "name",
+    key: "name",
+  },
+  {
+    title: "Address",
+    dataIndex: "address",
+    key: "address",
+  },
+  {
+    title: "Microfin",
+    dataIndex: "microfin.name",
+    key: "microfin",
+  },
+  {
+    title: "Phone Number",
+    dataIndex: "phoneNumber",
+    key: "phoneNumber",
+  },
+  {
+    title: "Actions",
+    key: "actions",
+  },
+];
 
 export const BranchesTable = () => {
   const [id, setSearchId] = useState<string>("");
@@ -27,10 +61,10 @@ export const BranchesTable = () => {
     }
   }, [microfinBranches]);
 
-  //   const handleTableChange = (pagination: any) => {
-  //     setPageNumber(pagination.current);
-  //     setPageSize(pagination.pageSize);
-  //   };
+  const handleTableChange = (pagination: any) => {
+    setPageNumber(pagination.current);
+    setPageSize(pagination.pageSize);
+  };
 
   const handleSearch = () => {
     setSearchId(id);
@@ -66,6 +100,42 @@ export const BranchesTable = () => {
             Add Branch
           </Button>
         </div>
+      </section>
+      <section className="w-full h-full hidden md:flex md:flex-col">
+        <Table
+          dataSource={microfinBranches?.data || []}
+          columns={branchesColumns}
+          rowKey="id"
+          onChange={handleTableChange}
+          loading={{
+            spinning: isFetching,
+            indicator: customLoader,
+          }}
+          pagination={{
+            current: pageNumber ?? 1,
+            pageSize: pageSize,
+            total: microfinBranches?.totalItems,
+          }}
+          components={{
+            header: {
+              cell: (props: any) => (
+                <th
+                  {...props}
+                  className="border-b-2 !bg-white !text-gray-400 text-xs !font-normal "
+                >
+                  {props.children}
+                </th>
+              ),
+            },
+            body: {
+              cell: (props: any) => (
+                <td {...props} className=" border-gray-300  text-xs  ">
+                  {props.children}
+                </td>
+              ),
+            },
+          }}
+        />
       </section>
     </div>
   );

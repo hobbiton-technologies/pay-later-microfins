@@ -1,5 +1,6 @@
 import AnimatedHeader from "../components/AnimatedHeader";
 import ProductStats from "../summary/components/ProductStats";
+import { BranchesTable } from "./components/BranchesTable";
 
 const Branches = () => {
   return (
@@ -10,7 +11,9 @@ const Branches = () => {
       </div>
       <div>
         <ProductStats />
-        <div>Branches Table</div>
+        <div>
+          <BranchesTable />
+        </div>
       </div>
     </div>
   );
