@@ -5,9 +5,10 @@ import {
 import Table, { ColumnsType } from "antd/es/table";
 import DebouncedInputField from "../components/DebouncedInput";
 import { useState } from "react";
-import { Button, Select } from "antd";
+import { Button, Drawer, Select } from "antd";
 import { ExportOutlined } from "@ant-design/icons";
 import { customLoader } from "@/components/table-loader";
+import { OrganisationForm } from "./components/OrganisationForm";
 
 export const organisationsColumns: ColumnsType<OrganisationData> = [
   {
@@ -54,6 +55,7 @@ const Organisation = () => {
   const [id, setSearchId] = useState<string>("");
   const [pageNumber, setPageNumber] = useState<number | null>(1);
   const [pageSize, setPageSize] = useState(10);
+  const [isCreateDrawerVisible, setIsCreateDrawerVisible] = useState(false);
 
   const { data: organisationData, isFetching } =
     useGetOrganisationsRequestQuery({
@@ -97,7 +99,11 @@ const Organisation = () => {
             <Select.Option value={109}>Failed</Select.Option>
             <Select.Option value={100}>Successful</Select.Option>
           </Select> */}
-          <Button type="primary" className="">
+          <Button
+            type="primary"
+            onClick={() => setIsCreateDrawerVisible(true)}
+            className=""
+          >
             <ExportOutlined className="" />
             Add Organisation
           </Button>
@@ -139,6 +145,14 @@ const Organisation = () => {
           }}
         />
       </section>
+      <Drawer
+        title="Create Loan Product"
+        open={isCreateDrawerVisible}
+        onClose={() => setIsCreateDrawerVisible(false)}
+        width="55%"
+      >
+        <OrganisationForm />
+      </Drawer>
     </div>
   );
 };
