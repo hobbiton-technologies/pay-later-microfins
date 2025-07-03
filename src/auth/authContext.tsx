@@ -1,3 +1,5 @@
+import { useLoginUserMutation } from "@/api/mutations/authMutation";
+import { message } from "antd";
 import React, {
   createContext,
   useContext,
@@ -9,7 +11,7 @@ import toast, { Toaster } from "react-hot-toast";
 
 interface AuthContextType {
   isAuthenticated: boolean;
-  login: (username: string, password: string) => Promise<void>;
+  login: (values: { username: string; password: string }) => Promise<void>;
   logout: () => void;
 }
 
@@ -21,12 +23,12 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
-    !!localStorage.getItem("authToken")
+    !!localStorage.getItem("accessToken")
   );
 
   useEffect(() => {
     const checkAuthToken = () => {
-      const token = localStorage.getItem("authToken");
+      const token = localStorage.getItem("accessToken");
       setIsAuthenticated(!!token);
     };
 
@@ -36,22 +38,29 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return () => window.removeEventListener("storage", checkAuthToken);
   }, []);
 
-  const login = async (username: string, password: string) => {
-    if (
-      username === "hobbitonAdmin@hobbiton.co.zm" &&
-      password === "admin2025"
-    ) {
-      // Added token simulation here
-      const fakeToken = "123456abcdef";
-      const fakeOrgId = "org-789";
-      localStorage.setItem("authToken", fakeToken);
-      localStorage.setItem("OrganisationId", fakeOrgId);
+  const [loginUser] = useLoginUserMutation();
+
+  const login = async (values: { username: string; password: string }) => {
+    try {
+      const loginData = {
+        username: values.username,
+        password: values.password,
+      };
+      const response = await loginUser(loginData).unwrap();
+
+      const { accessToken, organizationId } = response.data;
+
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("organizationId", organizationId.toString());
+
       setIsAuthenticated(true);
 
       toast.success("Login successful!", { position: "top-right" });
+
       window.location.href = "/";
-    } else {
-      toast.error("Login failed. Incorrect credentials.", {
+    } catch (error: any) {
+      console.error("Login failed", error);
+      toast.error("Invalid credentials or server error", {
         position: "top-right",
       });
     }

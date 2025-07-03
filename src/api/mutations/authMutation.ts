@@ -18,10 +18,17 @@ export interface LoginResponse {
 
 const AuthRequest = Api.injectEndpoints({
   endpoints: (builder) => ({
-    LoginUser: builder.mutation({
+    LoginUser: builder.mutation<LoginResponse, LoginRequest>({
       query: (loginData) => ({
         url: `/api/v1/auth/microfins/login`,
+        method: "POST",
+        body: loginData,
+        headers: {
+          "Content-Type": "application/json",
+        },
       }),
     }),
   }),
 });
+
+export const { useLoginUserMutation } = AuthRequest;

@@ -36,7 +36,7 @@ const SignInForm = () => {
       setError(null);
 
       try {
-        await login(formik.values.username, formik.values.password);
+        await login(formik.values);
       } catch (err) {
         setError("Login failed. Please check your credentials.");
         console.log(err);
