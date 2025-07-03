@@ -232,7 +232,9 @@ export const NewProductForm = () => {
         productStatus: values.productStatus || "",
         loanDocuments: transformedLoanDocuments,
         isMouBased: Boolean(values.isMouBased),
-        microfinBranches: values.microfinBranches || [],
+        microfinBranches: (values.microfinBranches || []).map((v: string) =>
+          Number(v)
+        ),
       };
 
       console.log("Transformed data:", loanProductData);
@@ -286,8 +288,8 @@ export const NewProductForm = () => {
               rules={[{ required: true }]}
             >
               <Select placeholder="Select type" id="">
-                <Option value="Emergency Advance">Emergency Advance</Option>
-                <Option value="Short Term Loan">Short Term Loan </Option>
+                <Option value="EmergencyAdvance">Emergency Advance</Option>
+                <Option value="ShortTermLoan">Short Term Loan </Option>
               </Select>
             </Form.Item>
             <Form.Item
@@ -324,7 +326,7 @@ export const NewProductForm = () => {
                 <Option value="Bank"> Bank</Option>
                 <Option value="Cash"> Cash</Option>
                 <Option value="Mobile"> Mobile</Option>
-                <Option value="Other Transfer"> Other Transfer</Option>
+                <Option value="OtherTransfer"> Other Transfer</Option>
               </Select>
             </Form.Item>
             <div className=" pt-6">
@@ -456,8 +458,8 @@ export const NewProductForm = () => {
                 rules={[{ required: false }]}
               >
                 <Select placeholder="Select type" id="">
-                  <Option value="Flat Rate">Flat Rate </Option>
-                  <Option value="Reducing Balance">Reducing Balance</Option>
+                  <Option value="FlatRate">Flat Rate </Option>
+                  <Option value="ReducingBalance">Reducing Balance</Option>
                 </Select>
               </Form.Item>
             </div>
@@ -535,14 +537,14 @@ export const NewProductForm = () => {
                   id=""
                   disabled={!calculatePenaltyByRate}
                 >
-                  <Option value="Initial principle">Initial principle</Option>
-                  <Option value="Outstanding principle">
+                  <Option value="InitialPrinciple">Initial principle</Option>
+                  <Option value="OutstandingPrinciple">
                     Outstanding principle
                   </Option>
-                  <Option value="Initial principle plus interest">
+                  <Option value="InitialPrinciplePlusInterest">
                     Initial principle plus interest
                   </Option>
-                  <Option value="Outstanding principle plus interest">
+                  <Option value="OutstandingPrinciplePlusInterest">
                     Outstanding principle plus interest
                   </Option>
                   <Option value="Interest">Interest</Option>
@@ -627,7 +629,10 @@ export const NewProductForm = () => {
               name="productStatus"
               rules={[{ required: false }]}
             >
-              <Input placeholder="enter loan product name" />
+              <Select placeholder="Select type" id="">
+                <Option value="Active">Active</Option>
+                <Option value="InActive">InActive</Option>
+              </Select>
             </Form.Item>
             <div className=" pt-6">
               <Form.Item
@@ -644,7 +649,7 @@ export const NewProductForm = () => {
               rules={[{ required: false }]}
             >
               <Select placeholder="Select type" id="" mode="multiple">
-                <Option value="20">Branch 1</Option>
+                <Option value="23">Branch 1</Option>
                 <Option value="2">Branch 2</Option>
                 <Option value="3">Branch 3</Option>
                 <Option value="4">Branch 4</Option>
