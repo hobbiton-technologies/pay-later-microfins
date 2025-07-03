@@ -94,16 +94,13 @@ export const ProductsTable = () => {
   const [pageAmount, setPageAmount] = useState<number>(0);
   const [isCreateDrawerVisible, setIsCreateDrawerVisible] = useState(false);
 
-  const {
-    data: productsResponse,
-    isFetching,
-    refetch,
-  } = useGetGovernmentBondsRequestQuery({
-    id: id,
-    searchQuery: "",
-    pageNumber: pageNumber ?? 1,
-    pageSize: pageSize,
-  });
+  const { data: productsResponse, isFetching } =
+    useGetGovernmentBondsRequestQuery({
+      id: id,
+      searchQuery: "",
+      pageNumber: pageNumber ?? 1,
+      pageSize: pageSize,
+    });
 
   useEffect(() => {
     if (productsResponse) {
