@@ -9,7 +9,10 @@ import {
 } from "antd";
 import { PlusOutlined, MinusCircleOutlined } from "@ant-design/icons";
 import { Option } from "antd/es/mentions";
-import { useCreateLoadProductMutation } from "@/api/mutations/productsMutation";
+import {
+  ProductsBody,
+  useCreateLoadProductMutation,
+} from "@/api/mutations/productsMutation";
 
 type ProductChargeItemProps = {
   name: number;
@@ -173,97 +176,88 @@ export const NewProductForm = () => {
 
   const [productData] = useCreateLoadProductMutation();
 
-  const handleProductSubmit = async (values: {
-    name: string;
-    loanProductType: string;
-    minimumLoanAmount: number;
-    maximumLoanAmount: number;
-    distributionChannels: string[];
-    loanDisbursementTypes: string[];
-    minimumRepaymentPeriod: number;
-    maximumRepaymentPeriod: number;
-    gracePeriodInDays: number;
-    repaymentCycles: string[];
-    calculateInterestByRate: boolean;
-    minimumInterestRate: number;
-    maximumInterestRate: number;
-    minimumInterestAmount: number;
-    maximumInterestAmount: number;
-    interestType: string;
-    calculatePenalty: boolean;
-    calculatePenaltyByRate: boolean;
-    penaltyRate: number;
-    penaltyAmount: number;
-    penaltyCalculationMethod: string;
-    loanProductCharges: [
-      {
-        name: string;
-        calculateByRate: boolean;
-        amount: number;
-        rate: number;
-      }
-    ];
-    productStatus: string;
-    isCollateralBased: boolean;
-    loanDocuments: [
-      {
-        name: string;
-        isRequired: boolean;
-      }
-    ];
-    isMouBased: boolean;
-    microfinBranches: number[];
-  }) => {
+  const handleProductSubmit = async (values: any) => {
     try {
+      console.log("Raw form values:", values);
+
       const transformedProductCharges =
-        values.loanProductCharges?.map((l: any) => ({
-          name: l.name,
-          calculateByRate: l.calculateByRate,
-          amount: l.amount,
-          rate: l.amount,
-        })) || [];
+        values.loanProductCharges
+          ?.filter((charge: any) => charge?.isProductCharges) // Only include enabled charges
+          .map((l: any) => ({
+            name: l.name || "",
+            calculateByRate: Boolean(l.calculateByRate),
+            amount: Number(l.amount) || 0,
+            rate: Number(l.rate) || 0,
+          })) || [];
 
-      const transformedLoadDocuments =
-        values.loanDocuments?.map((lc: any) => ({
-          name: lc.name,
-          isRequired: lc.isRequired,
-        })) || [];
+      const transformedLoanDocuments =
+        values.loanDocuments
+          ?.filter((doc: any) => doc?.isLoanDocument) // Only include enabled documents
+          .map((lc: any) => ({
+            name: lc.name || "",
+            isRequired: Boolean(lc.isRequired),
+          })) || [];
 
-      const loanProductData = {
-        name: values.name,
-        loanProductType: values.loanProductType,
-        minimumLoanAmount: values.minimumLoanAmount,
-        maximumLoanAmount: values.maximumLoanAmount,
-        distributionChannels: values.distributionChannels,
-        loanDisbursementTypes: values.loanDisbursementTypes,
-        isCollateralBased: values.isCollateralBased,
-        minimumRepaymentPeriod: values.minimumRepaymentPeriod,
-        maximumRepaymentPeriod: values.maximumRepaymentPeriod,
-        gracePeriodInDays: values.gracePeriodInDays,
-        repaymentCycles: values.repaymentCycles,
-        calculateInterestByRate: values.calculateInterestByRate,
-        minimumInterestRate: values.minimumInterestRate,
-        maximumInterestRate: values.maximumInterestRate,
-        minimumInterestAmount: values.minimumInterestAmount,
-        maximumInterestAmount: values.maximumInterestAmount,
-        interestType: values.interestType,
-        calculatePenalty: values.calculatePenalty,
-        calculatePenaltyByRate: values.calculatePenaltyByRate,
-        penaltyRate: values.penaltyRate,
-        penaltyAmount: values.penaltyAmount,
-        penaltyCalculationMethod: values.penaltyCalculationMethod,
+      const organizationId = Number(localStorage.getItem("organizationId"));
+
+      if (!organizationId) {
+        message.error("Organization ID not found");
+        return;
+      }
+
+      const loanProductData: ProductsBody = {
+        name: values.name || "",
+        loanProductType: values.loanProductType || "",
+        minimumLoanAmount: Number(values.minimumLoanAmount) || 0,
+        maximumLoanAmount: Number(values.maximumLoanAmount) || 0,
+        distributionChannels: values.distributionChannels || [],
+        loanDisbursementTypes: values.loanDisbursementTypes || [],
+        isCollateralBased: Boolean(values.isCollateralBased),
+        minimumRepaymentPeriod: Number(values.minimumRepaymentPeriod) || 0,
+        maximumRepaymentPeriod: Number(values.maximumRepaymentPeriod) || 0,
+        gracePeriodInDays: Number(values.gracePeriodInDays) || 0,
+        repaymentCycles: values.repaymentCycles || [],
+        calculateInterestByRate: Boolean(values.calculateInterestByRate),
+        minimumInterestRate: Number(values.minimumInterestRate) || 0,
+        maximumInterestRate: Number(values.maximumInterestRate) || 0,
+        minimumInterestAmount: Number(values.minimumInterestAmount) || 0,
+        maximumInterestAmount: Number(values.maximumInterestAmount) || 0,
+        interestType: values.interestType || "",
+        calculatePenalty: Boolean(values.calculatePenalty),
+        calculatePenaltyByRate: Boolean(values.calculatePenaltyByRate),
+        penaltyRate: Number(values.penaltyRate) || 0,
+        penaltyAmount: Number(values.penaltyAmount) || 0,
+        penaltyCalculationMethod: values.penaltyCalculationMethod || "",
         loanProductCharges: transformedProductCharges,
-        productStatus: values.productStatus,
-        loanDocuments: transformedLoadDocuments,
-        isMouBased: values.isMouBased,
-        microfinBranches: values.microfinBranches,
+        productStatus: values.productStatus || "",
+        loanDocuments: transformedLoanDocuments,
+        isMouBased: Boolean(values.isMouBased),
+        microfinBranches: values.microfinBranches || [],
       };
-      console.log("Form values:", values);
-      await productData(loanProductData).unwrap();
+
+      console.log("Transformed data:", loanProductData);
+      console.log("Product charges:", transformedProductCharges);
+      console.log("Loan documents:", transformedLoanDocuments);
+
+      const response = await productData({
+        organizationId,
+        loanProductData,
+      }).unwrap();
+
+      console.log("API Response:", response);
       message.success("Product Successfully Created");
-    } catch (error) {
+
+      form.resetFields();
+    } catch (error: any) {
       console.error("Failed to create Loan Product", error);
-      message.error("Failed to create Loan Product");
+
+      if (error?.data?.message) {
+        message.error(`Failed to create Loan Product: ${error.data.message}`);
+      } else if (error?.message) {
+        message.error(`Failed to create Loan Product: ${error.message}`);
+      } else {
+        message.error("Failed to create Loan Product");
+      }
     }
   };
 
@@ -291,9 +285,9 @@ export const NewProductForm = () => {
               name="loanProductType"
               rules={[{ required: true }]}
             >
-              <Select placeholder="Select type" id="" mode="multiple">
-                <Option value="1">Emergency Advance</Option>
-                <Option value="2">Short Term Loan </Option>
+              <Select placeholder="Select type" id="">
+                <Option value="Emergency Advance">Emergency Advance</Option>
+                <Option value="Short Term Loan">Short Term Loan </Option>
               </Select>
             </Form.Item>
             <Form.Item
@@ -316,9 +310,9 @@ export const NewProductForm = () => {
               rules={[{ required: true }]}
             >
               <Select placeholder="Select Dist Channel" id="" mode="multiple">
-                <Option value="1"> Ussd</Option>
-                <Option value="2"> Web</Option>
-                <Option value="3"> Mobile App</Option>
+                <Option value="Ussd"> Ussd</Option>
+                <Option value="Web"> Web</Option>
+                <Option value="Mobile App"> Mobile App</Option>
               </Select>
             </Form.Item>
             <Form.Item
@@ -327,10 +321,10 @@ export const NewProductForm = () => {
               rules={[{ required: true }]}
             >
               <Select placeholder="Select Disb Type" id="" mode="multiple">
-                <Option value="1"> Bank</Option>
-                <Option value="2"> Cash</Option>
-                <Option value="3"> Mobile</Option>
-                <Option value="4"> Other Transfer</Option>
+                <Option value="Bank"> Bank</Option>
+                <Option value="Cash"> Cash</Option>
+                <Option value="Mobile"> Mobile</Option>
+                <Option value="Other Transfer"> Other Transfer</Option>
               </Select>
             </Form.Item>
             <div className=" pt-6">
@@ -385,11 +379,11 @@ export const NewProductForm = () => {
               rules={[{ required: false }]}
             >
               <Select placeholder="Select type" id="" mode="multiple">
-                <Option value="1">Daily</Option>
-                <Option value="2">Monthly</Option>
-                <Option value="3">Quarterly</Option>
-                <Option value="4">Yearly</Option>
-                <Option value="5">LumpSum</Option>
+                <Option value="Daily">Daily</Option>
+                <Option value="Monthly">Monthly</Option>
+                <Option value="Quarterly">Quarterly</Option>
+                <Option value="Yearly">Yearly</Option>
+                <Option value="LumpSum">LumpSum</Option>
               </Select>
             </Form.Item>
           </div>
@@ -462,8 +456,8 @@ export const NewProductForm = () => {
                 rules={[{ required: false }]}
               >
                 <Select placeholder="Select type" id="">
-                  <Option value="1">Flat Rate </Option>
-                  <Option value="2">Reducing Balance</Option>
+                  <Option value="Flat Rate">Flat Rate </Option>
+                  <Option value="Reducing Balance">Reducing Balance</Option>
                 </Select>
               </Form.Item>
             </div>
@@ -541,11 +535,17 @@ export const NewProductForm = () => {
                   id=""
                   disabled={!calculatePenaltyByRate}
                 >
-                  <Option value="1">Initial principle</Option>
-                  <Option value="2">Outstanding principle</Option>
-                  <Option value="3">Initial principle plus interest</Option>
-                  <Option value="4">Outstanding principle plus interest</Option>
-                  <Option value="5">Interest</Option>
+                  <Option value="Initial principle">Initial principle</Option>
+                  <Option value="Outstanding principle">
+                    Outstanding principle
+                  </Option>
+                  <Option value="Initial principle plus interest">
+                    Initial principle plus interest
+                  </Option>
+                  <Option value="Outstanding principle plus interest">
+                    Outstanding principle plus interest
+                  </Option>
+                  <Option value="Interest">Interest</Option>
                 </Select>
               </Form.Item>
             </div>
@@ -643,8 +643,8 @@ export const NewProductForm = () => {
               name="microfinBranches"
               rules={[{ required: false }]}
             >
-              <Select placeholder="Select type" id="">
-                <Option value="1">Branch 1</Option>
+              <Select placeholder="Select type" id="" mode="multiple">
+                <Option value="20">Branch 1</Option>
                 <Option value="2">Branch 2</Option>
                 <Option value="3">Branch 3</Option>
                 <Option value="4">Branch 4</Option>
