@@ -11,9 +11,13 @@ const OrganisationRequest = Api.injectEndpoints({
       any,
       { organizationId: number; organisationData: OrganisationData }
     >({
-      query: () => ({
-        url: ``,
+      query: ({ organizationId, organisationData }) => ({
+        url: `/microfins/${organizationId}/microfin-organizations;`,
         method: "POST",
+        body: organisationData,
+        headers: {
+          "Content-Type": "application/json",
+        },
       }),
     }),
   }),
