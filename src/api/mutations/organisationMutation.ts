@@ -18,3 +18,5 @@ const OrganisationRequest = Api.injectEndpoints({
     }),
   }),
 });
+
+export const { useCreateOrganisationMutation } = OrganisationRequest;
