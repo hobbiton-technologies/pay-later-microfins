@@ -183,10 +183,23 @@ export const SummaryRequest = Api.injectEndpoints({
         return `/microfins/${id}/branches?${params.toString()}`;
       },
     }),
+
+    getOrganisationsRequest: builder.query<
+      OrganisationResponse,
+      { id: number; pageNumber: number; pageSize: number }
+    >({
+      query: ({ id, pageNumber, pageSize }) => {
+        const params = new URLSearchParams();
+        params.append("PageSize", pageSize.toString());
+        params.append("PageNumber", pageNumber.toString());
+        return `/microfins/${id}/microfin-organizationss?${params.toString()}`;
+      },
+    }),
   }),
 });
 
 export const {
   useGetGovernmentBondsRequestQuery,
   useGetMicrofinBranchesRequestQuery,
+  useGetOrganisationsRequestQuery,
 } = SummaryRequest;

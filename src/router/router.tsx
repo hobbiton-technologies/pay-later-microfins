@@ -11,7 +11,6 @@ import Summary from "../modules/summary/Summary";
 import { StaffMembers } from "../modules/business/StaffMembers";
 import { Financials } from "../modules/financials/Financials";
 import { MoneyLenders } from "../modules/moneylenders/MoneyLenders";
-import { Organisation } from "../modules/business/Organisation";
 import { MOUs } from "../modules/business/MOUs";
 import { Clients } from "../modules/moneylenders/Clients";
 import { Loans } from "../modules/moneylenders/Loans";
@@ -21,6 +20,7 @@ import { Reporting } from "../modules/financials/Reporting";
 import { Products } from "../modules/summary/Products";
 import { SignIn } from "@/auth/pages/signIn";
 import Branches from "@/modules/business/Branches";
+import Organisation from "@/modules/business/Organisation";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(

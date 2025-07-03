@@ -1,4 +1,7 @@
-import { OrganisationData } from "@/api/queries/summaryQueries";
+import {
+  OrganisationData,
+  useGetOrganisationsRequestQuery,
+} from "@/api/queries/summaryQueries";
 import Table, { ColumnsType } from "antd/es/table";
 import DebouncedInputField from "../components/DebouncedInput";
 import { useState } from "react";
@@ -48,6 +51,13 @@ const Organisation = () => {
   const [pageNumber, setPageNumber] = useState<number | null>(1);
   const [pageSize, setPageSize] = useState(10);
 
+  const { data: organisationData, isFetching } =
+    useGetOrganisationsRequestQuery({
+      id: Number(localStorage.getItem("organizationId")),
+      pageNumber: pageNumber ?? 1,
+      pageSize: pageSize,
+    });
+
   const handleTableChange = (pagination: any) => {
     setPageNumber(pagination.current);
     setPageSize(pagination.pageSize);
@@ -91,8 +101,8 @@ const Organisation = () => {
       </section>
       <section className="w-full h-full hidden md:flex md:flex-col">
         <Table
-          dataSource={productsResponse?.data || []}
-          columns={productsColumns}
+          dataSource={organisationData?.data || []}
+          columns={organisationsColumns}
           rowKey="id"
           onChange={handleTableChange}
           loading={{
@@ -102,7 +112,7 @@ const Organisation = () => {
           pagination={{
             current: pageNumber ?? 1,
             pageSize: pageSize,
-            total: totalData,
+            total: organisationData?.totalItems,
           }}
           components={{
             header: {

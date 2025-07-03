@@ -27,8 +27,8 @@ export const branchesColumns: ColumnsType<BranchesData> = [
   },
   {
     title: "Microfin",
-    dataIndex: "microfin.name",
-    key: "microfin",
+    dataIndex: "microfin",
+    render: (_, record: BranchesData) => record.microfin?.name || "-",
   },
   {
     title: "Phone Number",
@@ -44,7 +44,7 @@ export const branchesColumns: ColumnsType<BranchesData> = [
 export const BranchesTable = () => {
   const [id, setSearchId] = useState<string>("");
 
-  const [, setMicrofinBranches] = useState<BranchesData>();
+  //   const [, setMicrofinBranches] = useState<BranchesData[]>();
   const [pageNumber, setPageNumber] = useState<number | null>(1);
   const [pageSize, setPageSize] = useState(10);
 
@@ -55,11 +55,11 @@ export const BranchesTable = () => {
       pageSize: pageSize,
     });
 
-  useEffect(() => {
-    if (microfinBranches) {
-      setMicrofinBranches(microfinBranches?.data || []);
-    }
-  }, [microfinBranches]);
+  //   useEffect(() => {
+  //     if (microfinBranches) {
+  //       setMicrofinBranches(microfinBranches?.data ?? []);
+  //     }
+  //   }, [microfinBranches]);
 
   const handleTableChange = (pagination: any) => {
     setPageNumber(pagination.current);
