@@ -3,11 +3,12 @@ import {
   useGetMicrofinBranchesRequestQuery,
 } from "@/api/queries/summaryQueries";
 import DebouncedInputField from "@/modules/components/DebouncedInput";
-import { Button, Table } from "antd";
+import { Button, Drawer, Table } from "antd";
 import { useEffect, useState } from "react";
 import { ExportOutlined } from "@ant-design/icons";
 import { customLoader } from "@/components/table-loader";
 import { ColumnsType } from "antd/es/table";
+import { BranchesForm } from "./BranchesForm";
 
 export const branchesColumns: ColumnsType<BranchesData> = [
   {
@@ -43,7 +44,6 @@ export const branchesColumns: ColumnsType<BranchesData> = [
 
 export const BranchesTable = () => {
   const [id, setSearchId] = useState<string>("");
-
   //   const [, setMicrofinBranches] = useState<BranchesData[]>();
   const [pageNumber, setPageNumber] = useState<number | null>(1);
   const [pageSize, setPageSize] = useState(10);
@@ -54,6 +54,7 @@ export const BranchesTable = () => {
       pageNumber: pageNumber ?? 1,
       pageSize: pageSize,
     });
+  const [isCreateDrawerVisible, setIsCreateDrawerVisible] = useState(false);
 
   //   useEffect(() => {
   //     if (microfinBranches) {
@@ -95,7 +96,11 @@ export const BranchesTable = () => {
                     <Select.Option value={109}>Failed</Select.Option>
                     <Select.Option value={100}>Successful</Select.Option>
                   </Select> */}
-          <Button type="primary" className="">
+          <Button
+            type="primary"
+            onClick={() => setIsCreateDrawerVisible(true)}
+            className=""
+          >
             <ExportOutlined className="" />
             Add Branch
           </Button>
@@ -137,6 +142,14 @@ export const BranchesTable = () => {
           }}
         />
       </section>
+      <Drawer
+        title="Create Branch"
+        open={isCreateDrawerVisible}
+        onClose={() => setIsCreateDrawerVisible(false)}
+        width="55%"
+      >
+        <BranchesForm />
+      </Drawer>
     </div>
   );
 };
