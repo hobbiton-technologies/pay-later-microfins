@@ -1,9 +1,31 @@
-import { Button, Checkbox, Form, Input, Select } from "antd";
+import {
+  OrganisationData,
+  useGetOrganisationsRequestQuery,
+} from "@/api/queries/summaryQueries";
+import { Button, Checkbox, Form, Input, Select, Spin } from "antd";
 import { Option } from "antd/es/mentions";
+import { useEffect, useState } from "react";
 
 export const BranchesForm = () => {
+  const [pageNumber] = useState<number | null>(1);
+  const [pageSize] = useState(10);
   const [form] = Form.useForm();
+  const [, setMicrofinOrganisations] = useState<OrganisationData[]>();
 
+  const { data: organisationData, isFetching } =
+    useGetOrganisationsRequestQuery({
+      id: Number(localStorage.getItem("organizationId")),
+      pageNumber: pageNumber ?? 1,
+      pageSize: pageSize,
+    });
+
+  useEffect(() => {
+    if (organisationData) {
+      setMicrofinOrganisations(organisationData?.data || []);
+    }
+  }, [organisationData]);
+
+  const organisationDataSelect = organisationData?.data || [];
   return (
     <div className=" px-4">
       <Form
@@ -13,8 +35,22 @@ export const BranchesForm = () => {
         className=" grid grid-cols-1 gap-8 items-center"
       >
         <div>
-          <p className=" font-semibold pb-2 text-lg">Loan Details</p>
+          <p className=" font-semibold pb-2 text-lg">Branch Details</p>
           <div className="grid grid-cols-2 gap-4  p-4 rounded-sm shadow-sm">
+            <Form.Item>
+              <Select
+                placeholder="Select Microfin"
+                loading={isFetching}
+                notFoundContent={
+                  isFetching ? <Spin size="small" /> : "No Microfin"
+                }
+              ></Select>
+              {organisationDataSelect.map((organisation: OrganisationData) => (
+                <Option key={organisation.id} value={organisation.id}>
+                  {organisation.name}
+                </Option>
+              ))}
+            </Form.Item>
             <Form.Item
               label="Product Name"
               name="name"

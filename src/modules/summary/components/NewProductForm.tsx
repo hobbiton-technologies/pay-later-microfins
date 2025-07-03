@@ -198,11 +198,7 @@ export const NewProductForm = () => {
     }
   }, [microfinBranches]);
 
-  const microfinBranchesSelect: BranchesData[] = Array.isArray(
-    microfinBranches?.data
-  )
-    ? microfinBranches.data
-    : [];
+  const microfinBranchesSelect: BranchesData[] = microfinBranches?.data || [];
 
   const handleProductSubmit = async (values: any) => {
     try {

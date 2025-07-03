@@ -1,34 +1,17 @@
 import { Api } from "../apiSlice";
 
 export interface OrganisationData {
+  id: number;
   name: string;
   contactNo: string;
-  address: string;
-  email: string;
-  organizationIdentifier: string;
-  tPinNumber: string;
-  admins: [
-    {
-      user: {
-        firstName: string;
-        lastName: string;
-        phoneNumber: string;
-        email: string;
-        password: string;
-        passwordConfirm: string;
-      };
-      idType: string;
-      idNumber: string;
-      employeeIdNumber: string;
-      position: string;
-      isOrganisationAdmin: boolean;
-      isEnabled: boolean;
-      maximumLoanAmountPerMonth: number;
-      branchId: number;
-    }
-  ];
-  sector: "Other";
-  isDeactivated: boolean;
+  microfin: {
+    id: number;
+    name: string;
+    contactNo: string;
+    address: string;
+    email: string;
+  };
+  createdAt: string;
 }
 
 export interface BranchesData {

@@ -11,35 +11,39 @@ import { customLoader } from "@/components/table-loader";
 
 export const organisationsColumns: ColumnsType<OrganisationData> = [
   {
+    title: "ID",
+    dataIndex: "id",
+    key: "id",
+  },
+  {
     title: "Name",
     dataIndex: "name",
     key: "name",
   },
   {
-    title: "Contact No",
+    title: "Org Phone No",
     dataIndex: "contactNo",
     key: "contactNo",
   },
   {
-    title: "Address",
+    title: "Microfin Address",
     dataIndex: "address",
     key: "address",
+    render: (_, record: OrganisationData) => record.microfin?.address || "-",
   },
   {
-    title: "Email",
+    title: "Microfin Email",
     dataIndex: "email",
     key: "email",
+    render: (_, record: OrganisationData) => record.microfin?.email || "-",
   },
   {
-    title: "Organization Identifier",
-    dataIndex: "organizationIdentifier",
-    key: "organizationIdentifier",
+    title: "Microfin Phone No",
+    dataIndex: "email",
+    key: "email",
+    render: (_, record: OrganisationData) => record.microfin?.contactNo || "-",
   },
-  {
-    title: "TPin Number",
-    dataIndex: "tPinNumber",
-    key: "tPinNumber",
-  },
+
   {
     title: "Actions",
     key: "actions",
