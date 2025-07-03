@@ -1,4 +1,5 @@
 import { Api } from "../apiSlice";
+import { ProductsDataResponse } from "../queries/summaryQueries";
 
 export interface ProductsBody {
   name: string;
