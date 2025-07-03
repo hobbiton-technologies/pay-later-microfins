@@ -2,7 +2,7 @@ import {
   OrganisationData,
   useGetOrganisationsRequestQuery,
 } from "@/api/queries/summaryQueries";
-import { Button, Checkbox, Form, Input, Select, Spin } from "antd";
+import { Button, Form, Input, Select, Spin } from "antd";
 import { Option } from "antd/es/mentions";
 import { useEffect, useState } from "react";
 

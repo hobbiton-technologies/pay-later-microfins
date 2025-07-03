@@ -22,25 +22,11 @@ export const OrganisationForm = () => {
               <Input placeholder="enter name" />
             </Form.Item>
             <Form.Item
-              label="Address"
-              name="address"
-              rules={[{ required: true }]}
-            >
-              <Input placeholder="enter address" />
-            </Form.Item>
-            <Form.Item
               label="Phone Number"
-              name="phoneNumber"
+              name="contactNo"
               rules={[{ required: true }]}
             >
               <Input placeholder="enter phone number" />
-            </Form.Item>
-            <Form.Item
-              label="Branch ID"
-              name="branchId"
-              rules={[{ required: true }]}
-            >
-              <Input placeholder="enter max loan amount" />
             </Form.Item>
           </div>
         </div>
