@@ -71,7 +71,7 @@ export const BranchesTable = () => {
   };
 
   const handleSearchClear = () => {
-    setSearchId("");
+    setSearchId(id);
   };
 
   return (

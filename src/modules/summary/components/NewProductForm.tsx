@@ -180,7 +180,7 @@ export const NewProductForm = () => {
     (item: any) => item?.isLoanDocument
   );
 
-  const [, setMicrofinBranches] = useState<BranchesData>();
+  const [, setMicrofinBranches] = useState<BranchesData[]>();
   const [pageNumber] = useState<number | null>(1);
   const [pageSize] = useState(10);
 

@@ -140,7 +140,7 @@ export interface BranchesResponse {
   totalItems: number;
   statusCode: number;
   message: string;
-  data: BranchesData;
+  data: BranchesData[];
   errors: string[];
 }
 export const SummaryRequest = Api.injectEndpoints({
