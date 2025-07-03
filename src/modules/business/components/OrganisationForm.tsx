@@ -1,10 +1,29 @@
-import { Button, Form, Input } from "antd";
+import { useCreateOrganisationMutation } from "@/api/mutations/organisationMutation";
+import { Button, Form, Input, message } from "antd";
 import { useState } from "react";
 
 export const OrganisationForm = () => {
   const [pageNumber] = useState<number | null>(1);
   const [pageSize] = useState(10);
   const [form] = Form.useForm();
+
+  const [organisationCreation] = useCreateOrganisationMutation();
+
+  const handleSubmit = async (values: { name: string; contactNo: string }) => {
+    try {
+      const organizationId = Number(localStorage.getItem("organizationId"));
+
+      if (!organizationId) {
+        message.error("Organization ID not found");
+        return;
+      }
+      const organisationData = {
+        name: values.name,
+        contactNo: values.contactNo,
+      };
+      await organisationCreation({ organizationId, organisationData });
+    } catch (error) {}
+  };
 
   return (
     <div className=" px-4">
