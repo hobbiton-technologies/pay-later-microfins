@@ -1,5 +1,33 @@
 import { Api } from "../apiSlice";
 
+export interface StaffMembersData {
+  id: number;
+  user: {
+    id: number;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber: string;
+  };
+  organization: {
+    id: number;
+    name: string;
+    contactNo: string;
+  };
+  idType: string;
+  idNumber: string;
+  position: string;
+  activated: boolean;
+  createdAt: string;
+  bankDetails: {
+    id: number;
+    name: string;
+    branch: string;
+    code: string;
+    accountNumber: string;
+  };
+}
+
 export interface OrganisationData {
   id: number;
   name: string;
@@ -125,6 +153,16 @@ export interface BranchesResponse {
   message: string;
   data: BranchesData[];
   errors: string[];
+}
+
+export interface StaffResponse {
+  pageNumber: 1;
+  pageSize: 1;
+  totalItems: 1;
+  statusCode: 200;
+  message: "Ok";
+  data: StaffMembersData[];
+  errors: null;
 }
 export const SummaryRequest = Api.injectEndpoints({
   endpoints: (builder) => ({
