@@ -18,7 +18,7 @@ import { ExportOutlined, EyeOutlined } from "@ant-design/icons";
 import { customLoader } from "@/components/table-loader";
 import { OrganisationForm } from "./components/OrganisationForm";
 import { MicrofinOrgStaffTable } from "./components/MicrofinOrgStaffTable";
-import { StaffMemberForm } from "./components/StaffMemberForm";
+import { MicrofinOrgStaffMemberForm } from "./components/MIcrofinOrgStaffMemberForm";
 
 const Organisation = () => {
   const [id, setSearchId] = useState<string>("");
@@ -261,7 +261,7 @@ const Organisation = () => {
         onClose={() => setIsCreateStaffDrawerVisible(false)}
         width="55%"
       >
-        <StaffMemberForm />
+        <MicrofinOrgStaffMemberForm />
       </Drawer>
       <Drawer
         width="85%"

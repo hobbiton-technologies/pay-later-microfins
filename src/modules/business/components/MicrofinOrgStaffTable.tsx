@@ -8,7 +8,7 @@ import { ExportOutlined, EyeOutlined } from "@ant-design/icons";
 import DebouncedInputField from "@/modules/components/DebouncedInput";
 import { useState } from "react";
 import { customLoader } from "@/components/table-loader";
-import { StaffMemberForm } from "./StaffMemberForm";
+import { MicrofinOrgStaffMemberForm } from "./MIcrofinOrgStaffMemberForm";
 
 type StaffTableProps = {
   showCreateButton?: boolean;
@@ -171,7 +171,7 @@ export const MicrofinOrgStaffTable: React.FC<StaffTableProps> = ({
         onClose={() => setIsCreateDrawerVisible(false)}
         width="40%"
       >
-        <StaffMemberForm />
+        <MicrofinOrgStaffMemberForm />
       </Drawer>
     </div>
   );
