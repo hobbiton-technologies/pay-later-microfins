@@ -45,7 +45,7 @@ export const BranchesForm = () => {
     try {
       const organizationId = Number(localStorage.getItem("organizationId"));
       const branchData: BranchesData = {
-        microfinId: values.microfinId,
+        microfinId: organizationId,
         name: values.name,
         address: values.address,
         phoneNumber: values.phoneNumber,
@@ -72,7 +72,7 @@ export const BranchesForm = () => {
         <div>
           <p className=" font-semibold pb-2 text-lg">Branch Details</p>
           <div className="grid grid-cols-2 gap-4  p-4 rounded-sm shadow-sm">
-            <Form.Item label="Microfin">
+            {/* <Form.Item label="Microfin">
               <Select
                 placeholder="Select Microfin"
                 loading={isFetching}
@@ -91,7 +91,7 @@ export const BranchesForm = () => {
                   )
                 )}
               </Select>
-            </Form.Item>
+            </Form.Item> */}
             <Form.Item label=" Name" name="name" rules={[{ required: true }]}>
               <Input placeholder="enter name" />
             </Form.Item>
