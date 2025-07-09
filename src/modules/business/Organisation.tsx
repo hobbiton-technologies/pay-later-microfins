@@ -17,7 +17,7 @@ import {
 import { ExportOutlined, EyeOutlined } from "@ant-design/icons";
 import { customLoader } from "@/components/table-loader";
 import { OrganisationForm } from "./components/OrganisationForm";
-import { StaffTable } from "./components/StaffTable";
+import { MicrofinOrgStaffTable } from "./components/MicrofinOrgStaffTable";
 import { StaffMemberForm } from "./components/StaffMemberForm";
 
 const Organisation = () => {
@@ -296,7 +296,7 @@ const Organisation = () => {
                 </Descriptions.Item>
               </Descriptions>
               <div className=" pt-8">
-                <StaffTable showCreateButton={true} />
+                <MicrofinOrgStaffTable showCreateButton={true} />
               </div>
             </Card>
           </div>

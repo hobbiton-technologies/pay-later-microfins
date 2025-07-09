@@ -2,6 +2,27 @@ import { Api } from "../apiSlice";
 
 export interface MicrofinStaffMembersData {
   id: number;
+  createdAt: string;
+  updatedAt: string;
+  user: {
+    id: number;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber: string;
+    isSystemAdmin: true;
+  };
+  idType: string;
+  idNumber: string;
+  branch: string;
+  position: string;
+  isMicrofinAdmin: true;
+  isEnabled: true;
+  employeeIdNumber: string;
+}
+
+export interface MicrofinOrgStaffMembersData {
+  id: number;
   user: {
     id: number;
     firstName: string;
@@ -155,6 +176,16 @@ export interface BranchesResponse {
   errors: string[];
 }
 
+export interface MicrofinOrgStaffResponse {
+  pageNumber: 1;
+  pageSize: 1;
+  totalItems: 1;
+  statusCode: 200;
+  message: "Ok";
+  data: MicrofinOrgStaffMembersData[];
+  errors: null;
+}
+
 export interface MicrofinStaffResponse {
   pageNumber: 1;
   pageSize: 1;
@@ -218,8 +249,8 @@ export const SummaryRequest = Api.injectEndpoints({
       },
     }),
 
-    getMicrofinStaffMembers: builder.query<
-      MicrofinStaffResponse,
+    getMicrofinOrgStaffMembers: builder.query<
+      MicrofinOrgStaffResponse,
       {
         id: number;
         organizationId: number;
@@ -241,7 +272,7 @@ export const SummaryRequest = Api.injectEndpoints({
       },
     }),
 
-    getStaffMembers: builder.query<
+    getMicrofinStaffMembers: builder.query<
       MicrofinStaffResponse,
       {
         id: number;
@@ -270,6 +301,6 @@ export const {
   useGetGovernmentBondsRequestQuery,
   useGetMicrofinBranchesRequestQuery,
   useGetOrganisationsRequestQuery,
-  useGetStaffMembersQuery,
   useGetMicrofinStaffMembersQuery,
+  useGetMicrofinOrgStaffMembersQuery,
 } = SummaryRequest;

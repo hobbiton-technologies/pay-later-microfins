@@ -1,6 +1,6 @@
 import AnimatedHeader from "../components/AnimatedHeader";
 import ProductStats from "../summary/components/ProductStats";
-import { StaffTable } from "./components/StaffTable";
+import { MicrofinStaffTable } from "./components/MicrofinStaffTable";
 
 const StaffMembers = () => {
   return (
@@ -16,7 +16,7 @@ const StaffMembers = () => {
         </div>
         <div>
           {" "}
-          <StaffTable showCreateButton={false} />
+          <MicrofinStaffTable />
         </div>
       </div>
     </div>

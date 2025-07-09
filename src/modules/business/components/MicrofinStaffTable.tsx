@@ -1,7 +1,8 @@
 import {
+  MicrofinOrgStaffMembersData,
   MicrofinStaffMembersData,
+  useGetMicrofinOrgStaffMembersQuery,
   useGetMicrofinStaffMembersQuery,
-  useGetStaffMembersQuery,
 } from "@/api/queries/summaryQueries";
 import { Button, Drawer, Dropdown, MenuProps, Space } from "antd";
 import Table, { ColumnsType } from "antd/es/table";
@@ -11,70 +12,7 @@ import { useState } from "react";
 import { customLoader } from "@/components/table-loader";
 import { StaffMemberForm } from "./StaffMemberForm";
 
-type StaffTableProps = {
-  showCreateButton?: boolean;
-};
-
-export const branchesColumns: ColumnsType<MicrofinStaffMembersData> = [
-  {
-    title: "ID",
-    dataIndex: "id",
-    key: "id",
-  },
-  {
-    title: "FullName",
-    dataIndex: "user",
-    render: (_, record: MicrofinStaffMembersData) =>
-      `${record.user.firstName + " " + record.user.lastName} `,
-  },
-  {
-    title: "Email",
-    dataIndex: "user",
-    render: (_, record: MicrofinStaffMembersData) => record?.user.email ?? "NA",
-  },
-
-  {
-    title: "Organisation",
-    dataIndex: "organization",
-    render: (_, record: MicrofinStaffMembersData) => record.organization.name,
-  },
-  {
-    title: "National ID",
-    dataIndex: "idNumber",
-    key: "idNumber",
-  },
-  {
-    title: "Actions",
-    key: "actions",
-    render: () => {
-      const items: MenuProps["items"] = [
-        {
-          key: "4",
-          label: (
-            <span className="flex gap-2" onClick={() => alert("View CLicked")}>
-              <EyeOutlined />
-              View
-            </span>
-          ),
-        },
-      ];
-
-      return (
-        <Space>
-          <Dropdown menu={{ items }} placement="bottomRight">
-            <Button className=" dark:text-white">
-              <EyeOutlined />
-            </Button>
-          </Dropdown>
-        </Space>
-      );
-    },
-  },
-];
-
-export const StaffTable: React.FC<StaffTableProps> = ({
-  showCreateButton = true,
-}) => {
+export const MicrofinStaffTable = () => {
   const [id, setSearchId] = useState<number>(0);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isCreateDrawerVisible, setIsCreateDrawerVisible] = useState(false);
@@ -102,6 +40,83 @@ export const StaffTable: React.FC<StaffTableProps> = ({
     setSearchId(id);
   };
 
+  const membersColumns: ColumnsType<MicrofinStaffMembersData> = [
+    {
+      title: "ID",
+      dataIndex: "id",
+      key: "id",
+    },
+    {
+      title: "FullName",
+      dataIndex: "user",
+      render: (_, record: MicrofinStaffMembersData) =>
+        `${
+          record?.user.firstName ?? "NA" + " " + record?.user.lastName ?? "NA"
+        } `,
+    },
+    {
+      title: "Email",
+      dataIndex: "user",
+      render: (_, record: MicrofinStaffMembersData) =>
+        record?.user.email ?? "NA",
+    },
+
+    {
+      title: "Branch",
+      dataIndex: "branch",
+      key: "branch",
+      render: (_, record: MicrofinStaffMembersData) => record?.branch ?? "NA",
+    },
+    {
+      title: "EmployeeId Number",
+      dataIndex: "employeeIdNumber",
+      key: "employeeIdNumber",
+      render: (_, record: MicrofinStaffMembersData) =>
+        record?.employeeIdNumber ?? "NA",
+    },
+    {
+      title: "Position",
+      dataIndex: "position",
+      key: "position",
+      render: (_, record: MicrofinStaffMembersData) => record?.position ?? "NA",
+    },
+    {
+      title: "National ID",
+      dataIndex: "idNumber",
+      key: "idNumber",
+    },
+    {
+      title: "Actions",
+      key: "actions",
+      render: () => {
+        const items: MenuProps["items"] = [
+          {
+            key: "4",
+            label: (
+              <span
+                className="flex gap-2"
+                onClick={() => alert("View CLicked")}
+              >
+                <EyeOutlined />
+                View
+              </span>
+            ),
+          },
+        ];
+
+        return (
+          <Space>
+            <Dropdown menu={{ items }} placement="bottomRight">
+              <Button className=" dark:text-white">
+                <EyeOutlined />
+              </Button>
+            </Dropdown>
+          </Space>
+        );
+      },
+    },
+  ];
+
   return (
     <div className=" mt-2">
       {" "}
@@ -115,22 +130,18 @@ export const StaffTable: React.FC<StaffTableProps> = ({
             allowClear={true}
           />
         </div>
-        {showCreateButton && (
-          <div className="flex gap-3">
-            <Button
-              type="primary"
-              onClick={() => setIsCreateDrawerVisible(true)}
-            >
-              <ExportOutlined />
-              Add Staff Member
-            </Button>
-          </div>
-        )}
+
+        <div className="flex gap-3">
+          <Button type="primary" onClick={() => setIsCreateDrawerVisible(true)}>
+            <ExportOutlined />
+            Add Staff Member
+          </Button>
+        </div>
       </section>
       <section className="w-full h-full hidden md:flex md:flex-col">
         <Table
           dataSource={staffResponse?.data || []}
-          columns={branchesColumns}
+          columns={membersColumns}
           rowKey="id"
           onChange={handleTableChange}
           loading={{
