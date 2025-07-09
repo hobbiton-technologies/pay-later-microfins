@@ -4,13 +4,15 @@ import {
 } from "@/api/queries/summaryQueries";
 import Table, { ColumnsType } from "antd/es/table";
 import DebouncedInputField from "../components/DebouncedInput";
-import { useState } from "react";
-import { Button, Drawer, Select } from "antd";
-import { ExportOutlined } from "@ant-design/icons";
+import { useEffect, useState } from "react";
+import { Button, Drawer, Dropdown, MenuProps, Select, Space } from "antd";
+import { ExportOutlined, EyeOutlined } from "@ant-design/icons";
 import { customLoader } from "@/components/table-loader";
 import { OrganisationForm } from "./components/OrganisationForm";
 
-export const organisationsColumns: ColumnsType<OrganisationData> = [
+export const organisationsColumns = (
+  handleViewOrganisations: (id: number) => void
+): ColumnsType<OrganisationData> => [
   {
     title: "ID",
     dataIndex: "id",
@@ -48,6 +50,67 @@ export const organisationsColumns: ColumnsType<OrganisationData> = [
   {
     title: "Actions",
     key: "actions",
+    render: (record: OrganisationData) => {
+      const items: MenuProps["items"] = [
+        {
+          key: "1",
+          label: (
+            <span
+              className="flex gap-2"
+              onClick={() => handleViewOrganisations(record?.id)}
+            >
+              <EyeOutlined />
+              View
+            </span>
+          ),
+        },
+        {
+          key: "2",
+          label: (
+            <span className="flex gap-2" onClick={() => alert("View CLicked")}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className=" w-4"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 4.5v15m7.5-7.5h-15"
+                />
+              </svg>
+              Create Staff Member
+            </span>
+          ),
+        },
+      ];
+
+      return (
+        <Space>
+          <Dropdown menu={{ items }} placement="bottomRight">
+            <Button className=" dark:text-white">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                className=" w-6"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"
+                />
+              </svg>
+            </Button>
+          </Dropdown>
+        </Space>
+      );
+    },
   },
 ];
 
@@ -56,7 +119,12 @@ const Organisation = () => {
   const [pageNumber, setPageNumber] = useState<number | null>(1);
   const [pageSize, setPageSize] = useState(10);
   const [isCreateDrawerVisible, setIsCreateDrawerVisible] = useState(false);
+  const [selectedOrganisation, setSelectedOrganisation] =
+    useState<OrganisationData>();
+  const [isOrganisationDrawerVisible, setIsOrganisationDrawerVisible] =
+    useState(false);
 
+  const [organisations, setOrganisations] = useState<OrganisationData[]>([]);
   const { data: organisationData, isFetching } =
     useGetOrganisationsRequestQuery({
       id: Number(localStorage.getItem("organizationId")),
@@ -64,6 +132,11 @@ const Organisation = () => {
       pageSize: pageSize,
     });
 
+  useEffect(() => {
+    if (organisationData?.data) {
+      setOrganisations(organisationData.data);
+    }
+  }, [organisationData]);
   const handleTableChange = (pagination: any) => {
     setPageNumber(pagination.current);
     setPageSize(pagination.pageSize);
@@ -75,6 +148,18 @@ const Organisation = () => {
 
   const handleSearchClear = () => {
     setSearchId("");
+  };
+
+  const handleViewOrganisations = (organisationId: number) => {
+    if (organisationId && organisationData) {
+      const organisation = organisations.find((a) => a.id === organisationId);
+      setSelectedOrganisation(organisation);
+
+      if (organisation) {
+        setIsOrganisationDrawerVisible(true);
+      }
+      console.log("selectedOrganisation", selectedOrganisation);
+    }
   };
 
   return (
@@ -112,7 +197,7 @@ const Organisation = () => {
       <section className="w-full h-full hidden md:flex md:flex-col">
         <Table
           dataSource={organisationData?.data || []}
-          columns={organisationsColumns}
+          columns={organisationsColumns(handleViewOrganisations)}
           rowKey="id"
           onChange={handleTableChange}
           loading={{
@@ -146,13 +231,19 @@ const Organisation = () => {
         />
       </section>
       <Drawer
-        title="Create Loan Product"
+        title="Create Organisation"
         open={isCreateDrawerVisible}
         onClose={() => setIsCreateDrawerVisible(false)}
         width="55%"
       >
         <OrganisationForm />
       </Drawer>
+      <Drawer
+        width="55%"
+        open={isOrganisationDrawerVisible}
+        onClose={() => setIsOrganisationDrawerVisible(false)}
+        closeIcon={false}
+      ></Drawer>
     </div>
   );
 };
