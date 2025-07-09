@@ -18,8 +18,7 @@ import { ExportOutlined, EyeOutlined } from "@ant-design/icons";
 import DebouncedInputField from "@/modules/components/DebouncedInput";
 import { useEffect, useState } from "react";
 import { customLoader } from "@/components/table-loader";
-import { MicrofinOrgStaffTable } from "./MicrofinOrgStaffTable";
-import { MicrofinOrgStaffMemberForm } from "./MIcrofinOrgStaffMemberForm";
+import { MicrofinStaffMemberForm } from "./MicrofinStaffMemberForm";
 
 export const MicrofinStaffTable = () => {
   const [id, setSearchId] = useState<number>(0);
@@ -214,7 +213,7 @@ export const MicrofinStaffTable = () => {
         onClose={() => setIsCreateDrawerVisible(false)}
         width="40%"
       >
-        <MicrofinOrgStaffMemberForm />
+        <MicrofinStaffMemberForm />
       </Drawer>
       <Drawer
         width="50%"
