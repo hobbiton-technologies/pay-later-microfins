@@ -1,8 +1,12 @@
 import {
+  BranchesData,
+  useCreateBranchMutation,
+} from "@/api/mutations/branchMutations";
+import {
   OrganisationData,
   useGetOrganisationsRequestQuery,
 } from "@/api/queries/summaryQueries";
-import { Button, Form, Input, Select, Spin } from "antd";
+import { Button, Form, Input, message, Select, Spin } from "antd";
 import { Option } from "antd/es/mentions";
 import { useEffect, useState } from "react";
 
@@ -11,6 +15,8 @@ export const BranchesForm = () => {
   const [pageSize] = useState(10);
   const [form] = Form.useForm();
   const [, setMicrofinOrganisations] = useState<OrganisationData[]>();
+
+  const [createBranch] = useCreateBranchMutation();
 
   const { data: organisationData, isFetching } =
     useGetOrganisationsRequestQuery({
@@ -25,7 +31,35 @@ export const BranchesForm = () => {
     }
   }, [organisationData]);
 
+  // console.log("Organisation Data", organisationData?.data);
+
   const organisationDataSelect = organisationData?.data || [];
+
+  const handleSubmit = async (values: {
+    microfinId: number;
+    name: string;
+    address: string;
+    phoneNumber: string;
+    branchId: string;
+  }) => {
+    try {
+      const organizationId = Number(localStorage.getItem("organizationId"));
+      const branchData: BranchesData = {
+        microfinId: values.microfinId,
+        name: values.name,
+        address: values.address,
+        phoneNumber: values.phoneNumber,
+        branchId: values.branchId,
+      };
+
+      await createBranch({ branchData, organizationId }).unwrap();
+      message.success("Branch Successfully Created");
+
+      form.resetFields();
+    } catch (error) {
+      console.error("Failed to create Branch", error);
+    }
+  };
   return (
     <div className=" px-4">
       <Form
@@ -33,6 +67,7 @@ export const BranchesForm = () => {
         layout="vertical"
         style={{ maxWidth: 1000, marginTop: 24 }}
         className=" grid grid-cols-1 gap-8 items-center"
+        onFinish={handleSubmit}
       >
         <div>
           <p className=" font-semibold pb-2 text-lg">Branch Details</p>
@@ -44,15 +79,18 @@ export const BranchesForm = () => {
                 notFoundContent={
                   isFetching ? <Spin size="small" /> : "No Microfin"
                 }
-              ></Select>
-              {organisationDataSelect.map((organisation: OrganisationData) => (
-                <Option
-                  key={String(organisation.id)}
-                  value={String(organisation.id)}
-                >
-                  {organisation.name}
-                </Option>
-              ))}
+              >
+                {organisationDataSelect.map(
+                  (organisation: OrganisationData) => (
+                    <Option
+                      key={String(organisation.microfin.id)}
+                      value={String(organisation.microfin.id)}
+                    >
+                      {organisation.microfin.name}
+                    </Option>
+                  )
+                )}
+              </Select>
             </Form.Item>
             <Form.Item label=" Name" name="name" rules={[{ required: true }]}>
               <Input placeholder="enter name" />
