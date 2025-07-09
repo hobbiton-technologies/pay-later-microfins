@@ -217,6 +217,29 @@ export const SummaryRequest = Api.injectEndpoints({
         return `/microfins/${id}/microfin-organizations?${params.toString()}`;
       },
     }),
+
+    getStaffMembers: builder.query<
+      StaffResponse,
+      {
+        id: number;
+        organizationId: number;
+        query: string;
+        pageNumber: number;
+        pageSize: number;
+      }
+    >({
+      query: ({ id, organizationId, query, pageNumber, pageSize }) => {
+        const params = new URLSearchParams();
+
+        if (id) params.append("id", id.toString());
+        if (query) params.append("query", query);
+        params.append("organizationId", organizationId.toString());
+        params.append("pageNumber", pageNumber.toString());
+        params.append("pageSize", pageSize.toString());
+
+        return `microfins/${organizationId}/microfin-organizations/members?${params.toString()}`;
+      },
+    }),
   }),
 });
 
@@ -224,4 +247,5 @@ export const {
   useGetGovernmentBondsRequestQuery,
   useGetMicrofinBranchesRequestQuery,
   useGetOrganisationsRequestQuery,
+  useGetStaffMembersQuery,
 } = SummaryRequest;
