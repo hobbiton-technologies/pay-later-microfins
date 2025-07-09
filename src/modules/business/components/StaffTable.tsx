@@ -10,6 +10,10 @@ import { useState } from "react";
 import { customLoader } from "@/components/table-loader";
 import { StaffMemberForm } from "./StaffMemberForm";
 
+type StaffTableProps = {
+  showCreateButton?: boolean;
+};
+
 export const branchesColumns: ColumnsType<StaffMembersData> = [
   {
     title: "ID",
@@ -67,7 +71,9 @@ export const branchesColumns: ColumnsType<StaffMembersData> = [
   },
 ];
 
-export const StaffTable = () => {
+export const StaffTable: React.FC<StaffTableProps> = ({
+  showCreateButton = true,
+}) => {
   const [id, setSearchId] = useState<number>(0);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isCreateDrawerVisible, setIsCreateDrawerVisible] = useState(false);
@@ -98,6 +104,7 @@ export const StaffTable = () => {
   return (
     <div className=" mt-2">
       {" "}
+      <p className=" font-semibold">Organisation Staff Members</p>
       <section className="w-full h-full py-3 flex   gap-2 ">
         <div className="w-full">
           <DebouncedInputField
@@ -107,25 +114,17 @@ export const StaffTable = () => {
             allowClear={true}
           />
         </div>
-        <div className=" flex gap-3">
-          {/* <Button onClick={exportCSV} className="bg-green-700 text-gray-100">
-                    <ExportOutlined className="text-white" />
-                    Export to CSV
-                  </Button> */}
-          {/* <Select placeholder="Status" className="min-w-32" allowClear={true}>
-                    <Select.Option value={105}>Pending</Select.Option>
-                    <Select.Option value={109}>Failed</Select.Option>
-                    <Select.Option value={100}>Successful</Select.Option>
-                  </Select> */}
-          <Button
-            type="primary"
-            onClick={() => setIsCreateDrawerVisible(true)}
-            className=""
-          >
-            <ExportOutlined className="" />
-            Add Staff Member
-          </Button>
-        </div>
+        {showCreateButton && (
+          <div className="flex gap-3">
+            <Button
+              type="primary"
+              onClick={() => setIsCreateDrawerVisible(true)}
+            >
+              <ExportOutlined />
+              Add Staff Member
+            </Button>
+          </div>
+        )}
       </section>
       <section className="w-full h-full hidden md:flex md:flex-col">
         <Table
@@ -167,7 +166,7 @@ export const StaffTable = () => {
         title="Create Staff Member"
         open={isCreateDrawerVisible}
         onClose={() => setIsCreateDrawerVisible(false)}
-        width="55%"
+        width="40%"
       >
         <StaffMemberForm />
       </Drawer>

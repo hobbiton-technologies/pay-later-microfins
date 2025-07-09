@@ -16,7 +16,7 @@ const StaffMembers = () => {
         </div>
         <div>
           {" "}
-          <StaffTable />
+          <StaffTable showCreateButton={false} />
         </div>
       </div>
     </div>

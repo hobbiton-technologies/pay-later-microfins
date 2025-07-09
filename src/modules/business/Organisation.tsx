@@ -5,120 +5,29 @@ import {
 import Table, { ColumnsType } from "antd/es/table";
 import DebouncedInputField from "../components/DebouncedInput";
 import { useEffect, useState } from "react";
-import { Button, Drawer, Dropdown, MenuProps, Select, Space } from "antd";
+import {
+  Button,
+  Card,
+  Descriptions,
+  Drawer,
+  Dropdown,
+  MenuProps,
+  Space,
+} from "antd";
 import { ExportOutlined, EyeOutlined } from "@ant-design/icons";
 import { customLoader } from "@/components/table-loader";
 import { OrganisationForm } from "./components/OrganisationForm";
-
-export const organisationsColumns = (
-  handleViewOrganisations: (id: number) => void
-): ColumnsType<OrganisationData> => [
-  {
-    title: "ID",
-    dataIndex: "id",
-    key: "id",
-  },
-  {
-    title: "Name",
-    dataIndex: "name",
-    key: "name",
-  },
-  {
-    title: "Org Phone No",
-    dataIndex: "contactNo",
-    key: "contactNo",
-  },
-  {
-    title: "Microfin Address",
-    dataIndex: "address",
-    key: "address",
-    render: (_, record: OrganisationData) => record.microfin?.address || "-",
-  },
-  {
-    title: "Microfin Email",
-    dataIndex: "email",
-    key: "email",
-    render: (_, record: OrganisationData) => record.microfin?.email || "-",
-  },
-  {
-    title: "Microfin Phone No",
-    dataIndex: "email",
-    key: "email",
-    render: (_, record: OrganisationData) => record.microfin?.contactNo || "-",
-  },
-
-  {
-    title: "Actions",
-    key: "actions",
-    render: (record: OrganisationData) => {
-      const items: MenuProps["items"] = [
-        {
-          key: "1",
-          label: (
-            <span
-              className="flex gap-2"
-              onClick={() => handleViewOrganisations(record?.id)}
-            >
-              <EyeOutlined />
-              View
-            </span>
-          ),
-        },
-        {
-          key: "2",
-          label: (
-            <span className="flex gap-2" onClick={() => alert("View CLicked")}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className=" w-4"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 4.5v15m7.5-7.5h-15"
-                />
-              </svg>
-              Create Staff Member
-            </span>
-          ),
-        },
-      ];
-
-      return (
-        <Space>
-          <Dropdown menu={{ items }} placement="bottomRight">
-            <Button className=" dark:text-white">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                className=" w-6"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"
-                />
-              </svg>
-            </Button>
-          </Dropdown>
-        </Space>
-      );
-    },
-  },
-];
+import { StaffTable } from "./components/StaffTable";
+import { StaffMemberForm } from "./components/StaffMemberForm";
 
 const Organisation = () => {
   const [id, setSearchId] = useState<string>("");
   const [pageNumber, setPageNumber] = useState<number | null>(1);
   const [pageSize, setPageSize] = useState(10);
   const [isCreateDrawerVisible, setIsCreateDrawerVisible] = useState(false);
+  const [isCreateStaffDrawerVisible, setIsCreateStaffDrawerVisible] =
+    useState(false);
+
   const [selectedOrganisation, setSelectedOrganisation] =
     useState<OrganisationData>();
   const [isOrganisationDrawerVisible, setIsOrganisationDrawerVisible] =
@@ -158,9 +67,117 @@ const Organisation = () => {
       if (organisation) {
         setIsOrganisationDrawerVisible(true);
       }
-      console.log("selectedOrganisation", selectedOrganisation);
+      // console.log("selectedOrganisation", selectedOrganisation);
     }
   };
+
+  const organisationsColumns = (
+    handleViewOrganisations: (id: number) => void
+  ): ColumnsType<OrganisationData> => [
+    {
+      title: "ID",
+      dataIndex: "id",
+      key: "id",
+    },
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Org Phone No",
+      dataIndex: "contactNo",
+      key: "contactNo",
+    },
+    {
+      title: "Microfin Address",
+      dataIndex: "address",
+      key: "address",
+      render: (_, record: OrganisationData) => record.microfin?.address || "-",
+    },
+    {
+      title: "Microfin Email",
+      dataIndex: "email",
+      key: "email",
+      render: (_, record: OrganisationData) => record.microfin?.email || "-",
+    },
+    {
+      title: "Microfin Phone No",
+      dataIndex: "email",
+      key: "email",
+      render: (_, record: OrganisationData) =>
+        record.microfin?.contactNo || "-",
+    },
+
+    {
+      title: "Actions",
+      key: "actions",
+      render: (record: OrganisationData) => {
+        const items: MenuProps["items"] = [
+          {
+            key: "1",
+            label: (
+              <span
+                className="flex gap-2"
+                onClick={() => handleViewOrganisations(record?.id)}
+              >
+                <EyeOutlined />
+                View
+              </span>
+            ),
+          },
+          {
+            key: "2",
+            label: (
+              <span
+                className="flex gap-2"
+                onClick={() => setIsCreateStaffDrawerVisible(true)}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className=" w-4"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 4.5v15m7.5-7.5h-15"
+                  />
+                </svg>
+                Create Staff Member
+              </span>
+            ),
+          },
+        ];
+
+        return (
+          <Space>
+            <Dropdown menu={{ items }} placement="bottomRight">
+              <Button className=" dark:text-white">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  className=" w-6"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"
+                  />
+                </svg>
+              </Button>
+            </Dropdown>
+          </Space>
+        );
+      },
+    },
+  ];
 
   return (
     <div>
@@ -239,11 +256,54 @@ const Organisation = () => {
         <OrganisationForm />
       </Drawer>
       <Drawer
+        title="Create Staff Member"
+        open={isCreateStaffDrawerVisible}
+        onClose={() => setIsCreateStaffDrawerVisible(false)}
         width="55%"
+      >
+        <StaffMemberForm />
+      </Drawer>
+      <Drawer
+        width="85%"
         open={isOrganisationDrawerVisible}
         onClose={() => setIsOrganisationDrawerVisible(false)}
-        closeIcon={false}
-      ></Drawer>
+        closeIcon={true}
+      >
+        {selectedOrganisation ? (
+          <div>
+            <Card title="Organisation Details">
+              <Descriptions bordered={true} column={3} className="text-black">
+                <Descriptions.Item label="Organisation Id">
+                  {selectedOrganisation.id}
+                </Descriptions.Item>
+                <Descriptions.Item label="Organisation Number">
+                  {selectedOrganisation.contactNo}
+                </Descriptions.Item>
+                <Descriptions.Item label="Organisation Name">
+                  {selectedOrganisation.name}
+                </Descriptions.Item>
+                <Descriptions.Item label="Org Microfin ID">
+                  {selectedOrganisation.microfin.id}
+                </Descriptions.Item>
+                <Descriptions.Item label="Org Microfin Name">
+                  {selectedOrganisation.microfin.name}
+                </Descriptions.Item>
+                <Descriptions.Item label="Org Microfin Address">
+                  {selectedOrganisation.microfin.address}
+                </Descriptions.Item>
+                <Descriptions.Item label="Org Microfin Email">
+                  {selectedOrganisation.microfin.email}
+                </Descriptions.Item>
+              </Descriptions>
+              <div className=" pt-8">
+                <StaffTable showCreateButton={true} />
+              </div>
+            </Card>
+          </div>
+        ) : (
+          "Invalid process"
+        )}
+      </Drawer>
     </div>
   );
 };
