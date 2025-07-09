@@ -18,8 +18,8 @@ export const productsColumns: ColumnsType<ProductsData> = [
   },
   {
     title: "Name",
-    dataIndex: "microfinName",
-    key: "microfinName",
+    dataIndex: "name",
+    key: "name",
   },
   {
     title: "Type",
