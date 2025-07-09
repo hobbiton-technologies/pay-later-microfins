@@ -3,9 +3,9 @@ import {
   useGetMicrofinBranchesRequestQuery,
 } from "@/api/queries/summaryQueries";
 import DebouncedInputField from "@/modules/components/DebouncedInput";
-import { Button, Drawer, Table } from "antd";
+import { Button, Drawer, Dropdown, MenuProps, Space, Table } from "antd";
 import { useEffect, useState } from "react";
-import { ExportOutlined } from "@ant-design/icons";
+import { ExportOutlined, EyeOutlined } from "@ant-design/icons";
 import { customLoader } from "@/components/table-loader";
 import { ColumnsType } from "antd/es/table";
 import { BranchesForm } from "./BranchesForm";
@@ -44,6 +44,29 @@ export const branchesColumns: ColumnsType<BranchesData> = [
   {
     title: "Actions",
     key: "actions",
+    render: () => {
+      const items: MenuProps["items"] = [
+        {
+          key: "4",
+          label: (
+            <span className="flex gap-2" onClick={() => alert("View CLicked")}>
+              <EyeOutlined />
+              View
+            </span>
+          ),
+        },
+      ];
+
+      return (
+        <Space>
+          <Dropdown menu={{ items }} placement="bottomRight">
+            <Button className=" dark:text-white">
+              <EyeOutlined />
+            </Button>
+          </Dropdown>
+        </Space>
+      );
+    },
   },
 ];
 
