@@ -2,12 +2,13 @@ import {
   StaffMembersData,
   useGetStaffMembersQuery,
 } from "@/api/queries/summaryQueries";
-import { Button, Dropdown, MenuProps, Space } from "antd";
+import { Button, Drawer, Dropdown, MenuProps, Space } from "antd";
 import Table, { ColumnsType } from "antd/es/table";
 import { ExportOutlined, EyeOutlined } from "@ant-design/icons";
 import DebouncedInputField from "@/modules/components/DebouncedInput";
 import { useState } from "react";
 import { customLoader } from "@/components/table-loader";
+import { StaffMemberForm } from "./StaffMemberForm";
 
 export const branchesColumns: ColumnsType<StaffMembersData> = [
   {
@@ -162,6 +163,14 @@ export const StaffTable = () => {
           }}
         />
       </section>
+      <Drawer
+        title="Create Staff Member"
+        open={isCreateDrawerVisible}
+        onClose={() => setIsCreateDrawerVisible(false)}
+        width="55%"
+      >
+        <StaffMemberForm />
+      </Drawer>
     </div>
   );
 };
