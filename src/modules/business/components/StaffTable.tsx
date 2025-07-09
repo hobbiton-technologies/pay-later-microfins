@@ -1,9 +1,13 @@
-import { StaffMembersData } from "@/api/queries/summaryQueries";
+import {
+  StaffMembersData,
+  useGetStaffMembersQuery,
+} from "@/api/queries/summaryQueries";
 import { Button, Dropdown, MenuProps, Space } from "antd";
 import Table, { ColumnsType } from "antd/es/table";
 import { ExportOutlined, EyeOutlined } from "@ant-design/icons";
 import DebouncedInputField from "@/modules/components/DebouncedInput";
 import { useState } from "react";
+import { customLoader } from "@/components/table-loader";
 
 export const branchesColumns: ColumnsType<StaffMembersData> = [
   {
@@ -20,7 +24,7 @@ export const branchesColumns: ColumnsType<StaffMembersData> = [
   {
     title: "Email",
     dataIndex: "user",
-    render: (_, record: StaffMembersData) => record.user.email,
+    render: (_, record: StaffMembersData) => record?.user.email ?? "NA",
   },
 
   {
@@ -63,11 +67,19 @@ export const branchesColumns: ColumnsType<StaffMembersData> = [
 ];
 
 export const StaffTable = () => {
-  const [id, setSearchId] = useState<string>("");
-
+  const [id, setSearchId] = useState<number>(0);
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [isCreateDrawerVisible, setIsCreateDrawerVisible] = useState(false);
   const [pageNumber, setPageNumber] = useState<number | null>(1);
   const [pageSize, setPageSize] = useState(10);
+
+  const { data: staffResponse, isFetching } = useGetStaffMembersQuery({
+    id: id,
+    query: searchQuery,
+    organizationId: Number(localStorage.getItem("organizationId")),
+    pageNumber: pageNumber ?? 1,
+    pageSize: pageSize,
+  });
 
   const handleTableChange = (pagination: any) => {
     setPageNumber(pagination.current);
@@ -116,19 +128,19 @@ export const StaffTable = () => {
       </section>
       <section className="w-full h-full hidden md:flex md:flex-col">
         <Table
-          // dataSource={microfinBranches?.data || []}
+          dataSource={staffResponse?.data || []}
           columns={branchesColumns}
           rowKey="id"
           onChange={handleTableChange}
-          // loading={{
-          //   spinning: isFetching,
-          //   indicator: customLoader,
-          // }}
-          // pagination={{
-          //   current: pageNumber ?? 1,
-          //   pageSize: pageSize,
-          //   total: microfinBranches?.totalItems,
-          // }}
+          loading={{
+            spinning: isFetching,
+            indicator: customLoader,
+          }}
+          pagination={{
+            current: pageNumber ?? 1,
+            pageSize: pageSize,
+            total: staffResponse?.totalItems,
+          }}
           components={{
             header: {
               cell: (props: any) => (

@@ -233,7 +233,7 @@ export const SummaryRequest = Api.injectEndpoints({
 
         if (id) params.append("id", id.toString());
         if (query) params.append("query", query);
-        params.append("organizationId", organizationId.toString());
+        // params.append("organizationId", organizationId.toString());
         params.append("pageNumber", pageNumber.toString());
         params.append("pageSize", pageSize.toString());
 
