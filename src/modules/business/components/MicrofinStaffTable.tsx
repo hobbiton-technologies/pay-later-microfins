@@ -226,26 +226,23 @@ export const MicrofinStaffTable = () => {
           <div>
             <Card title="Organisation Details">
               <Descriptions bordered={true} column={1} className="text-black">
-                <Descriptions.Item label="Organisation Id">
+                <Descriptions.Item label="Staff Id">
                   {selectedStaffMembers.id}
                 </Descriptions.Item>
-                <Descriptions.Item label="Organisation Number">
+                <Descriptions.Item label="Staff Member Branch">
                   {selectedStaffMembers.branch}
                 </Descriptions.Item>
-                <Descriptions.Item label="Organisation Name">
+                <Descriptions.Item label="Staff Employee ID ">
                   {selectedStaffMembers.employeeIdNumber}
                 </Descriptions.Item>
-                <Descriptions.Item label="Org Microfin ID">
+                <Descriptions.Item label="Staff ID">
                   {selectedStaffMembers.idNumber}
                 </Descriptions.Item>
-                <Descriptions.Item label="Org Microfin Name">
+                <Descriptions.Item label="Staff is Microfin ID">
                   {selectedStaffMembers.isMicrofinAdmin}
                 </Descriptions.Item>
-                <Descriptions.Item label="Org Microfin Address">
+                <Descriptions.Item label="Staff Position">
                   {selectedStaffMembers.position}
-                </Descriptions.Item>
-                <Descriptions.Item label="Org Microfin Email">
-                  {selectedStaffMembers.updatedAt}
                 </Descriptions.Item>
               </Descriptions>
             </Card>
