@@ -12,26 +12,26 @@ export const branchesColumns: ColumnsType<StaffMembersData> = [
     key: "id",
   },
   {
-    title: "Full Name",
+    title: "FullName",
     dataIndex: "user",
     render: (_, record: StaffMembersData) =>
-      `${record.user.firstName + "" + record.user.lastName} `,
+      `${record.user.firstName + " " + record.user.lastName} `,
   },
   {
-    title: "Address",
-    dataIndex: "address",
-    key: "address",
+    title: "Email",
+    dataIndex: "user",
+    render: (_, record: StaffMembersData) => record.user.email,
   },
 
   {
-    title: "Phone Number",
-    dataIndex: "phoneNumber",
-    key: "phoneNumber",
+    title: "Organisation",
+    dataIndex: "organization",
+    render: (_, record: StaffMembersData) => record.organization.name,
   },
   {
-    title: "Branch ID",
-    dataIndex: "branchId",
-    key: "branchId",
+    title: "National ID",
+    dataIndex: "idNumber",
+    key: "idNumber",
   },
   {
     title: "Actions",
