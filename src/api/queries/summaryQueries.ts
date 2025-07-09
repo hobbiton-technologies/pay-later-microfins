@@ -1,6 +1,6 @@
 import { Api } from "../apiSlice";
 
-export interface StaffMembersData {
+export interface MicrofinStaffMembersData {
   id: number;
   user: {
     id: number;
@@ -155,13 +155,13 @@ export interface BranchesResponse {
   errors: string[];
 }
 
-export interface StaffResponse {
+export interface MicrofinStaffResponse {
   pageNumber: 1;
   pageSize: 1;
   totalItems: 1;
   statusCode: 200;
   message: "Ok";
-  data: StaffMembersData[];
+  data: MicrofinStaffMembersData[];
   errors: null;
 }
 export const SummaryRequest = Api.injectEndpoints({
@@ -218,8 +218,8 @@ export const SummaryRequest = Api.injectEndpoints({
       },
     }),
 
-    getStaffMembers: builder.query<
-      StaffResponse,
+    getMicrofinStaffMembers: builder.query<
+      MicrofinStaffResponse,
       {
         id: number;
         organizationId: number;
@@ -240,6 +240,29 @@ export const SummaryRequest = Api.injectEndpoints({
         return `microfins/${organizationId}/microfin-organizations/members?${params.toString()}`;
       },
     }),
+
+    getStaffMembers: builder.query<
+      MicrofinStaffResponse,
+      {
+        id: number;
+        organizationId: number;
+        query: string;
+        pageNumber: number;
+        pageSize: number;
+      }
+    >({
+      query: ({ id, organizationId, query, pageNumber, pageSize }) => {
+        const params = new URLSearchParams();
+
+        if (id) params.append("id", id.toString());
+        if (query) params.append("query", query);
+        // params.append("organizationId", organizationId.toString());
+        params.append("pageNumber", pageNumber.toString());
+        params.append("pageSize", pageSize.toString());
+
+        return `microfins/members?${params.toString()}`;
+      },
+    }),
   }),
 });
 
@@ -248,4 +271,5 @@ export const {
   useGetMicrofinBranchesRequestQuery,
   useGetOrganisationsRequestQuery,
   useGetStaffMembersQuery,
+  useGetMicrofinStaffMembersQuery,
 } = SummaryRequest;

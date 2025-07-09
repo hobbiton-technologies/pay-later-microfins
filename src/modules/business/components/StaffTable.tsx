@@ -1,5 +1,6 @@
 import {
-  StaffMembersData,
+  MicrofinStaffMembersData,
+  useGetMicrofinStaffMembersQuery,
   useGetStaffMembersQuery,
 } from "@/api/queries/summaryQueries";
 import { Button, Drawer, Dropdown, MenuProps, Space } from "antd";
@@ -14,7 +15,7 @@ type StaffTableProps = {
   showCreateButton?: boolean;
 };
 
-export const branchesColumns: ColumnsType<StaffMembersData> = [
+export const branchesColumns: ColumnsType<MicrofinStaffMembersData> = [
   {
     title: "ID",
     dataIndex: "id",
@@ -23,19 +24,19 @@ export const branchesColumns: ColumnsType<StaffMembersData> = [
   {
     title: "FullName",
     dataIndex: "user",
-    render: (_, record: StaffMembersData) =>
+    render: (_, record: MicrofinStaffMembersData) =>
       `${record.user.firstName + " " + record.user.lastName} `,
   },
   {
     title: "Email",
     dataIndex: "user",
-    render: (_, record: StaffMembersData) => record?.user.email ?? "NA",
+    render: (_, record: MicrofinStaffMembersData) => record?.user.email ?? "NA",
   },
 
   {
     title: "Organisation",
     dataIndex: "organization",
-    render: (_, record: StaffMembersData) => record.organization.name,
+    render: (_, record: MicrofinStaffMembersData) => record.organization.name,
   },
   {
     title: "National ID",
@@ -80,7 +81,7 @@ export const StaffTable: React.FC<StaffTableProps> = ({
   const [pageNumber, setPageNumber] = useState<number | null>(1);
   const [pageSize, setPageSize] = useState(10);
 
-  const { data: staffResponse, isFetching } = useGetStaffMembersQuery({
+  const { data: staffResponse, isFetching } = useGetMicrofinStaffMembersQuery({
     id: id,
     query: searchQuery,
     organizationId: Number(localStorage.getItem("organizationId")),
