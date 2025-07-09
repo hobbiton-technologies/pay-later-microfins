@@ -1,5 +1,6 @@
 import AnimatedHeader from "../components/AnimatedHeader";
 import ProductStats from "../summary/components/ProductStats";
+import { StaffTable } from "./components/StaffTable";
 
 const StaffMembers = () => {
   return (
@@ -8,8 +9,15 @@ const StaffMembers = () => {
         <AnimatedHeader title="Staff Members" />
         <p>Manage your members</p>
       </div>
-      <div>
-        <ProductStats />
+      <div className=" grid grid-cols-1 gap-6">
+        <div>
+          {" "}
+          <ProductStats />
+        </div>
+        <div>
+          {" "}
+          <StaffTable />
+        </div>
       </div>
     </div>
   );
