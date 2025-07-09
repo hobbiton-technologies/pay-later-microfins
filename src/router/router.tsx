@@ -8,7 +8,7 @@ import Layout from "../layout";
 
 import ProtectedRoute from "../auth/protectedRoutes";
 import Summary from "../modules/summary/Summary";
-import { StaffMembers } from "../modules/business/StaffMembers";
+import StaffMembers from "../modules/business/StaffMembers";
 import { Financials } from "../modules/financials/Financials";
 import { MoneyLenders } from "../modules/moneylenders/MoneyLenders";
 import { MOUs } from "../modules/business/MOUs";
