@@ -22,7 +22,7 @@ const BranchRequests = Api.injectEndpoints({
           "Content-Type": "application/json",
         },
       }),
-      invalidatesTags: ["Branchess"],
+      invalidatesTags: ["Branches"],
     }),
   }),
 });

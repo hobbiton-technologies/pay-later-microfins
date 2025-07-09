@@ -165,6 +165,7 @@ export const SummaryRequest = Api.injectEndpoints({
         params.append("PageNumber", pageNumber.toString());
         return `/microfins/${id}/branches?${params.toString()}`;
       },
+      providesTags: ["Branches"],
     }),
 
     getOrganisationsRequest: builder.query<

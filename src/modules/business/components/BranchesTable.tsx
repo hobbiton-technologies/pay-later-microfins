@@ -37,6 +37,11 @@ export const branchesColumns: ColumnsType<BranchesData> = [
     key: "phoneNumber",
   },
   {
+    title: "Branch ID",
+    dataIndex: "branchId",
+    key: "branchId",
+  },
+  {
     title: "Actions",
     key: "actions",
   },
