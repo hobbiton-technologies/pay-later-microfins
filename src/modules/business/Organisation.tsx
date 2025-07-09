@@ -256,10 +256,10 @@ const Organisation = () => {
         <OrganisationForm />
       </Drawer>
       <Drawer
-        title="Create Staff Member"
+        title="Create Microfin Organisation Staff Member"
         open={isCreateStaffDrawerVisible}
         onClose={() => setIsCreateStaffDrawerVisible(false)}
-        width="55%"
+        width="50%"
       >
         <MicrofinOrgStaffMemberForm />
       </Drawer>

@@ -1,4 +1,5 @@
-import { Form } from "antd";
+import { Button, Form, Input, Select } from "antd";
+import { Option } from "antd/es/mentions";
 
 // type UserItemProps = {
 //   name: number;
@@ -22,9 +23,56 @@ export const MicrofinOrgStaffMemberForm = () => {
         form={form}
         layout="vertical"
         style={{ maxWidth: 1000, marginTop: 24 }}
-        className=" grid grid-cols-1 gap-8 items-center"
+        className="grid grid-cols-1 gap-4"
       >
-        <Form.Item label="Nam"></Form.Item>
+        <div className=" grid grid-cols-2 gap-4 items-center">
+          <Form.Item label="First Name">
+            <Input placeholder="enter first name" />
+          </Form.Item>
+          <Form.Item label="Last Name">
+            <Input placeholder="enter last name" />
+          </Form.Item>
+          <Form.Item label="Email">
+            <Input placeholder="enter email" />
+          </Form.Item>
+          <Form.Item label="Password">
+            <Input placeholder="enter password" />
+          </Form.Item>
+          <Form.Item label="Confirm Password">
+            <Input placeholder="enter password confirmation" />
+          </Form.Item>
+          <Form.Item label="Confirm Password">
+            <Input placeholder="enter password confirmation" />
+          </Form.Item>
+          <Form.Item
+            label="ID Type"
+            name="idType"
+            rules={[{ required: false }]}
+          >
+            <Select placeholder="Select type" id="">
+              <Option value="nrc">NRC</Option>
+              <Option value="passport">Passport</Option>
+              <Option value="driversLicense">Drivers License</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item label="Name">
+            <Input placeholder="enter bank name" />
+          </Form.Item>
+          <Form.Item label="Branch">
+            <Input placeholder="enter branch" />
+          </Form.Item>
+          <Form.Item label="Code">
+            <Input placeholder="enter code" />
+          </Form.Item>
+          <Form.Item label="Account Number">
+            <Input placeholder="enter account number" />
+          </Form.Item>
+        </div>
+        <Form.Item className="mt-6">
+          <Button className=" w-full" type="primary" htmlType="submit">
+            Submit
+          </Button>
+        </Form.Item>
       </Form>
     </div>
   );
