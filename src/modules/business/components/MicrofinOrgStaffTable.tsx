@@ -35,10 +35,9 @@ export const branchesColumns: ColumnsType<MicrofinOrgStaffMembersData> = [
   },
 
   {
-    title: "Organisation",
-    dataIndex: "organization",
-    render: (_, record: MicrofinOrgStaffMembersData) =>
-      record.organization.name,
+    title: "Position",
+    dataIndex: "position",
+    key: "postion",
   },
   {
     title: "National ID",

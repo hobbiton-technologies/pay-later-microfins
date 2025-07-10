@@ -338,7 +338,7 @@ const Organisation = () => {
       >
         {selectedOrganisation ? (
           <div>
-            <Card title="Organisation Details">
+            <Card title={`${selectedOrganisation.name} `}>
               <Descriptions bordered={true} column={3} className="text-black">
                 <Descriptions.Item label="Organisation Id">
                   {selectedOrganisation.id}
