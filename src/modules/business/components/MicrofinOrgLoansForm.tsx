@@ -1,14 +1,9 @@
-import {
-  Button,
-  DatePicker,
-  Form,
-  FormInstance,
-  Input,
-  Select,
-  Upload,
-} from "antd";
-import { Option } from "antd/es/mentions";
+import { Button, DatePicker, Form, FormInstance, Input, Upload } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
+import {
+  MicrofinOrgLoansBody,
+  useCreateMicrofinOrgLoanMutation,
+} from "@/api/mutations/loansMutation";
 
 type ItemProps = {
   name: number;
@@ -43,6 +38,29 @@ const DocumetItem: React.FC<ItemProps> = ({ name, fieldKey }) => {
 
 export const MicrofinOrgLoansForm = () => {
   const [form] = Form.useForm();
+  const [loadDataSubmit] = useCreateMicrofinOrgLoanMutation();
+
+  const handleSubmit = async (values: any) => {
+    const documentData =
+      values.documents.map((d: any) => ({
+        name: d.name || "",
+        document: d.document || "",
+      })) || null;
+
+    const organizationId = Number(localStorage.getItem("organizationId"));
+
+    const microfinOrgLoanData: MicrofinOrgLoansBody = {
+      amount: values.amount || "",
+      interestRate: values.interestRate || "",
+      penaltyRate: values.penaltyRate || "",
+      penaltyCalculationMethod: values.penaltyCalculationMethod || "",
+      documents: documentData,
+      startDate: values.startDate || "",
+      duration: values.duration || "",
+    };
+
+    await loadDataSubmit({ microfinOrgLoanData, organizationId });
+  };
   return (
     <div className="">
       <Form
