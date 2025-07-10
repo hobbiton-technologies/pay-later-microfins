@@ -131,7 +131,10 @@ const Organisation = () => {
             label: (
               <span
                 className="flex gap-2"
-                onClick={() => setIsCreateStaffDrawerVisible(true)}
+                onClick={() => {
+                  setSelectedOrganisation(record);
+                  setIsCreateStaffDrawerVisible(true);
+                }}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -261,7 +264,11 @@ const Organisation = () => {
         onClose={() => setIsCreateStaffDrawerVisible(false)}
         width="50%"
       >
-        <MicrofinOrgStaffMemberForm />
+        {selectedOrganisation?.microfin?.id && (
+          <MicrofinOrgStaffMemberForm
+            microfinOrganisationId={selectedOrganisation.microfin.id}
+          />
+        )}
       </Drawer>
       <Drawer
         width="85%"

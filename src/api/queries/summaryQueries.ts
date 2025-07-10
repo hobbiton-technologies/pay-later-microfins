@@ -270,6 +270,7 @@ export const SummaryRequest = Api.injectEndpoints({
 
         return `microfins/${organizationId}/microfin-organizations/members?${params.toString()}`;
       },
+      providesTags: ["MicrofinStaffMembers"],
     }),
 
     getMicrofinStaffMembers: builder.query<
@@ -293,6 +294,7 @@ export const SummaryRequest = Api.injectEndpoints({
 
         return `microfins/members?${params.toString()}`;
       },
+      providesTags: ["MicrofinOrgStaffMembers"],
     }),
   }),
 });

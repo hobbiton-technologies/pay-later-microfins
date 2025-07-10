@@ -11,6 +11,11 @@ type ItemProps = {
   index: number;
   form: FormInstance;
 };
+
+type MicrofinOrgStaffMemberFormProps = {
+  microfinOrganisationId: number;
+};
+
 const UserItem: React.FC<ItemProps> = ({ name, fieldKey }) => {
   return (
     <div
@@ -73,7 +78,9 @@ const BankItem: React.FC<ItemProps> = ({ name, fieldKey }) => {
   );
 };
 
-export const MicrofinOrgStaffMemberForm = () => {
+export const MicrofinOrgStaffMemberForm: React.FC<
+  MicrofinOrgStaffMemberFormProps
+> = ({ microfinOrganisationId }) => {
   const [form] = Form.useForm();
   const [orgStaffMemberData] = useCreateMicrofinOrgStaffMemberMutation();
 
@@ -98,7 +105,6 @@ export const MicrofinOrgStaffMemberForm = () => {
         accountNumber: b?.accountNumber || "",
       };
       const organizationId = Number(localStorage.getItem("organizationId"));
-      const branchId = Number(values.branchId);
 
       const microfinStaffMemberData: MicrofinOrgStaffBody = {
         user: userData,
@@ -110,7 +116,7 @@ export const MicrofinOrgStaffMemberForm = () => {
 
       await orgStaffMemberData({
         organizationId,
-        branchId,
+        microfinOrganisationId,
         microfinStaffMemberData,
       }).unwrap();
 
