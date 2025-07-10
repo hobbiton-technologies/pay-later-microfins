@@ -1,4 +1,12 @@
-import { Button, DatePicker, Form, FormInstance, Input, Upload } from "antd";
+import {
+  Button,
+  DatePicker,
+  Form,
+  FormInstance,
+  Input,
+  message,
+  Upload,
+} from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import {
   MicrofinOrgLoansBody,
@@ -47,29 +55,35 @@ export const MicrofinOrgLoansForm: React.FC<MicrofinOrgLoansFormProps> = ({
   const [loadDataSubmit] = useCreateMicrofinOrgLoanMutation();
 
   const handleSubmit = async (values: any) => {
-    const documentData =
-      values.documents.map((d: any) => ({
-        name: d.name || "",
-        document: d.document || "",
-      })) || null;
+    try {
+      const documentData =
+        values.documents.map((d: any) => ({
+          name: d.name || "",
+          document: d.document || "",
+        })) || null;
 
-    const organizationId = Number(localStorage.getItem("organizationId"));
+      const organizationId = Number(localStorage.getItem("organizationId"));
 
-    const microfinOrgLoanData: MicrofinOrgLoansBody = {
-      amount: values.amount || "",
-      interestRate: values.interestRate || "",
-      penaltyRate: values.penaltyRate || "",
-      penaltyCalculationMethod: values.penaltyCalculationMethod || "",
-      documents: documentData,
-      startDate: values.startDate || "",
-      duration: values.duration || "",
-    };
+      const microfinOrgLoanData: MicrofinOrgLoansBody = {
+        amount: values.amount || "",
+        interestRate: values.interestRate || "",
+        penaltyRate: values.penaltyRate || "",
+        penaltyCalculationMethod: values.penaltyCalculationMethod || "",
+        documents: documentData,
+        startDate: values.startDate || "",
+        duration: values.duration || "",
+      };
 
-    await loadDataSubmit({
-      microfinOrgLoanData,
-      organizationId,
-      microfinMemberId,
-    });
+      await loadDataSubmit({
+        microfinOrgLoanData,
+        organizationId,
+        microfinMemberId,
+      });
+      message.success("Microfin Organisation loan Successfully Created");
+      form.resetFields();
+    } catch (error) {
+      console.error("Failed to create Microfin Organisation loan ", error);
+    }
   };
   return (
     <div className="">
@@ -78,7 +92,7 @@ export const MicrofinOrgLoansForm: React.FC<MicrofinOrgLoansFormProps> = ({
         layout="vertical"
         style={{ maxWidth: 1000, marginTop: 24 }}
         className="grid grid-cols-1 gap-4"
-        // onFinish={handleSubmit}
+        onFinish={handleSubmit}
       >
         <div className=" grid grid-cols-1 items-center">
           <div className=" grid grid-cols-1 gap-4 mb-4 shadow-sm p-4 rounded relative bg-white">
