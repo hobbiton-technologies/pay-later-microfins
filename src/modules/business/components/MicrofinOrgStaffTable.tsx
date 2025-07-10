@@ -2,12 +2,13 @@ import {
   MicrofinOrgStaffMembersData,
   OrganisationData,
   useGetMicrofinOrgStaffMembersQuery,
+  useGetOrganisationsRequestQuery,
 } from "@/api/queries/summaryQueries";
 import { Button, Card, Drawer, Dropdown, MenuProps, Space } from "antd";
 import Table, { ColumnsType } from "antd/es/table";
 import { ExportOutlined, EyeOutlined } from "@ant-design/icons";
 import DebouncedInputField from "@/modules/components/DebouncedInput";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { customLoader } from "@/components/table-loader";
 import { MicrofinOrgStaffMemberForm } from "./MIcrofinOrgStaffMemberForm";
 import { MicrofinOrgLoansTable } from "./MicrofinOrgLoansTable";
@@ -26,9 +27,11 @@ export const MicrofinOrgStaffTable: React.FC<StaffTableProps> = ({
   const [isCreateDrawerVisible, setIsCreateDrawerVisible] = useState(false);
   const [pageNumber, setPageNumber] = useState<number | null>(1);
   const [pageSize, setPageSize] = useState(10);
+  const [organisations, setOrganisations] = useState<OrganisationData[]>([]);
 
-  const [selectedOrganisation, setSelectedOrganisation] =
-    useState<OrganisationData>();
+  const [selectedOrganisation, setSelectedOrganisation] = useState<
+    OrganisationData[]
+  >([]);
 
   const [isLoansDrawerVisible, setIsLoansDrawerVisible] = useState(false);
 
@@ -41,6 +44,18 @@ export const MicrofinOrgStaffTable: React.FC<StaffTableProps> = ({
       pageSize: pageSize,
     });
 
+  const { data: organisationData, isFetching } =
+    useGetOrganisationsRequestQuery({
+      id: Number(localStorage.getItem("organizationId")),
+      pageNumber: pageNumber ?? 1,
+      pageSize: pageSize,
+    });
+
+  useEffect(() => {
+    if (staffResponse) {
+      setSelectedOrganisation(organisationData?.data);
+    }
+  });
   const handleTableChange = (pagination: any) => {
     setPageNumber(pagination.current);
     setPageSize(pagination.pageSize);
