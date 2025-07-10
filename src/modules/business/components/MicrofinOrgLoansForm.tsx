@@ -21,7 +21,8 @@ type ItemProps = {
 };
 
 type MicrofinOrgLoansFormProps = {
-  microfinMemberId: number;
+  //   microfinMemberId: number;
+  microfinOrganisationId: number;
 };
 
 const DocumetItem: React.FC<ItemProps> = ({ name, fieldKey }) => {
@@ -49,7 +50,8 @@ const DocumetItem: React.FC<ItemProps> = ({ name, fieldKey }) => {
 };
 
 export const MicrofinOrgLoansForm: React.FC<MicrofinOrgLoansFormProps> = ({
-  microfinMemberId,
+  //   microfinMemberId,
+  microfinOrganisationId,
 }) => {
   const [form] = Form.useForm();
   const [loadDataSubmit] = useCreateMicrofinOrgLoanMutation();
@@ -77,7 +79,7 @@ export const MicrofinOrgLoansForm: React.FC<MicrofinOrgLoansFormProps> = ({
       await loadDataSubmit({
         microfinOrgLoanData,
         organizationId,
-        microfinMemberId,
+        microfinOrganisationId,
       });
       message.success("Microfin Organisation loan Successfully Created");
       form.resetFields();

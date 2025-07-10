@@ -8,7 +8,7 @@ import { MicrofinOrgLoansForm } from "./MicrofinOrgLoansForm";
 
 type MicrofinOrgLoansFormProps = {
   microfinOrganisationId: number;
-  microfinMemberId: number;
+  // microfinMemberId: number;
 };
 
 export const loansColumns: ColumnsType<MicrofinLoansData> = [
@@ -53,7 +53,7 @@ export const loansColumns: ColumnsType<MicrofinLoansData> = [
     render: () => {
       const items: MenuProps["items"] = [
         {
-          key: "4",
+          key: "1",
           label: (
             <span className="flex gap-2" onClick={() => alert("View CLicked")}>
               <EyeOutlined />
@@ -77,7 +77,7 @@ export const loansColumns: ColumnsType<MicrofinLoansData> = [
 ];
 
 export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansFormProps> = ({
-  microfinMemberId,
+  microfinOrganisationId,
 }) => {
   const [id, setSearchId] = useState<string>("");
   const [isCreateDrawerVisible, setIsCreateDrawerVisible] = useState(false);
@@ -150,7 +150,7 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansFormProps> = ({
         onClose={() => setIsCreateDrawerVisible(false)}
         width="40%"
       >
-        <MicrofinOrgLoansForm microfinMemberId={microfinMemberId} />
+        <MicrofinOrgLoansForm microfinOrganisationId={microfinOrganisationId} />
       </Drawer>
     </div>
   );

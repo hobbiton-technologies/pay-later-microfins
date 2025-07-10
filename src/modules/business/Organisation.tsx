@@ -331,7 +331,7 @@ const Organisation = () => {
         )}
       </Drawer>
       <Drawer
-        width="80%"
+        width="85%"
         open={isOrganisationDrawerVisible}
         onClose={() => setIsOrganisationDrawerVisible(false)}
         closeIcon={true}
