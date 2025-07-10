@@ -54,7 +54,6 @@ const UserItem: React.FC<UserItemProps> = ({ name, fieldKey }) => {
 };
 
 export const MicrofinStaffMemberForm = () => {
-  const [id, setSearchId] = useState<number>(0);
   const [pageNumber] = useState<number | null>(1);
   const [pageSize] = useState(10);
   const [, setBranches] = useState<BranchesData[]>([]);

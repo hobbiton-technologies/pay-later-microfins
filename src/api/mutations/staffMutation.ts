@@ -14,6 +14,26 @@ export interface MicrofinStaffBody {
   employeeIdNumber: string;
   position: string;
 }
+
+export interface MicrofinOrgStaffBody {
+  user: {
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+    email: string;
+    password: string;
+    passwordConfirm: string;
+  };
+  idType: string;
+  idNumber: string;
+  position: string;
+  bankDetails: {
+    name: string;
+    branch: string;
+    code: string;
+    accountNumber: string;
+  };
+}
 const StaffMutions = Api.injectEndpoints({
   endpoints: (builder) => ({
     CreateMicrofinStaffMember: builder.mutation<any, any>({
