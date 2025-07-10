@@ -80,15 +80,24 @@ export const MicrofinStaffMemberForm = () => {
 
   const handleSubmit = async (values: any) => {
     try {
-      const userData =
-        values.user?.map((u: any) => ({
-          firstName: u.firstName || "",
-          lastName: u.lastName || "",
-          phoneNumber: u.phoneNumber || "",
-          email: u.email || "",
-          password: u.password || "",
-          passwordConfirm: u.passwordConfirm,
-        })) || [];
+      // const userData =
+      //   values.user?.map((u: any) => ({
+      //     firstName: u.firstName || "",
+      //     lastName: u.lastName || "",
+      //     phoneNumber: u.phoneNumber || "",
+      //     email: u.email || "",
+      //     password: u.password || "",
+      //     passwordConfirm: u.passwordConfirm,
+      //   })) || [];
+      const u = values.user?.[0];
+      const userData = {
+        firstName: u?.firstName || "",
+        lastName: u?.lastName || "",
+        phoneNumber: u?.phoneNumber || "",
+        email: u?.email || "",
+        password: u?.password || "",
+        passwordConfirm: u?.passwordConfirm,
+      };
 
       const organizationId = Number(localStorage.getItem("organizationId"));
       const branchId = Number(values.branchId);
@@ -106,6 +115,8 @@ export const MicrofinStaffMemberForm = () => {
         branchId,
         microfinStaffMemberData,
       }).unwrap();
+
+      console.log("Staff Member: ", microfinStaffMemberData);
       message.success("Product Successfully Created");
       form.resetFields();
     } catch (error) {
@@ -175,7 +186,7 @@ export const MicrofinStaffMemberForm = () => {
                 rules={[{ required: false }]}
               >
                 <Select placeholder="Select type" id="">
-                  <Option value="Nome">None</Option>
+                  <Option value="None">None</Option>
                   <Option value="Nrc">NRC</Option>
                   <Option value="Passport">Passport</Option>
                   <Option value="DriversLicense">Drivers License</Option>
