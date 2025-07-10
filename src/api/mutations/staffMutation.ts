@@ -45,8 +45,28 @@ const StaffMutions = Api.injectEndpoints({
           "Content-Type": "application/json",
         },
       }),
+      invalidatesTags: ["MicrofinStaffMembers"],
+    }),
+
+    CreateMicrofinOrgStaffMember: builder.mutation<any, any>({
+      query: ({
+        organizationId,
+        microfinOrganisationId,
+        microfinStaffMemberData,
+      }) => ({
+        url: `/microfins/${organizationId}/branches/${microfinOrganisationId}/members`,
+        method: "POST",
+        body: microfinStaffMemberData,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
+      invalidatesTags: ["MicrofinStaffMembers"],
     }),
   }),
 });
 
-export const { useCreateMicrofinStaffMemberMutation } = StaffMutions;
+export const {
+  useCreateMicrofinStaffMemberMutation,
+  useCreateMicrofinOrgStaffMemberMutation,
+} = StaffMutions;

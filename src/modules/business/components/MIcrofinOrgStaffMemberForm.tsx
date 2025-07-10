@@ -1,22 +1,122 @@
-import { Button, Form, Input, Select } from "antd";
+import { MicrofinOrgStaffBody } from "@/api/mutations/staffMutation";
+import { Button, Form, FormInstance, Input, message, Select } from "antd";
 import { Option } from "antd/es/mentions";
 
-// type UserItemProps = {
-//   name: number;
-//   fieldKey: React.Key;
-// };
+type ItemProps = {
+  name: number;
+  fieldKey: React.Key;
+  index: number;
+  form: FormInstance;
+};
+const UserItem: React.FC<ItemProps> = ({ name, fieldKey }) => {
+  return (
+    <div
+      key={fieldKey}
+      className=" grid grid-cols-1 shadow-sm p-4 rounded relative bg-white"
+    >
+      <div>
+        {" "}
+        <p className=" font-semibold pb-2">Personal Details</p>
+      </div>
+      <div className=" grid grid-cols-2 gap-4 relative bg-white">
+        <Form.Item name={[name, "firstName"]} label="First Name">
+          <Input placeholder="enter first name" />
+        </Form.Item>
+        <Form.Item name={[name, "lastName"]} label="Last Name">
+          <Input placeholder="enter last name" />
+        </Form.Item>
+        <Form.Item name={[name, "phoneNumber"]} label="Phone Number">
+          <Input placeholder="enter last name" />
+        </Form.Item>
+        <Form.Item name={[name, "email"]} label="Email">
+          <Input placeholder="enter email" />
+        </Form.Item>
+        <Form.Item name={[name, "password"]} label="Password">
+          <Input placeholder="enter password" />
+        </Form.Item>
+        <Form.Item name={[name, "passwordConfirm"]} label="Confirm Password">
+          <Input placeholder="enter password confirmation" />
+        </Form.Item>
+      </div>
+    </div>
+  );
+};
 
-// const UserItem: React.FC<UserItemProps> = ({ name, fieldKey }) => {
-//   return (
-//     <div
-//       key={fieldKey}
-//       className="grid grid-cols-1 gap-4 mb-4 shadow-sm p-4 rounded relative bg-white"
-//     ></div>
-//   );
-// };
+const BankItem: React.FC<ItemProps> = ({ name, fieldKey }) => {
+  return (
+    <div
+      key={fieldKey}
+      className=" grid grid-cols-1 shadow-sm p-4 rounded relative bg-white"
+    >
+      <div>
+        {" "}
+        <p className=" font-semibold pb-2">Bank Details</p>
+      </div>
+      <div className=" grid grid-cols-2 gap-4 relative bg-white">
+        <Form.Item name={[name, "name"]} label="Name">
+          <Input placeholder="enter bank name" />
+        </Form.Item>
+        <Form.Item name={[name, "branch"]} label="Branch">
+          <Input placeholder="enter bank branch " />
+        </Form.Item>
+        <Form.Item name={[name, "code"]} label="Code">
+          <Input placeholder="enter bank code" />
+        </Form.Item>
+        <Form.Item name={[name, "accaccountNumber"]} label="Account Number">
+          <Input placeholder="enter account number" />
+        </Form.Item>
+      </div>
+    </div>
+  );
+};
 
 export const MicrofinOrgStaffMemberForm = () => {
   const [form] = Form.useForm();
+
+   const handleSubmit = async (values: any) => {
+      try {
+        const u = values.user?.[0];
+        const b = values.bank?[0];
+
+        const userData = {
+          firstName: u?.firstName || "",
+          lastName: u?.lastName || "",
+          phoneNumber: u?.phoneNumber || "",
+          email: u?.email || "",
+          password: u?.password || "",
+          passwordConfirm: u?.passwordConfirm,
+        };
+  
+        const bankData = {
+          name: b?.name || "",
+          branch: b?.branch || "",
+          code: b?.email || "",
+          accountNumber: b?.accountNumber || "",
+        };
+        const organizationId = Number(localStorage.getItem("organizationId"));
+        const branchId = Number(values.branchId);
+  
+        const microfinStaffMemberData: MicrofinOrgStaffBody = {
+          user: userData,
+          idType: values.idType,
+          idNumber: values.idNumber,
+          position: values.position,
+          bankDetails: bankData
+        };
+  
+        await staffMemberData({
+          organizationId,
+          branchId,
+          microfinStaffMemberData,
+        }).unwrap();
+  
+        // console.log("Staff Member: ", microfinStaffMemberData);
+        message.success("Microfin Organisation member Successfully Created");
+        form.resetFields();
+      } catch (error) {
+        console.error("Failed to create Staff Member", error);
+      }
+    };
   return (
     <div className=" pt-4">
       <Form
@@ -24,53 +124,71 @@ export const MicrofinOrgStaffMemberForm = () => {
         layout="vertical"
         style={{ maxWidth: 1000, marginTop: 24 }}
         className="grid grid-cols-1 gap-4"
+        // onFinish={handleSubmit}
       >
-        <div className=" grid grid-cols-1 gap-4 items-center">
-          <div className=" grid grid-cols-2 gap-4 rounded-sm shadow-sm px-4">
-            <Form.Item label="First Name">
-              <Input placeholder="enter first name" />
-            </Form.Item>
-            <Form.Item label="Last Name">
-              <Input placeholder="enter last name" />
-            </Form.Item>
-            <Form.Item label="Email">
-              <Input placeholder="enter email" />
-            </Form.Item>
-            <Form.Item label="Password">
-              <Input placeholder="enter password" />
-            </Form.Item>
-            <Form.Item label="Confirm Password">
-              <Input placeholder="enter password confirmation" />
-            </Form.Item>
-            <Form.Item label="Confirm Password">
-              <Input placeholder="enter password confirmation" />
-            </Form.Item>
-            <Form.Item
-              label="ID Type"
-              name="idType"
-              rules={[{ required: false }]}
-            >
-              <Select placeholder="Select type" id="">
-                <Option value="nrc">NRC</Option>
-                <Option value="passport">Passport</Option>
-                <Option value="driversLicense">Drivers License</Option>
-              </Select>
-            </Form.Item>
+        <div className=" grid grid-cols-1 gap-8 items-center">
+          <div>
+            <Form.List name="user" initialValue={[{}]}>
+              {(fields) => (
+                <>
+                  {fields.map(({ key, name }, index) => (
+                    <UserItem
+                      key={key}
+                      name={name}
+                      fieldKey={key}
+                      index={index}
+                      form={form}
+                    />
+                  ))}
+                </>
+              )}
+            </Form.List>
+          </div>
+
+          <div className=" grid grid-cols-1 gap-4 shadow-sm p-4 rounded relative bg-white">
+            <div>
+              {" "}
+              <p className=" font-semibold pb-2">Employee Details</p>
+            </div>
+            <div className=" grid grid-cols-2 gap-4">
+              {" "}
+              <Form.Item
+                label="ID Type"
+                name="idType"
+                rules={[{ required: false }]}
+              >
+                <Select placeholder="Select type" id="">
+                  <Option value="None">None</Option>
+                  <Option value="Nrc">NRC</Option>
+                  <Option value="Passport">Passport</Option>
+                  <Option value="DriversLicense">Drivers License</Option>
+                </Select>
+              </Form.Item>
+              <Form.Item name="idNumber" label="ID Number">
+                <Input placeholder="enter id number" />
+              </Form.Item>
+              <Form.Item name="position" label="Position">
+                <Input placeholder="enter position" />
+              </Form.Item>
+            </div>
           </div>
 
           <div>
-            <Form.Item label="Name">
-              <Input placeholder="enter bank name" />
-            </Form.Item>
-            <Form.Item label="Branch">
-              <Input placeholder="enter branch" />
-            </Form.Item>
-            <Form.Item label="Code">
-              <Input placeholder="enter code" />
-            </Form.Item>
-            <Form.Item label="Account Number">
-              <Input placeholder="enter account number" />
-            </Form.Item>
+            <Form.List name="user" initialValue={[{}]}>
+              {(fields) => (
+                <>
+                  {fields.map(({ key, name }, index) => (
+                    <BankItem
+                      key={key}
+                      name={name}
+                      fieldKey={key}
+                      index={index}
+                      form={form}
+                    />
+                  ))}
+                </>
+              )}
+            </Form.List>
           </div>
         </div>
         <Form.Item className="mt-6">
