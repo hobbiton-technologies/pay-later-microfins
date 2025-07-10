@@ -3,6 +3,29 @@ import { useAuth } from "../../auth/authContext";
 import { LogoutOutlined, SettingOutlined } from "@ant-design/icons";
 import { Popover } from "antd";
 import { Offline, Online } from "react-detect-offline";
+import jwtDecode from "jwt-decode";
+
+export interface DecodedToken {
+  FirstName?: string;
+  LastName?: string;
+  email?: string;
+  PhoneNumber?: string;
+  Id?: string;
+  [key: string]: any; // for flexibility
+}
+
+export const decodeAccessToken = (): DecodedToken | null => {
+  const token = localStorage.getItem("accessToken");
+  if (!token) return null;
+
+  try {
+    const decoded = jwtDecode<DecodedToken>(token);
+    return decoded;
+  } catch (error) {
+    console.error("Failed to decode token", error);
+    return null;
+  }
+};
 
 const ProfileBar = () => {
   const { isAuthenticated, logout } = useAuth();
