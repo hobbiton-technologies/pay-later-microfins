@@ -44,18 +44,18 @@ export const MicrofinOrgStaffTable: React.FC<StaffTableProps> = ({
       pageSize: pageSize,
     });
 
-  const { data: organisationData, isFetching } =
-    useGetOrganisationsRequestQuery({
-      id: Number(localStorage.getItem("organizationId")),
-      pageNumber: pageNumber ?? 1,
-      pageSize: pageSize,
-    });
+  // const { data: organisationData, isFetching } =
+  //   useGetOrganisationsRequestQuery({
+  //     id: Number(localStorage.getItem("organizationId")),
+  //     pageNumber: pageNumber ?? 1,
+  //     pageSize: pageSize,
+  //   });
 
-  useEffect(() => {
-    if (staffResponse) {
-      setSelectedOrganisation(organisationData?.data);
-    }
-  });
+  // useEffect(() => {
+  //   if (staffResponse) {
+  //     setSelectedOrganisation(organisationData?.data);
+  //   }
+  // });
   const handleTableChange = (pagination: any) => {
     setPageNumber(pagination.current);
     setPageSize(pagination.pageSize);
@@ -121,7 +121,7 @@ export const MicrofinOrgStaffTable: React.FC<StaffTableProps> = ({
               <span
                 className="flex gap-2"
                 onClick={() => {
-                  setSelectedOrganisation(record);
+                  // setSelectedOrganisation(record);
                   setIsLoansDrawerVisible(true);
                 }}
               >
@@ -229,7 +229,7 @@ export const MicrofinOrgStaffTable: React.FC<StaffTableProps> = ({
           microfinOrganisationId={microfinOrganisationId}
         />
       </Drawer>
-      <Drawer
+      {/* <Drawer
         width="83%"
         open={isLoansDrawerVisible}
         onClose={() => setIsLoansDrawerVisible(false)}
@@ -248,7 +248,7 @@ export const MicrofinOrgStaffTable: React.FC<StaffTableProps> = ({
         ) : (
           "Invalid process"
         )}
-      </Drawer>
+      </Drawer> */}
     </div>
   );
 };
