@@ -8,6 +8,7 @@ import { MicrofinOrgLoansForm } from "./MicrofinOrgLoansForm";
 
 type MicrofinOrgLoansFormProps = {
   microfinOrganisationId: number;
+  microfinMemberId: number;
 };
 
 export const loansColumns: ColumnsType<MicrofinLoansData> = [
@@ -76,7 +77,7 @@ export const loansColumns: ColumnsType<MicrofinLoansData> = [
 ];
 
 export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansFormProps> = ({
-  microfinOrganisationId,
+  microfinMemberId,
 }) => {
   const [id, setSearchId] = useState<string>("");
   const [isCreateDrawerVisible, setIsCreateDrawerVisible] = useState(false);
@@ -149,7 +150,7 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansFormProps> = ({
         onClose={() => setIsCreateDrawerVisible(false)}
         width="40%"
       >
-        <MicrofinOrgLoansForm />
+        <MicrofinOrgLoansForm microfinMemberId={microfinMemberId} />
       </Drawer>
     </div>
   );
