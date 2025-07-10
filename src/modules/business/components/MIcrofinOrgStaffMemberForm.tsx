@@ -1,4 +1,7 @@
-import { MicrofinOrgStaffBody } from "@/api/mutations/staffMutation";
+import {
+  MicrofinOrgStaffBody,
+  useCreateMicrofinOrgStaffMemberMutation,
+} from "@/api/mutations/staffMutation";
 import { Button, Form, FormInstance, Input, message, Select } from "antd";
 import { Option } from "antd/es/mentions";
 
@@ -72,51 +75,52 @@ const BankItem: React.FC<ItemProps> = ({ name, fieldKey }) => {
 
 export const MicrofinOrgStaffMemberForm = () => {
   const [form] = Form.useForm();
+  const [orgStaffMemberData] = useCreateMicrofinOrgStaffMemberMutation();
 
-   const handleSubmit = async (values: any) => {
-      try {
-        const u = values.user?.[0];
-        const b = values.bank?[0];
+  const handleSubmit = async (values: any) => {
+    try {
+      const u = values.user?.[0];
+      const b = values.bank?.[0];
 
-        const userData = {
-          firstName: u?.firstName || "",
-          lastName: u?.lastName || "",
-          phoneNumber: u?.phoneNumber || "",
-          email: u?.email || "",
-          password: u?.password || "",
-          passwordConfirm: u?.passwordConfirm,
-        };
-  
-        const bankData = {
-          name: b?.name || "",
-          branch: b?.branch || "",
-          code: b?.email || "",
-          accountNumber: b?.accountNumber || "",
-        };
-        const organizationId = Number(localStorage.getItem("organizationId"));
-        const branchId = Number(values.branchId);
-  
-        const microfinStaffMemberData: MicrofinOrgStaffBody = {
-          user: userData,
-          idType: values.idType,
-          idNumber: values.idNumber,
-          position: values.position,
-          bankDetails: bankData
-        };
-  
-        await staffMemberData({
-          organizationId,
-          branchId,
-          microfinStaffMemberData,
-        }).unwrap();
-  
-        // console.log("Staff Member: ", microfinStaffMemberData);
-        message.success("Microfin Organisation member Successfully Created");
-        form.resetFields();
-      } catch (error) {
-        console.error("Failed to create Staff Member", error);
-      }
-    };
+      const userData = {
+        firstName: u?.firstName || "",
+        lastName: u?.lastName || "",
+        phoneNumber: u?.phoneNumber || "",
+        email: u?.email || "",
+        password: u?.password || "",
+        passwordConfirm: u?.passwordConfirm,
+      };
+
+      const bankData = {
+        name: b?.name || "",
+        branch: b?.branch || "",
+        code: b?.email || "",
+        accountNumber: b?.accountNumber || "",
+      };
+      const organizationId = Number(localStorage.getItem("organizationId"));
+      const branchId = Number(values.branchId);
+
+      const microfinStaffMemberData: MicrofinOrgStaffBody = {
+        user: userData,
+        idType: values.idType,
+        idNumber: values.idNumber,
+        position: values.position,
+        bankDetails: bankData,
+      };
+
+      await orgStaffMemberData({
+        organizationId,
+        branchId,
+        microfinStaffMemberData,
+      }).unwrap();
+
+      // console.log("Staff Member: ", microfinStaffMemberData);
+      message.success("Microfin Organisation member Successfully Created");
+      form.resetFields();
+    } catch (error) {
+      console.error("Failed to create Staff Member", error);
+    }
+  };
   return (
     <div className=" pt-4">
       <Form
@@ -124,7 +128,7 @@ export const MicrofinOrgStaffMemberForm = () => {
         layout="vertical"
         style={{ maxWidth: 1000, marginTop: 24 }}
         className="grid grid-cols-1 gap-4"
-        // onFinish={handleSubmit}
+        onFinish={handleSubmit}
       >
         <div className=" grid grid-cols-1 gap-8 items-center">
           <div>
