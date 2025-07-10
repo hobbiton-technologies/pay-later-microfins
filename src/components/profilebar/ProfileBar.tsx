@@ -11,7 +11,6 @@ export interface DecodedToken {
   email?: string;
   PhoneNumber?: string;
   Id?: string;
-  [key: string]: any; // for flexibility
 }
 
 export const decodeAccessToken = (): DecodedToken | null => {
