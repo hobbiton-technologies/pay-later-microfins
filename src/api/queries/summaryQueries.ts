@@ -1,5 +1,20 @@
 import { Api } from "../apiSlice";
 
+export interface MicrofinLoansData {
+  amount: number;
+  interestRate: number;
+  penaltyRate: number;
+  penaltyCalculationMethod: string;
+  documents: [
+    {
+      name: string;
+      document: string;
+    }
+  ];
+  startDate: string;
+  duration: number;
+}
+
 export interface MicrofinStaffMembersData {
   id: number;
   createdAt: string;
