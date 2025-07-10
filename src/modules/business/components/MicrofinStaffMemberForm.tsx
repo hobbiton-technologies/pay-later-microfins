@@ -8,7 +8,7 @@ import {
   useGetMicrofinBranchesRequestQuery,
 } from "@/api/queries/summaryQueries";
 import { orange } from "@mui/material/colors";
-import { Button, Form, FormInstance, Input, Select, Spin } from "antd";
+import { Button, Form, FormInstance, Input, message, Select, Spin } from "antd";
 import { Option } from "antd/es/mentions";
 import { useEffect, useState } from "react";
 
@@ -106,7 +106,11 @@ export const MicrofinStaffMemberForm = () => {
         branchId,
         microfinStaffMemberData,
       }).unwrap();
-    } catch (error) {}
+      message.success("Product Successfully Created");
+      form.resetFields();
+    } catch (error) {
+      console.error("Failed to create Staff Member", error);
+    }
   };
 
   return (
@@ -116,6 +120,7 @@ export const MicrofinStaffMemberForm = () => {
         layout="vertical"
         style={{ maxWidth: 1000, marginTop: 24 }}
         className="grid grid-cols-1 gap-4"
+        onFinish={handleSubmit}
       >
         <div className=" grid grid-cols-1 gap-8 items-center">
           <div>
