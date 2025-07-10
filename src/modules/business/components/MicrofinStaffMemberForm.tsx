@@ -17,26 +17,32 @@ const UserItem: React.FC<UserItemProps> = ({ name, fieldKey }) => {
   return (
     <div
       key={fieldKey}
-      className=" grid grid-cols-2 gap-4 mb-4 shadow-sm p-4 rounded relative bg-white"
+      className=" grid grid-cols-1 shadow-sm p-4 rounded relative bg-white"
     >
-      <Form.Item name={[name, "firstName"]} label="First Name">
-        <Input placeholder="enter first name" />
-      </Form.Item>
-      <Form.Item name={[name, "lastName"]} label="Last Name">
-        <Input placeholder="enter last name" />
-      </Form.Item>
-      <Form.Item name={[name, "phoneNumber"]} label="Phone Number">
-        <Input placeholder="enter last name" />
-      </Form.Item>
-      <Form.Item name={[name, "email"]} label="Email">
-        <Input placeholder="enter email" />
-      </Form.Item>
-      <Form.Item name={[name, "password"]} label="Password">
-        <Input placeholder="enter password" />
-      </Form.Item>
-      <Form.Item name={[name, "passwordConfirm"]} label="Confirm Password">
-        <Input placeholder="enter password confirmation" />
-      </Form.Item>
+      <div>
+        {" "}
+        <p className=" font-semibold pb-2">Personal Details</p>
+      </div>
+      <div className=" grid grid-cols-2 gap-4 relative bg-white">
+        <Form.Item name={[name, "firstName"]} label="First Name">
+          <Input placeholder="enter first name" />
+        </Form.Item>
+        <Form.Item name={[name, "lastName"]} label="Last Name">
+          <Input placeholder="enter last name" />
+        </Form.Item>
+        <Form.Item name={[name, "phoneNumber"]} label="Phone Number">
+          <Input placeholder="enter last name" />
+        </Form.Item>
+        <Form.Item name={[name, "email"]} label="Email">
+          <Input placeholder="enter email" />
+        </Form.Item>
+        <Form.Item name={[name, "password"]} label="Password">
+          <Input placeholder="enter password" />
+        </Form.Item>
+        <Form.Item name={[name, "passwordConfirm"]} label="Confirm Password">
+          <Input placeholder="enter password confirmation" />
+        </Form.Item>
+      </div>
     </div>
   );
 };
@@ -96,47 +102,57 @@ export const MicrofinStaffMemberForm = () => {
               )}
             </Form.List>
           </div>
-          <div className=" grid grid-cols-2 gap-4">
-            <Form.Item
-              label="ID Type"
-              name="idType"
-              rules={[{ required: false }]}
-            >
-              <Select placeholder="Select type" id="">
-                <Option value="Nome">None</Option>
-                <Option value="Nrc">NRC</Option>
-                <Option value="Passport">Passport</Option>
-                <Option value="DriversLicense">Drivers License</Option>
-              </Select>
-            </Form.Item>
-            <Form.Item name="idNumber" label="ID Number">
-              <Input placeholder="enter id number" />
-            </Form.Item>
-            <Form.Item name="employeeIdNumber" label="Employee ID Number">
-              <Input placeholder="enter employee id number" />
-            </Form.Item>
-            <Form.Item name="position" label="Position">
-              <Input placeholder="enter position" />
-            </Form.Item>
-            <Form.Item
-              label="Branch"
-              name="branchId"
-              rules={[{ required: false }]}
-            >
-              <Select
-                placeholder="Select Branch"
-                loading={isFetching}
-                notFoundContent={
-                  isFetching ? <Spin size="small" /> : "No Branch"
-                }
+          <div className=" grid grid-cols-1 gap-4 mb-4 shadow-sm p-4 rounded relative bg-white">
+            <div>
+              {" "}
+              <p className=" font-semibold pb-2">Employee Details</p>
+            </div>
+            <div className=" grid grid-cols-2 gap-4">
+              {" "}
+              <Form.Item
+                label="Branch"
+                name="branchId"
+                rules={[{ required: false }]}
               >
-                {branchesDataSelect.map((branches: BranchesData) => (
-                  <Option key={String(branches.id)} value={String(branches.id)}>
-                    {branches.name}
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item>
+                <Select
+                  placeholder="Select Branch"
+                  loading={isFetching}
+                  notFoundContent={
+                    isFetching ? <Spin size="small" /> : "No Branch"
+                  }
+                >
+                  {branchesDataSelect.map((branches: BranchesData) => (
+                    <Option
+                      key={String(branches.id)}
+                      value={String(branches.id)}
+                    >
+                      {branches.name}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+              <Form.Item
+                label="ID Type"
+                name="idType"
+                rules={[{ required: false }]}
+              >
+                <Select placeholder="Select type" id="">
+                  <Option value="Nome">None</Option>
+                  <Option value="Nrc">NRC</Option>
+                  <Option value="Passport">Passport</Option>
+                  <Option value="DriversLicense">Drivers License</Option>
+                </Select>
+              </Form.Item>
+              <Form.Item name="idNumber" label="ID Number">
+                <Input placeholder="enter id number" />
+              </Form.Item>
+              <Form.Item name="employeeIdNumber" label="Employee ID Number">
+                <Input placeholder="enter employee id number" />
+              </Form.Item>
+              <Form.Item name="position" label="Position">
+                <Input placeholder="enter position" />
+              </Form.Item>
+            </div>
           </div>
         </div>
         <Form.Item className="mt-6">
