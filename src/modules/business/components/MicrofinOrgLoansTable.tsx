@@ -1,9 +1,10 @@
 import { MicrofinLoansData } from "@/api/queries/summaryQueries";
-import { Button, Dropdown, MenuProps, Space, Table } from "antd";
+import { Button, Drawer, Dropdown, MenuProps, Space, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { ExportOutlined, EyeOutlined } from "@ant-design/icons";
 import DebouncedInputField from "@/modules/components/DebouncedInput";
 import { useState } from "react";
+import { MicrofinOrgLoansForm } from "./MicrofinOrgLoansForm";
 
 type MicrofinOrgLoansFormProps = {
   microfinOrganisationId: number;
@@ -142,6 +143,14 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansFormProps> = ({
           }}
         />
       </section>
+      <Drawer
+        title="Create Loan"
+        open={isCreateDrawerVisible}
+        onClose={() => setIsCreateDrawerVisible(false)}
+        width="40%"
+      >
+        <MicrofinOrgLoansForm />
+      </Drawer>
     </div>
   );
 };
