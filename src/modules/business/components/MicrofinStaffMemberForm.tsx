@@ -1,7 +1,13 @@
 import {
+  MicrofinStaffBody,
+  useCreateMicrofinStaffMemberMutation,
+} from "@/api/mutations/staffMutation";
+import {
   BranchesData,
+  MicrofinStaffMembersData,
   useGetMicrofinBranchesRequestQuery,
 } from "@/api/queries/summaryQueries";
+import { orange } from "@mui/material/colors";
 import { Button, Form, FormInstance, Input, Select, Spin } from "antd";
 import { Option } from "antd/es/mentions";
 import { useEffect, useState } from "react";
@@ -64,6 +70,8 @@ export const MicrofinStaffMemberForm = () => {
 
   const branchesDataSelect = branchesData?.data || [];
 
+  const [staffMemberData] = useCreateMicrofinStaffMemberMutation();
+
   useEffect(() => {
     if (branchesData) {
       setBranches(branchesData?.data || []);
@@ -72,7 +80,32 @@ export const MicrofinStaffMemberForm = () => {
 
   const handleSubmit = async (values: any) => {
     try {
-      const userData = {};
+      const userData =
+        values.user?.map((u: any) => ({
+          firstName: u.firstName || "",
+          lastName: u.lastName || "",
+          phoneNumber: u.phoneNumber || "",
+          email: u.email || "",
+          password: u.password || "",
+          passwordConfirm: u.passwordConfirm,
+        })) || [];
+
+      const organizationId = Number(localStorage.getItem("organizationId"));
+      const branchId = Number(values.branchId);
+
+      const microfinStaffMemberData: MicrofinStaffBody = {
+        user: userData,
+        idType: values.idType,
+        idNumber: values.idNumber,
+        employeeIdNumber: values.employeeIdNumber,
+        position: values.position,
+      };
+
+      await staffMemberData({
+        organizationId,
+        branchId,
+        microfinStaffMemberData,
+      }).unwrap();
     } catch (error) {}
   };
 
