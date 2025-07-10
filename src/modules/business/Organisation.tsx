@@ -14,11 +14,12 @@ import {
   MenuProps,
   Space,
 } from "antd";
-import { ExportOutlined, EyeOutlined } from "@ant-design/icons";
+import { ExportOutlined } from "@ant-design/icons";
 import { customLoader } from "@/components/table-loader";
 import { OrganisationForm } from "./components/OrganisationForm";
 import { MicrofinOrgStaffTable } from "./components/MicrofinOrgStaffTable";
 import { MicrofinOrgStaffMemberForm } from "./components/MIcrofinOrgStaffMemberForm";
+import { MicrofinOrgLoansTable } from "./components/MicrofinOrgLoansTable";
 
 const Organisation = () => {
   const [id, setSearchId] = useState<string>("");
@@ -30,8 +31,11 @@ const Organisation = () => {
 
   const [selectedOrganisation, setSelectedOrganisation] =
     useState<OrganisationData>();
+
   const [isOrganisationDrawerVisible, setIsOrganisationDrawerVisible] =
     useState(false);
+
+  const [isLoansDrawerVisible, setIsLoansDrawerVisible] = useState(false);
 
   const [organisations, setOrganisations] = useState<OrganisationData[]>([]);
   const { data: organisationData, isFetching } =
@@ -67,12 +71,24 @@ const Organisation = () => {
       if (organisation) {
         setIsOrganisationDrawerVisible(true);
       }
-      console.log("selectedOrganisation", selectedOrganisation?.id);
+      // console.log("selectedOrganisation", selectedOrganisation?.id);
+    }
+  };
+
+  const handleViewMicrofinOrgLoans = (organisationId: number) => {
+    if (organisationId && organisationData) {
+      const organisation = organisations.find((a) => a.id === organisationId);
+      setSelectedOrganisation(organisation);
+
+      if (organisation) {
+        setIsLoansDrawerVisible(true);
+      }
     }
   };
 
   const organisationsColumns = (
-    handleViewOrganisations: (id: number) => void
+    handleViewOrganisations: (id: number) => void,
+    handleViewMicrofinOrgLoans: (id: number) => void
   ): ColumnsType<OrganisationData> => [
     {
       title: "ID",
@@ -146,7 +162,7 @@ const Organisation = () => {
                 className="flex gap-2"
                 onClick={() => {
                   setSelectedOrganisation(record);
-                  setIsCreateStaffDrawerVisible(true);
+                  setIsLoansDrawerVisible(true);
                 }}
               >
                 <svg
@@ -258,7 +274,10 @@ const Organisation = () => {
       <section className="w-full h-full hidden md:flex md:flex-col">
         <Table
           dataSource={organisationData?.data || []}
-          columns={organisationsColumns(handleViewOrganisations)}
+          columns={organisationsColumns(
+            handleViewOrganisations,
+            handleViewMicrofinOrgLoans
+          )}
           rowKey="id"
           onChange={handleTableChange}
           loading={{
@@ -346,6 +365,26 @@ const Organisation = () => {
               <div className=" pt-8">
                 <MicrofinOrgStaffTable
                   showCreateButton={true}
+                  microfinOrganisationId={selectedOrganisation?.id}
+                />
+              </div>
+            </Card>
+          </div>
+        ) : (
+          "Invalid process"
+        )}
+      </Drawer>
+      <Drawer
+        width="85%"
+        open={isLoansDrawerVisible}
+        onClose={() => setIsLoansDrawerVisible(false)}
+        closeIcon={true}
+      >
+        {selectedOrganisation ? (
+          <div>
+            <Card title={`${selectedOrganisation.name} Loans`}>
+              <div className=" pt-8">
+                <MicrofinOrgLoansTable
                   microfinOrganisationId={selectedOrganisation?.id}
                 />
               </div>
