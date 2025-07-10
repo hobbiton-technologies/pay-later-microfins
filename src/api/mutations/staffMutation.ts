@@ -54,7 +54,7 @@ const StaffMutions = Api.injectEndpoints({
         microfinOrganisationId,
         microfinStaffMemberData,
       }) => ({
-        url: `/microfins/${organizationId}/branches/${microfinOrganisationId}/members`,
+        url: `/microfins/${organizationId}/microfin-organizations/${microfinOrganisationId}/members`,
         method: "POST",
         body: microfinStaffMemberData,
         headers: {

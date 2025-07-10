@@ -12,6 +12,7 @@ import { MicrofinOrgStaffMemberForm } from "./MIcrofinOrgStaffMemberForm";
 
 type StaffTableProps = {
   showCreateButton?: boolean;
+  microfinOrganisationId: number;
 };
 
 export const branchesColumns: ColumnsType<MicrofinOrgStaffMembersData> = [
@@ -75,6 +76,7 @@ export const branchesColumns: ColumnsType<MicrofinOrgStaffMembersData> = [
 
 export const MicrofinOrgStaffTable: React.FC<StaffTableProps> = ({
   showCreateButton = true,
+  microfinOrganisationId,
 }) => {
   const [id, setSearchId] = useState<number>(0);
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -171,7 +173,9 @@ export const MicrofinOrgStaffTable: React.FC<StaffTableProps> = ({
         onClose={() => setIsCreateDrawerVisible(false)}
         width="40%"
       >
-        <MicrofinOrgStaffMemberForm />
+        <MicrofinOrgStaffMemberForm
+          microfinOrganisationId={microfinOrganisationId}
+        />
       </Drawer>
     </div>
   );
