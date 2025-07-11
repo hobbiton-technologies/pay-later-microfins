@@ -386,7 +386,9 @@ const Organisation = () => {
             <Card title={`${selectedOrganisation.name} Loans`}>
               <div className=" pt-8">
                 <MicrofinOrgLoansTable
+                  showCreateButton={false}
                   microfinOrganisationId={selectedOrganisation?.id}
+                  microfinMemberId={selectedOrganisation.microfin.id}
                 />
               </div>
             </Card>

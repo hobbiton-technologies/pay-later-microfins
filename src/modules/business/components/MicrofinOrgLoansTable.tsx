@@ -7,6 +7,7 @@ import { useState } from "react";
 import { MicrofinOrgLoansForm } from "./MicrofinOrgLoansForm";
 
 type MicrofinOrgLoansTableProps = {
+  showCreateButton?: boolean;
   microfinOrganisationId: number;
   microfinMemberId: number; // Add this prop
 };
@@ -77,6 +78,7 @@ export const loansColumns: ColumnsType<MicrofinLoansData> = [
 ];
 
 export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
+  showCreateButton = true,
   microfinOrganisationId,
   microfinMemberId,
 }) => {
@@ -103,12 +105,17 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
           />
         </div>
 
-        <div className="flex gap-3">
-          <Button type="primary" onClick={() => setIsCreateDrawerVisible(true)}>
-            <ExportOutlined />
-            Create Loan
-          </Button>
-        </div>
+        {showCreateButton && (
+          <div className="flex gap-3">
+            <Button
+              type="primary"
+              onClick={() => setIsCreateDrawerVisible(true)}
+            >
+              <ExportOutlined />
+              Create Loan
+            </Button>
+          </div>
+        )}
       </section>
       <section className="w-full h-full hidden md:flex md:flex-col">
         <Table
