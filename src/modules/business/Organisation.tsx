@@ -366,6 +366,7 @@ const Organisation = () => {
                 <MicrofinOrgStaffTable
                   showCreateButton={true}
                   microfinOrganisationId={selectedOrganisation?.id}
+                  microfinMemberId={selectedOrganisation?.microfin?.id}
                 />
               </div>
             </Card>

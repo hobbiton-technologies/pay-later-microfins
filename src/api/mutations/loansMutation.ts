@@ -6,12 +6,13 @@ export interface MicrofinOrgLoansBody {
   interestRate: number;
   penaltyRate: number;
   penaltyCalculationMethod: string;
-  documents: [
-    {
-      name: string;
-      document: string;
-    }
-  ];
+  // documents: [
+  //   {
+  //     name: string;
+  //     document: string;
+  //   }
+  // ];
+  documents?: { name: string; document: string }[] | null;
   startDate: string;
   duration: number;
 }
@@ -19,8 +20,13 @@ export interface MicrofinOrgLoansBody {
 const LoansMutations = Api.injectEndpoints({
   endpoints: (builder) => ({
     CreateMicrofinOrgLoan: builder.mutation<any, any>({
-      query: ({ organizationId, orgId, memberId, microfinOrgLoanData }) => ({
-        url: `microfins/${organizationId}/microfin-organizations/${orgId}/members/${memberId}/loans`,
+      query: ({
+        organizationId,
+        microfinOrganisationId,
+        microfinMemberId,
+        microfinOrgLoanData,
+      }) => ({
+        url: `microfins/${organizationId}/microfin-organizations/${microfinOrganisationId}/members/${microfinMemberId}/loans`,
         method: "POST",
         body: microfinOrgLoanData,
       }),

@@ -2,13 +2,12 @@ import {
   MicrofinOrgStaffMembersData,
   OrganisationData,
   useGetMicrofinOrgStaffMembersQuery,
-  useGetOrganisationsRequestQuery,
 } from "@/api/queries/summaryQueries";
 import { Button, Card, Drawer, Dropdown, MenuProps, Space } from "antd";
 import Table, { ColumnsType } from "antd/es/table";
 import { ExportOutlined, EyeOutlined } from "@ant-design/icons";
 import DebouncedInputField from "@/modules/components/DebouncedInput";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { customLoader } from "@/components/table-loader";
 import { MicrofinOrgStaffMemberForm } from "./MIcrofinOrgStaffMemberForm";
 import { MicrofinOrgLoansTable } from "./MicrofinOrgLoansTable";
@@ -16,23 +15,21 @@ import { MicrofinOrgLoansTable } from "./MicrofinOrgLoansTable";
 type StaffTableProps = {
   showCreateButton?: boolean;
   microfinOrganisationId: number;
+  microfinMemberId: number;
 };
 
 export const MicrofinOrgStaffTable: React.FC<StaffTableProps> = ({
   showCreateButton = true,
   microfinOrganisationId,
+  microfinMemberId,
 }) => {
   const [id, setSearchId] = useState<number>(0);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isCreateDrawerVisible, setIsCreateDrawerVisible] = useState(false);
   const [pageNumber, setPageNumber] = useState<number | null>(1);
   const [pageSize, setPageSize] = useState(10);
-  const [organisations, setOrganisations] = useState<OrganisationData[]>([]);
-
-  const [selectedOrganisation, setSelectedOrganisation] = useState<
-    OrganisationData[]
-  >([]);
-
+  const [selectedStaffMember, setSelectedStaffMember] =
+    useState<MicrofinOrgStaffMembersData | null>(null);
   const [isLoansDrawerVisible, setIsLoansDrawerVisible] = useState(false);
 
   const { data: staffResponse, isFetching } =
@@ -44,18 +41,6 @@ export const MicrofinOrgStaffTable: React.FC<StaffTableProps> = ({
       pageSize: pageSize,
     });
 
-  // const { data: organisationData, isFetching } =
-  //   useGetOrganisationsRequestQuery({
-  //     id: Number(localStorage.getItem("organizationId")),
-  //     pageNumber: pageNumber ?? 1,
-  //     pageSize: pageSize,
-  //   });
-
-  // useEffect(() => {
-  //   if (staffResponse) {
-  //     setSelectedOrganisation(organisationData?.data);
-  //   }
-  // });
   const handleTableChange = (pagination: any) => {
     setPageNumber(pagination.current);
     setPageSize(pagination.pageSize);
@@ -87,11 +72,10 @@ export const MicrofinOrgStaffTable: React.FC<StaffTableProps> = ({
       render: (_, record: MicrofinOrgStaffMembersData) =>
         record?.user.email ?? "NA",
     },
-
     {
       title: "Position",
       dataIndex: "position",
-      key: "postion",
+      key: "position",
     },
     {
       title: "National ID",
@@ -101,14 +85,14 @@ export const MicrofinOrgStaffTable: React.FC<StaffTableProps> = ({
     {
       title: "Actions",
       key: "actions",
-      render: (record: OrganisationData) => {
+      render: (record: MicrofinOrgStaffMembersData) => {
         const items: MenuProps["items"] = [
           {
             key: "1",
             label: (
               <span
                 className="flex gap-2"
-                onClick={() => alert("View CLicked")}
+                onClick={() => alert("View Clicked")}
               >
                 <EyeOutlined />
                 View
@@ -121,7 +105,7 @@ export const MicrofinOrgStaffTable: React.FC<StaffTableProps> = ({
               <span
                 className="flex gap-2"
                 onClick={() => {
-                  // setSelectedOrganisation(record);
+                  setSelectedStaffMember(record);
                   setIsLoansDrawerVisible(true);
                 }}
               >
@@ -139,7 +123,7 @@ export const MicrofinOrgStaffTable: React.FC<StaffTableProps> = ({
                     d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
                   />
                 </svg>
-                Loans
+                Create Loan
               </span>
             ),
           },
@@ -160,7 +144,6 @@ export const MicrofinOrgStaffTable: React.FC<StaffTableProps> = ({
 
   return (
     <div className=" mt-2">
-      {" "}
       <p className=" font-semibold">Organisation Staff Members</p>
       <section className="w-full h-full py-3 flex   gap-2 ">
         <div className="w-full">
@@ -229,18 +212,21 @@ export const MicrofinOrgStaffTable: React.FC<StaffTableProps> = ({
           microfinOrganisationId={microfinOrganisationId}
         />
       </Drawer>
-      {/* <Drawer
-        width="83%"
+      <Drawer
+        width="60%"
         open={isLoansDrawerVisible}
         onClose={() => setIsLoansDrawerVisible(false)}
         closeIcon={true}
       >
-        {selectedOrganisation ? (
+        {selectedStaffMember ? (
           <div>
-            <Card title={`${selectedOrganisation.name} Loans`}>
+            <Card
+              title={`${selectedStaffMember.user.firstName} ${selectedStaffMember.user.lastName} - Loans`}
+            >
               <div className=" pt-8">
                 <MicrofinOrgLoansTable
-                  microfinOrganisationId={selectedOrganisation?.id}
+                  microfinOrganisationId={microfinOrganisationId}
+                  microfinMemberId={selectedStaffMember.id}
                 />
               </div>
             </Card>
@@ -248,7 +234,7 @@ export const MicrofinOrgStaffTable: React.FC<StaffTableProps> = ({
         ) : (
           "Invalid process"
         )}
-      </Drawer> */}
+      </Drawer>
     </div>
   );
 };

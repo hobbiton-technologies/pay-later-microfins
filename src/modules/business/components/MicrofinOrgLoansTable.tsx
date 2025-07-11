@@ -6,9 +6,9 @@ import DebouncedInputField from "@/modules/components/DebouncedInput";
 import { useState } from "react";
 import { MicrofinOrgLoansForm } from "./MicrofinOrgLoansForm";
 
-type MicrofinOrgLoansFormProps = {
+type MicrofinOrgLoansTableProps = {
   microfinOrganisationId: number;
-  // microfinMemberId: number;
+  microfinMemberId: number; // Add this prop
 };
 
 export const loansColumns: ColumnsType<MicrofinLoansData> = [
@@ -55,7 +55,7 @@ export const loansColumns: ColumnsType<MicrofinLoansData> = [
         {
           key: "1",
           label: (
-            <span className="flex gap-2" onClick={() => alert("View CLicked")}>
+            <span className="flex gap-2" onClick={() => alert("View Clicked")}>
               <EyeOutlined />
               View
             </span>
@@ -76,8 +76,9 @@ export const loansColumns: ColumnsType<MicrofinLoansData> = [
   },
 ];
 
-export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansFormProps> = ({
+export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
   microfinOrganisationId,
+  microfinMemberId,
 }) => {
   const [id, setSearchId] = useState<string>("");
   const [isCreateDrawerVisible, setIsCreateDrawerVisible] = useState(false);
@@ -89,6 +90,7 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansFormProps> = ({
   const handleSearchClear = () => {
     setSearchId(id);
   };
+
   return (
     <div>
       <section className="w-full h-full py-3 flex   gap-2 ">
@@ -150,7 +152,10 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansFormProps> = ({
         onClose={() => setIsCreateDrawerVisible(false)}
         width="40%"
       >
-        <MicrofinOrgLoansForm microfinOrganisationId={microfinOrganisationId} />
+        <MicrofinOrgLoansForm
+          microfinOrganisationId={microfinOrganisationId}
+          microfinMemberId={microfinMemberId}
+        />
       </Drawer>
     </div>
   );

@@ -21,7 +21,7 @@ type ItemProps = {
 };
 
 type MicrofinOrgLoansFormProps = {
-  //   microfinMemberId: number;
+  microfinMemberId: number;
   microfinOrganisationId: number;
 };
 
@@ -50,7 +50,7 @@ const DocumetItem: React.FC<ItemProps> = ({ name, fieldKey }) => {
 };
 
 export const MicrofinOrgLoansForm: React.FC<MicrofinOrgLoansFormProps> = ({
-  //   microfinMemberId,
+  microfinMemberId,
   microfinOrganisationId,
 }) => {
   const [form] = Form.useForm();
@@ -59,10 +59,14 @@ export const MicrofinOrgLoansForm: React.FC<MicrofinOrgLoansFormProps> = ({
   const handleSubmit = async (values: any) => {
     try {
       const documentData =
-        values.documents.map((d: any) => ({
-          name: d.name || "",
-          document: d.document || "",
-        })) || null;
+        Array.isArray(values.documents) &&
+        values.documents.length > 0 &&
+        values.documents.some((d: any) => d.name || d.document)
+          ? values.documents.map((d: any) => ({
+              name: d.name || "",
+              document: d.document || "",
+            }))
+          : null;
 
       const organizationId = Number(localStorage.getItem("organizationId"));
 
@@ -71,15 +75,16 @@ export const MicrofinOrgLoansForm: React.FC<MicrofinOrgLoansFormProps> = ({
         interestRate: values.interestRate || "",
         penaltyRate: values.penaltyRate || "",
         penaltyCalculationMethod: values.penaltyCalculationMethod || "",
-        documents: documentData,
+        documents: documentData || null,
         startDate: values.startDate || "",
         duration: values.duration || "",
       };
 
       await loadDataSubmit({
-        microfinOrgLoanData,
         organizationId,
         microfinOrganisationId,
+        microfinMemberId,
+        microfinOrgLoanData,
       });
       message.success("Microfin Organisation loan Successfully Created");
       form.resetFields();
@@ -128,7 +133,7 @@ export const MicrofinOrgLoansForm: React.FC<MicrofinOrgLoansFormProps> = ({
             </div>
           </div>
           <div>
-            <Form.List name="document" initialValue={[{}]}>
+            <Form.List name="documents" initialValue={[{}]}>
               {(fields) => (
                 <>
                   {fields.map(({ key, name }, index) => (
