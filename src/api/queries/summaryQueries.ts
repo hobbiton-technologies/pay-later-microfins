@@ -1,5 +1,13 @@
 import { Api } from "../apiSlice";
 
+export interface LoanStats {
+  month: number;
+  monthlyStats: {
+    loansTotal: number;
+    repaymentsTotal: number;
+  };
+}
+
 export interface MicrofinLoansData {
   id: number;
   amount: number;
@@ -211,6 +219,22 @@ export interface MicrofinStaffResponse {
   data: MicrofinStaffMembersData[];
   errors: null;
 }
+
+export interface LoanStatsResponse {
+  statusCode: number;
+  message: string;
+  data: [
+    {
+      month: number;
+      monthlyStats: {
+        loansTotal: number;
+        repaymentsTotal: number;
+      };
+    }
+  ];
+  errors: string[];
+}
+
 export const SummaryRequest = Api.injectEndpoints({
   endpoints: (builder) => ({
     getSummaryData: builder.query<any, any>({
@@ -312,6 +336,15 @@ export const SummaryRequest = Api.injectEndpoints({
       },
       providesTags: ["MicrofinOrgStaffMembers"],
     }),
+
+    getLoanStats: builder.query<LoanStatsResponse, { organizationId: number }>({
+      query: ({ organizationId }) => {
+        const params = new URLSearchParams();
+        if (organizationId) params.append("id", organizationId.toString());
+
+        return `microfins/${organizationId}/stats/monthly?${params.toString()}`;
+      },
+    }),
   }),
 });
 
@@ -321,4 +354,5 @@ export const {
   useGetOrganisationsRequestQuery,
   useGetMicrofinStaffMembersQuery,
   useGetMicrofinOrgStaffMembersQuery,
+  useGetLoanStatsQuery,
 } = SummaryRequest;
