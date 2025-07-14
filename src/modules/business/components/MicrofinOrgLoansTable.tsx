@@ -1,5 +1,5 @@
 import { MicrofinLoansData } from "@/api/queries/summaryQueries";
-import { Button, Drawer, Dropdown, MenuProps, Space, Table } from "antd";
+import { Button, Drawer, Dropdown, MenuProps, Space, Table, Tag } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { ExportOutlined, EyeOutlined } from "@ant-design/icons";
 import DebouncedInputField from "@/modules/components/DebouncedInput";
@@ -9,11 +9,13 @@ import {
   GetMicrofinLoansData,
   useGetMicrofinLoansQuery,
 } from "@/api/queries/loansQueries";
+import { customLoader } from "@/components/table-loader";
+import { useNavigate } from "react-router-dom";
 
 type MicrofinOrgLoansTableProps = {
   showCreateButton?: boolean;
   microfinOrganisationId: number;
-  microfinMemberId: number; // Add this prop
+  microfinMemberId: number;
 };
 
 export const loansColumns: ColumnsType<GetMicrofinLoansData> = [
@@ -25,7 +27,7 @@ export const loansColumns: ColumnsType<GetMicrofinLoansData> = [
   {
     title: "Member Name",
     render: (_, record: GetMicrofinLoansData) =>
-      `${record.member.user.firstName} + ${record.member.user.lastName}`,
+      `${record.member.user.firstName}  ${record.member.user.lastName}`,
   },
   {
     title: "Amount",
@@ -41,6 +43,16 @@ export const loansColumns: ColumnsType<GetMicrofinLoansData> = [
     title: "Loan Status",
     dataIndex: "loanStatus",
     key: "loanStatus",
+    render: (loanStatus: string) => {
+      const status = loanStatus ? "UnderReview" : "Not Withdrawn";
+      const color = loanStatus ? "orange" : "green";
+
+      return (
+        <Tag color={color} style={{ fontWeight: "500" }}>
+          {status}
+        </Tag>
+      );
+    },
   },
   {
     title: "Interest Rate",
@@ -65,12 +77,21 @@ export const loansColumns: ColumnsType<GetMicrofinLoansData> = [
   {
     title: "Actions",
     key: "actions",
-    render: () => {
+    render: (record: GetMicrofinLoansData) => {
       const items: MenuProps["items"] = [
         {
           key: "1",
           label: (
-            <span className="flex gap-2" onClick={() => alert("View Clicked")}>
+            <span className="flex gap-2" onClick={() => alert("clicked")}>
+              <EyeOutlined />
+              View
+            </span>
+          ),
+        },
+        {
+          key: "1",
+          label: (
+            <span className="flex gap-2" onClick={() => alert("clicked")}>
               <EyeOutlined />
               View
             </span>
@@ -160,15 +181,15 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
           columns={loansColumns}
           rowKey="id"
           // onChange={handleTableChange}
-          // loading={{
-          //   spinning: isFetching,
-          //   indicator: customLoader,
-          // }}
-          // pagination={{
-          //   current: pageNumber ?? 1,
-          //   pageSize: pageSize,
-          //   total: staffResponse?.totalItems,
-          // }}
+          loading={{
+            spinning: isFetching,
+            indicator: customLoader,
+          }}
+          pagination={{
+            current: pageNumber ?? 1,
+            pageSize: pageSize,
+            total: apiResponse?.totalItems,
+          }}
           components={{
             header: {
               cell: (props: any) => (

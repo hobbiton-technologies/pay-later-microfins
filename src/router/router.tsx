@@ -21,6 +21,7 @@ import { Products } from "../modules/summary/Products";
 import { SignIn } from "@/auth/pages/signIn";
 import Branches from "@/modules/business/Branches";
 import Organisation from "@/modules/business/Organisation";
+import { MicrofinOrgDetailsPage } from "@/modules/business/components/MicrofinOrgDetailsPage";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -112,6 +113,15 @@ export const router = createBrowserRouter(
           element={
             <ProtectedRoute>
               <Reporting />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/microfin-org-details"
+          element={
+            <ProtectedRoute>
+              <MicrofinOrgDetailsPage />
             </ProtectedRoute>
           }
         />

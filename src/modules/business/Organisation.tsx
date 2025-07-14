@@ -14,12 +14,14 @@ import {
   MenuProps,
   Space,
 } from "antd";
-import { ExportOutlined } from "@ant-design/icons";
+import { ExportOutlined, EyeOutlined } from "@ant-design/icons";
 import { customLoader } from "@/components/table-loader";
 import { OrganisationForm } from "./components/OrganisationForm";
 import { MicrofinOrgStaffTable } from "./components/MicrofinOrgStaffTable";
 import { MicrofinOrgStaffMemberForm } from "./components/MIcrofinOrgStaffMemberForm";
 import { MicrofinOrgLoansTable } from "./components/MicrofinOrgLoansTable";
+import { GetMicrofinLoansData } from "@/api/queries/loansQueries";
+import { useNavigate } from "react-router-dom";
 
 const Organisation = () => {
   const [id, setSearchId] = useState<string>("");
@@ -28,6 +30,7 @@ const Organisation = () => {
   const [isCreateDrawerVisible, setIsCreateDrawerVisible] = useState(false);
   const [isCreateStaffDrawerVisible, setIsCreateStaffDrawerVisible] =
     useState(false);
+  const navigate = useNavigate();
 
   const [selectedOrganisation, setSelectedOrganisation] =
     useState<OrganisationData>();
@@ -87,8 +90,8 @@ const Organisation = () => {
   };
 
   const organisationsColumns = (
-    handleViewOrganisations: (id: number) => void,
-    handleViewMicrofinOrgLoans: (id: number) => void
+    handleViewOrganisations: (record: OrganisationData) => void
+    // handleViewMicrofinOrgLoans: (id: number) => void
   ): ColumnsType<OrganisationData> => [
     {
       title: "ID",
@@ -135,54 +138,66 @@ const Organisation = () => {
             label: (
               <span
                 className="flex gap-2"
-                onClick={() => handleViewOrganisations(record?.id)}
+                onClick={() => handleViewOrganisations(record)}
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className=" w-4"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
-                  />
-                </svg>
-                Staff Members
+                <EyeOutlined />
+                View
               </span>
             ),
           },
-          {
-            key: "2",
-            label: (
-              <span
-                className="flex gap-2"
-                onClick={() => {
-                  setSelectedOrganisation(record);
-                  setIsLoansDrawerVisible(true);
-                }}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className=" w-4"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
-                  />
-                </svg>
-                Loans
-              </span>
-            ),
-          },
+          // {
+          //   key: "2",
+          //   label: (
+          //     <span
+          //       className="flex gap-2"
+          //       onClick={() => handleViewOrganisations(record)}
+          //     >
+          //       <svg
+          //         xmlns="http://www.w3.org/2000/svg"
+          //         fill="none"
+          //         viewBox="0 0 24 24"
+          //         strokeWidth={1.5}
+          //         stroke="currentColor"
+          //         className=" w-4"
+          //       >
+          //         <path
+          //           strokeLinecap="round"
+          //           strokeLinejoin="round"
+          //           d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
+          //         />
+          //       </svg>
+          //       Staff Members
+          //     </span>
+          //   ),
+          // },
+          // {
+          //   key: "3",
+          //   label: (
+          //     <span
+          //       className="flex gap-2"
+          //       onClick={() => {
+          //         setSelectedOrganisation(record);
+          //         setIsLoansDrawerVisible(true);
+          //       }}
+          //     >
+          //       <svg
+          //         xmlns="http://www.w3.org/2000/svg"
+          //         fill="none"
+          //         viewBox="0 0 24 24"
+          //         strokeWidth={1.5}
+          //         stroke="currentColor"
+          //         className=" w-4"
+          //       >
+          //         <path
+          //           strokeLinecap="round"
+          //           strokeLinejoin="round"
+          //           d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
+          //         />
+          //       </svg>
+          //       Loans
+          //     </span>
+          //   ),
+          // },
           // {
           //   key: "2",
           //   label: (
@@ -217,20 +232,7 @@ const Organisation = () => {
           <Space>
             <Dropdown menu={{ items }} placement="bottomRight">
               <Button className=" dark:text-white">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  className=" w-6"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"
-                  />
-                </svg>
+                <EyeOutlined />
               </Button>
             </Dropdown>
           </Space>
@@ -274,9 +276,14 @@ const Organisation = () => {
       <section className="w-full h-full hidden md:flex md:flex-col">
         <Table
           dataSource={organisationData?.data || []}
-          columns={organisationsColumns(
-            handleViewOrganisations,
-            handleViewMicrofinOrgLoans
+          columns={organisationsColumns((record: OrganisationData) =>
+            navigate(`/microfin-org-details`, {
+              state: {
+                member: {
+                  ...record,
+                },
+              },
+            })
           )}
           rowKey="id"
           onChange={handleTableChange}
@@ -330,7 +337,7 @@ const Organisation = () => {
           />
         )}
       </Drawer>
-      <Drawer
+      {/* <Drawer
         width="85%"
         open={isOrganisationDrawerVisible}
         onClose={() => setIsOrganisationDrawerVisible(false)}
@@ -396,7 +403,7 @@ const Organisation = () => {
         ) : (
           "Invalid process"
         )}
-      </Drawer>
+      </Drawer> */}
     </div>
   );
 };

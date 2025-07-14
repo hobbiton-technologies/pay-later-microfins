@@ -77,6 +77,9 @@ export interface GetMicrofinLoansData {
 }
 
 export interface MicrofinLoansResponse {
+  pageNumber: number;
+  pageSize: number;
+  totalItems: number;
   statusCode: number;
   message: string;
   data: GetMicrofinLoansData[];
