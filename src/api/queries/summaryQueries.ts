@@ -223,15 +223,7 @@ export interface MicrofinStaffResponse {
 export interface LoanStatsResponse {
   statusCode: number;
   message: string;
-  data: [
-    {
-      month: number;
-      monthlyStats: {
-        loansTotal: number;
-        repaymentsTotal: number;
-      };
-    }
-  ];
+  data: LoanStats[];
   errors: string[];
 }
 
