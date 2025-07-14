@@ -1,5 +1,14 @@
 import { Api } from "../apiSlice";
 
+export interface FinanceStatsData {
+  totalDisbursementAmount: number;
+  totalRepaymentAmount: number;
+  totalInterestAmount: number;
+  totalOverdueAmount: number;
+  totalLoansDisbursed: number;
+  totalMous: number;
+}
+
 export interface OverviewStatsData {
   dailyAmount: number;
   monthlyAmount: number;
@@ -264,6 +273,13 @@ export interface OverviewStatsResponse {
   errors: [];
 }
 
+export interface FinanceStatsResponse {
+  statusCode: number;
+  message: string;
+  data: FinanceStatsData;
+  errors: string[];
+}
+
 export const SummaryRequest = Api.injectEndpoints({
   endpoints: (builder) => ({
     getSummaryData: builder.query<any, any>({
@@ -398,6 +414,18 @@ export const SummaryRequest = Api.injectEndpoints({
         return `microfins/${organizationId}/stats/overview?${params.toString()}`;
       },
     }),
+
+    getfinanceStats: builder.query<
+      FinanceStatsResponse,
+      { organizationId: number }
+    >({
+      query: ({ organizationId }) => {
+        const params = new URLSearchParams();
+        if (organizationId) params.append("id", organizationId.toString());
+
+        return `microfins/${organizationId}/stats/finance?${params.toString()}`;
+      },
+    }),
   }),
 });
 
@@ -410,4 +438,5 @@ export const {
   useGetLoanStatsQuery,
   useGetOrganisationStatsQuery,
   useGetOverviewStatsQuery,
+  useGetfinanceStatsQuery,
 } = SummaryRequest;

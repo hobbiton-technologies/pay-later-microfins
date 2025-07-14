@@ -5,8 +5,36 @@ import {
   RiseOutlined,
 } from "@ant-design/icons";
 import { formatCurrency } from "../../../utils/formaters";
+import {
+  FinanceStatsData,
+  OverviewStatsData,
+  useGetfinanceStatsQuery,
+  useGetOverviewStatsQuery,
+} from "@/api/queries/summaryQueries";
+import { useEffect, useState } from "react";
 
 const SummaryStats = () => {
+  const [financialOverview, setFinancialOverview] =
+    useState<FinanceStatsData>();
+  const [overviewData, setOverviewData] = useState<OverviewStatsData>();
+
+  const { data: financialResponse, isFetching } = useGetfinanceStatsQuery({
+    organizationId: Number(localStorage.getItem("organizationId")),
+  });
+
+  const { data: overviewResponse } = useGetOverviewStatsQuery({
+    organizationId: Number(localStorage.getItem("organizationId")),
+  });
+
+  useEffect(() => {
+    if (overviewResponse) {
+      setOverviewData(overviewResponse?.data);
+    }
+
+    if (financialResponse) {
+      setFinancialOverview(financialResponse?.data);
+    }
+  });
   const statItems = [
     {
       label: "Disbursed Amt",
@@ -14,7 +42,7 @@ const SummaryStats = () => {
       values: {
         dtd: formatCurrency(23445),
         mtd: formatCurrency(23345677),
-        ytd: formatCurrency(6543331),
+        ytd: financialResponse?.data.totalDisbursementAmount,
       },
     },
     {
@@ -32,7 +60,7 @@ const SummaryStats = () => {
       values: {
         dtd: formatCurrency(23445),
         mtd: formatCurrency(23345677),
-        ytd: formatCurrency(6543331),
+        ytd: financialResponse?.data.totalInterestAmount,
       },
     },
     {
@@ -59,7 +87,7 @@ const SummaryStats = () => {
       values: {
         dtd: formatCurrency(23445),
         mtd: formatCurrency(23345677),
-        ytd: formatCurrency(6543331),
+        ytd: overviewResponse?.data.dailyAmount,
       },
     },
     {
@@ -68,7 +96,7 @@ const SummaryStats = () => {
       values: {
         dtd: formatCurrency(23445),
         mtd: formatCurrency(23345677),
-        ytd: formatCurrency(6543331),
+        ytd: overviewResponse?.data.monthlyAmount,
       },
     },
     {
@@ -77,7 +105,7 @@ const SummaryStats = () => {
       values: {
         dtd: formatCurrency(23445),
         mtd: formatCurrency(23345677),
-        ytd: formatCurrency(6543331),
+        ytd: overviewResponse?.data.annualAmount,
       },
     },
     {
@@ -86,7 +114,7 @@ const SummaryStats = () => {
       values: {
         dtd: "23445",
         mtd: formatCurrency(23345677),
-        ytd: formatCurrency(6543331),
+        ytd: overviewResponse?.data.activeLoans,
       },
     },
     {
@@ -95,7 +123,7 @@ const SummaryStats = () => {
       values: {
         dtd: "23445",
         mtd: formatCurrency(23345677),
-        ytd: formatCurrency(6543331),
+        ytd: overviewResponse?.data.failedLoans,
       },
     },
   ];
@@ -119,11 +147,11 @@ const SummaryStats = () => {
             <div className=" border-t border-slate-300 pt-2">
               <div className=" flex gap-2 justify-between ">
                 <span>Today </span>
-                <div>{values.dtd}</div>
+                <div className=" font-semibold">{values.dtd}</div>
               </div>
               <div className=" flex gap-2 justify-between">
                 <span>This Month </span>
-                <div>{values.mtd}</div>
+                <div className=" font-semibold">{values.mtd}</div>
               </div>
             </div>
           </div>
