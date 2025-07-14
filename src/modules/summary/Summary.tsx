@@ -14,11 +14,11 @@ const Summary: React.FC = () => {
         <div>
           <SummaryStats />
         </div>
-        <div className=" flex justify-between">
-          <div className=" w-[40rem]">
+        <div className="w-full h-full flex flex-col md:flex-row justify-between gap-4">
+          <div className=" ">
             <LoanPerformaceChart />
           </div>
-          <div>
+          <div className=" w-full flex-1">
             <OrganisationPieChart />
           </div>
         </div>

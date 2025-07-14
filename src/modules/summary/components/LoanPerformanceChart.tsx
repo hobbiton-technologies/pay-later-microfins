@@ -85,7 +85,7 @@ export const LoanPerformaceChart = () => {
   const trendPercentage = calculateTrend();
 
   return (
-    <div className="shadow-sm rounded-md p-4">
+    <div className="">
       <Card className="h-full flex flex-col">
         <CardHeader className=" items-center">
           <CardTitle>Loan Performance by Month</CardTitle>

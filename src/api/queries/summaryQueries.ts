@@ -1,5 +1,28 @@
 import { Api } from "../apiSlice";
 
+export interface OverviewStatsData {
+  dailyAmount: number;
+  monthlyAmount: number;
+  annualAmount: number;
+  activeLoansAmount: number;
+  pendingLoansAmount: number;
+  failedLoansAmount: number;
+  fullySettledAmount: number;
+  fromInceptionAmount: number;
+  interestAmount: number;
+  activeLoans: number;
+  pendingLoans: number;
+  failedLoans: number;
+  repayedLoans: number;
+  fromInception: number;
+}
+
+export interface OrganisationStatsData {
+  all: number;
+  withMou: number;
+  withoutMou: number;
+}
+
 export interface LoanStats {
   month: number;
   monthlyStats: {
@@ -227,6 +250,20 @@ export interface LoanStatsResponse {
   errors: string[];
 }
 
+export interface OrganisationStatsResponse {
+  statusCode: number;
+  message: string;
+  data: OrganisationStatsData;
+  errors: string[];
+}
+
+export interface OverviewStatsResponse {
+  statusCode: 200;
+  message: "Ok";
+  data: OverviewStatsData;
+  errors: [];
+}
+
 export const SummaryRequest = Api.injectEndpoints({
   endpoints: (builder) => ({
     getSummaryData: builder.query<any, any>({
@@ -337,6 +374,30 @@ export const SummaryRequest = Api.injectEndpoints({
         return `microfins/${organizationId}/stats/monthly?${params.toString()}`;
       },
     }),
+
+    getOrganisationStats: builder.query<
+      OrganisationStatsResponse,
+      { organizationId: number }
+    >({
+      query: ({ organizationId }) => {
+        const params = new URLSearchParams();
+        if (organizationId) params.append("id", organizationId.toString());
+
+        return `microfins/${organizationId}/stats/organizations?${params.toString()}`;
+      },
+    }),
+
+    getOverviewStats: builder.query<
+      OverviewStatsResponse,
+      { organizationId: number }
+    >({
+      query: ({ organizationId }) => {
+        const params = new URLSearchParams();
+        if (organizationId) params.append("id", organizationId.toString());
+
+        return `microfins/${organizationId}/stats/overview?${params.toString()}`;
+      },
+    }),
   }),
 });
 
@@ -347,4 +408,6 @@ export const {
   useGetMicrofinStaffMembersQuery,
   useGetMicrofinOrgStaffMembersQuery,
   useGetLoanStatsQuery,
+  useGetOrganisationStatsQuery,
+  useGetOverviewStatsQuery,
 } = SummaryRequest;

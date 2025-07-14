@@ -202,3 +202,8 @@
     @apply bg-background text-foreground;
   }
 }
+.card-content,
+.ant-card-body {
+  border: none !important;
+  box-shadow: none !important;
+}
