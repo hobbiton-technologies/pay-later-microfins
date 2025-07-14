@@ -1,6 +1,6 @@
 import { Api } from "../apiSlice";
 
-export interface MicrofinLoansData {
+export interface GetMicrofinLoansData {
   member: {
     id: number;
     user: {
@@ -79,7 +79,7 @@ export interface MicrofinLoansData {
 export interface MicrofinLoansResponse {
   statusCode: number;
   message: string;
-  data: MicrofinLoansData[];
+  data: GetMicrofinLoansData[];
   errors: string[];
 }
 
@@ -95,8 +95,8 @@ const LoansRequest = Api.injectEndpoints({
         loanStatus: string;
         startDate: string;
         endDate: string;
-        pageSize: string;
-        pageNumber: string;
+        pageSize: number;
+        pageNumber: number;
       }
     >({
       query: ({

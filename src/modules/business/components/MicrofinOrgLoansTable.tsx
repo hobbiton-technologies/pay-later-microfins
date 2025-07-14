@@ -3,8 +3,12 @@ import { Button, Drawer, Dropdown, MenuProps, Space, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { ExportOutlined, EyeOutlined } from "@ant-design/icons";
 import DebouncedInputField from "@/modules/components/DebouncedInput";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MicrofinOrgLoansForm } from "./MicrofinOrgLoansForm";
+import {
+  GetMicrofinLoansData,
+  useGetMicrofinLoansQuery,
+} from "@/api/queries/loansQueries";
 
 type MicrofinOrgLoansTableProps = {
   showCreateButton?: boolean;
@@ -12,11 +16,16 @@ type MicrofinOrgLoansTableProps = {
   microfinMemberId: number; // Add this prop
 };
 
-export const loansColumns: ColumnsType<MicrofinLoansData> = [
+export const loansColumns: ColumnsType<GetMicrofinLoansData> = [
   {
     title: "ID",
     dataIndex: "id",
     key: "id",
+  },
+  {
+    title: "Member Name",
+    render: (_, record: GetMicrofinLoansData) =>
+      `${record.member.user.firstName} + ${record.member.user.lastName}`,
   },
   {
     title: "Amount",
@@ -29,9 +38,19 @@ export const loansColumns: ColumnsType<MicrofinLoansData> = [
     key: "interestRate",
   },
   {
-    title: "Penalty Rate",
-    dataIndex: "penaltyRate",
-    key: "penaltyRate",
+    title: "Loan Status",
+    dataIndex: "loanStatus",
+    key: "loanStatus",
+  },
+  {
+    title: "Interest Rate",
+    dataIndex: "interestRate",
+    key: "interestRate",
+  },
+  {
+    title: "Duration",
+    dataIndex: "duration",
+    key: "duration",
   },
   {
     title: "Penalty Calculation Method",
@@ -42,11 +61,6 @@ export const loansColumns: ColumnsType<MicrofinLoansData> = [
     title: "Start Date",
     dataIndex: "startDate",
     key: "startDate",
-  },
-  {
-    title: "Duration",
-    dataIndex: "duration",
-    key: "duration",
   },
   {
     title: "Actions",
@@ -84,15 +98,38 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
 }) => {
   const [id, setSearchId] = useState<string>("");
   const [isCreateDrawerVisible, setIsCreateDrawerVisible] = useState(false);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [loanStatus, setloanStatus] = useState<string>("");
+  const [startDate, setstartDate] = useState<string>("");
+  const [endDate, setendDate] = useState<string>("");
+  const [pageNumber, setPageNumber] = useState<number | null>(1);
+  const [pageSize, setPageSize] = useState(10);
 
   const handleSearch = () => {
     setSearchId(id);
+    setSearchQuery(searchQuery);
   };
 
   const handleSearchClear = () => {
     setSearchId(id);
   };
 
+  const { data: apiResponse, isFetching } = useGetMicrofinLoansQuery({
+    id: Number(localStorage.getItem("organizationId")),
+    memberid: microfinMemberId,
+    microfinOrganisationId: microfinOrganisationId,
+    query: searchQuery,
+    loanStatus: loanStatus,
+    startDate: startDate,
+    endDate: endDate,
+    pageNumber: pageNumber ?? 1,
+    pageSize: pageSize,
+  });
+
+  useEffect(() => {
+    if (apiResponse) {
+    }
+  });
   return (
     <div>
       <section className="w-full h-full py-3 flex   gap-2 ">
@@ -119,7 +156,7 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
       </section>
       <section className="w-full h-full hidden md:flex md:flex-col">
         <Table
-          // dataSource={staffResponse?.data || []}
+          dataSource={apiResponse?.data || []}
           columns={loansColumns}
           rowKey="id"
           // onChange={handleTableChange}
