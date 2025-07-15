@@ -4,15 +4,18 @@ import {
   Descriptions,
   Drawer,
   Dropdown,
+  Form,
+  Input,
   MenuProps,
+  message,
+  Modal,
+  Select,
   Space,
   Table,
   Tag,
-  Upload,
 } from "antd";
 import { ColumnsType } from "antd/es/table";
-import Icon, {
-  BlockOutlined,
+import {
   ExportOutlined,
   EyeOutlined,
   StopOutlined,
@@ -27,8 +30,9 @@ import {
 } from "@/api/queries/loansQueries";
 import { customLoader } from "@/components/table-loader";
 import { formatCurrency } from "@/utils/formaters";
-import { Check, Send } from "lucide-react";
-import { OrganisationData } from "@/api/queries/summaryQueries";
+import { Check } from "lucide-react";
+import { useApproveMicrofinOrgLoanMutation } from "@/api/mutations/loansMutation";
+import { Option } from "antd/es/mentions";
 
 type MicrofinOrgLoansTableProps = {
   showCreateButton?: boolean;
@@ -37,7 +41,8 @@ type MicrofinOrgLoansTableProps = {
 };
 
 export const loansColumns = (
-  handleViewMicrofinOrgLoans: (record: GetMicrofinLoansData) => void
+  handleViewMicrofinOrgLoans: (record: GetMicrofinLoansData) => void,
+  handleApproveMicrofinOrgLoan: (record: GetMicrofinLoansData) => void
 ): ColumnsType<GetMicrofinLoansData> => [
   {
     title: "ID",
@@ -167,7 +172,7 @@ export const loansColumns = (
                 label: (
                   <span
                     className="flex gap-2 text-blue-500"
-                    onClick={() => alert("clicked")}
+                    onClick={() => handleApproveMicrofinOrgLoan(record)}
                   >
                     <div className=" w-4">
                       {" "}
@@ -219,8 +224,9 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
   const [endDate, setendDate] = useState<string>("");
   const [pageNumber, setPageNumber] = useState<number | null>(1);
   const [pageSize, setPageSize] = useState(10);
+  const [form] = Form.useForm();
 
-  const [isOrganisationDrawerVisible, setIsOrganisationDrawerVisible] =
+  const [isLoanApproveDrawerVisible, setIsLoanApproveDrawerVisible] =
     useState(false);
 
   const [isLoansDrawerVisible, setIsLoansDrawerVisible] = useState(false);
@@ -235,6 +241,8 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
   const handleSearchClear = () => {
     setSearchId(id);
   };
+
+  const [approveLoan, { isLoading }] = useApproveMicrofinOrgLoanMutation();
 
   const { data: apiResponse, isFetching } = useGetMicrofinLoansQuery({
     id: Number(localStorage.getItem("organizationId")),
@@ -258,6 +266,17 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
       }
     }
   };
+
+  const handleApproveMicrofinOrgLoan = (record: GetMicrofinLoansData) => {
+    if (record) {
+      const loan = loans.find((a) => a.id === record.id);
+      setSelectedLoan(loan);
+      if (loan) {
+        setIsLoanApproveDrawerVisible(true);
+      }
+    }
+  };
+
   useEffect(() => {
     if (apiResponse?.data) {
       setLoans(apiResponse.data);
@@ -277,6 +296,26 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
   };
 
   const color = statusColors[selectedLoan?.loanStatus || ""] || "default";
+
+  const handleSubmit = async (values: { answer: string; comment: string }) => {
+    try {
+      const approveLoanData = {
+        answer: values.answer,
+        comment: values.comment,
+      };
+      await approveLoan({
+        organizationId: Number(localStorage.getItem("organizationId")),
+        microfinOrganisationId: selectedLoan?.member.organization.id,
+        loanId: selectedLoan?.id,
+        approveLoanData,
+      }).unwrap();
+      message.success("Loan response submitted successfully");
+      setIsLoanApproveDrawerVisible(false);
+      console.log(microfinOrganisationId);
+    } catch (error) {
+      message.error("Something went wrong");
+    }
+  };
 
   return (
     <div>
@@ -305,7 +344,10 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
       <section className="w-full h-full hidden md:flex md:flex-col">
         <Table
           dataSource={apiResponse?.data || []}
-          columns={loansColumns(handleViewMicrofinOrgLoans)}
+          columns={loansColumns(
+            handleViewMicrofinOrgLoans,
+            handleApproveMicrofinOrgLoan
+          )}
           rowKey="id"
           // onChange={handleTableChange}
           loading={{
@@ -501,6 +543,53 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
           "Invalid process"
         )}
       </Drawer>
+      <Modal
+        centered
+        open={isLoanApproveDrawerVisible}
+        onCancel={() => setIsLoanApproveDrawerVisible(false)}
+        confirmLoading={isLoading}
+        onOk={() => {
+          form.submit();
+        }}
+      >
+        <Form form={form} layout="vertical" onFinish={handleSubmit}>
+          <div className=" text-center py-6">
+            {" "}
+            You're about to approve a{" "}
+            <span className=" font-semibold">
+              {selectedLoan?.duration} day(s)
+            </span>{" "}
+            loan application of amount{" "}
+            <div className=" text-lg font-semibold">
+              ZMW{" "}
+              {selectedLoan?.amount
+                .toFixed(2)
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+            </div>{" "}
+            at an interest rate of{" "}
+            <span className=" font-semibold">
+              {selectedLoan?.interestRate}%
+            </span>{" "}
+            for{" "}
+            <span className=" font-semibold">
+              {selectedLoan?.member.user.firstName}{" "}
+              {selectedLoan?.member.user.lastName}
+            </span>
+          </div>
+          {/* your loan confirmation text */}
+          <div className=" grid grid-cols-2 gap-4">
+            <Form.Item required={true} name="comment" label="Comment">
+              <Input placeholder="enter comment" />
+            </Form.Item>
+            <Form.Item required={true} name="answer" label="Select">
+              <Select placeholder="Select">
+                <Option value="Accept">Approve</Option>
+                <Option value="Reject">Reject</Option>
+              </Select>
+            </Form.Item>
+          </div>
+        </Form>
+      </Modal>
     </div>
   );
 };

@@ -381,7 +381,7 @@ const Organisation = () => {
         ) : (
           "Invalid process"
         )}
-      </Drawer>
+      </Drawer> */}
       <Drawer
         width="83%"
         open={isLoansDrawerVisible}
@@ -392,18 +392,25 @@ const Organisation = () => {
           <div>
             <Card title={`${selectedOrganisation.name} Loans`}>
               <div className=" pt-8">
-                <MicrofinOrgLoansTable
-                  showCreateButton={false}
-                  microfinOrganisationId={selectedOrganisation?.id}
-                  microfinMemberId={selectedOrganisation.microfin.id}
-                />
+                {/* FIX: Check if microfin exists and has valid ID before rendering */}
+                {selectedOrganisation.microfin?.id ? (
+                  <MicrofinOrgLoansTable
+                    showCreateButton={false}
+                    microfinOrganisationId={selectedOrganisation.id} // Use organisation ID, not microfin ID
+                    microfinMemberId={selectedOrganisation.microfin.id}
+                  />
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    No microfin data available for this organisation
+                  </div>
+                )}
               </div>
             </Card>
           </div>
         ) : (
           "Invalid process"
         )}
-      </Drawer> */}
+      </Drawer>
     </div>
   );
 };

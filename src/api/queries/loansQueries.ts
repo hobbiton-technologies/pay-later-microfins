@@ -146,6 +146,7 @@ const LoansRequest = Api.injectEndpoints({
 
         return `microfins/${id}/microfin-organizations/loans?${params.toString()}`;
       },
+      providesTags: ["ApproveLoan"],
     }),
   }),
 });

@@ -18,6 +18,7 @@ export const Api = createApi({
     "Branches",
     "MicrofinStaffMembers",
     "MicrofinOrgStaffMembers",
+    "ApproveLoan",
   ],
   endpoints: () => ({}),
 });
