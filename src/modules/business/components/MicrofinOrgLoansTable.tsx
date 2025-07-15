@@ -350,7 +350,7 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
         />
       </Drawer>
       <Drawer
-        width="50%"
+        width="60%"
         open={isLoansDrawerVisible}
         onClose={() => setIsLoansDrawerVisible(false)}
         closeIcon={true}
@@ -361,7 +361,7 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
               title={`${selectedLoan.member.user.firstName} ${selectedLoan.member.user.lastName}`}
             >
               <div className="">
-                <p className=" pb-2">Loan Details</p>
+                <p className=" pb-2 font-medium">Loan Details</p>
                 <Descriptions
                   bordered={true}
                   column={2}
@@ -376,19 +376,65 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
                   <Descriptions.Item label="Interest Rate">
                     {selectedLoan.interestRate}%
                   </Descriptions.Item>
+                  <Descriptions.Item label="Full Amount">
+                    ZMW{" "}
+                    {selectedLoan.fullLoanAmount
+                      .toFixed(2)
+                      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                  </Descriptions.Item>
                   <Descriptions.Item label="Duration">
                     {selectedLoan.duration} days
                   </Descriptions.Item>
                   <Descriptions.Item label="Loan Status">
                     <Tag color={color}> {selectedLoan.loanStatus}</Tag>
                   </Descriptions.Item>
-                  <Descriptions.Item label="Penalty Calculation Method">
+                  <Descriptions.Item label="Penalty Calculation ">
                     {selectedLoan.penaltyCalculationMethod}
+                  </Descriptions.Item>
+
+                  <Descriptions.Item label="Maturity Date">
+                    {new Date(selectedLoan.maturityDate).toLocaleDateString(
+                      "en-GB",
+                      {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      }
+                    )}
+                  </Descriptions.Item>
+
+                  <Descriptions.Item label="Start Date">
+                    {new Date(selectedLoan.startDate).toLocaleDateString(
+                      "en-GB",
+                      {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      }
+                    )}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Comment">
+                    {selectedLoan.comment}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Resolved By">
+                    {selectedLoan?.resolvedBy?.user
+                      ? `${selectedLoan.resolvedBy.user.firstName} (${selectedLoan.resolvedBy.user.email})`
+                      : "NA"}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="UploadedBy">
+                    {selectedLoan?.uploadedBy.user
+                      ? `${selectedLoan.uploadedBy.user.firstName} (${selectedLoan.uploadedBy.user.email})`
+                      : "NA"}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="UploadedBy Phone">
+                    {selectedLoan?.uploadedBy.user
+                      ? `${selectedLoan.uploadedBy.user.phoneNumber}`
+                      : "NA"}
                   </Descriptions.Item>
                 </Descriptions>
               </div>
               <div className=" py-4">
-                <p className=" pb-2">Personal Details</p>
+                <p className=" pb-2 font-medium">Personal Details</p>
                 <Descriptions
                   bordered={true}
                   column={2}
@@ -398,7 +444,7 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
                     {selectedLoan.member.user.email}
                   </Descriptions.Item>
                   <Descriptions.Item label="Phone Number">
-                    +260 {selectedLoan.member.user.phoneNumber}
+                    {selectedLoan.member.user.phoneNumber}
                   </Descriptions.Item>
                   <Descriptions.Item label="ID Type">
                     {selectedLoan.member.idType}
@@ -413,7 +459,7 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
                     {selectedLoan.member.activated}
                   </Descriptions.Item>
                   <Descriptions.Item label="Bank Name">
-                    {selectedLoan.member.bankDetails.name}
+                    {selectedLoan?.member.bankDetails.name}
                   </Descriptions.Item>
                   <Descriptions.Item label="Bank Branch">
                     {selectedLoan.member.bankDetails?.branch ?? "NA"}
@@ -427,8 +473,8 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
                 </Descriptions>
               </div>
 
-              <div className=" pb-4">
-                <p className=" pb-2">Organization Details</p>
+              <div className=" pb-4 ">
+                <p className=" pb-2 font-semibold">Organization Details</p>
                 <Descriptions
                   bordered={true}
                   column={2}
