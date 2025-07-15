@@ -1,7 +1,23 @@
-import { MicrofinLoansData } from "@/api/queries/summaryQueries";
-import { Button, Drawer, Dropdown, MenuProps, Space, Table, Tag } from "antd";
+import {
+  Button,
+  Card,
+  Descriptions,
+  Drawer,
+  Dropdown,
+  MenuProps,
+  Space,
+  Table,
+  Tag,
+  Upload,
+} from "antd";
 import { ColumnsType } from "antd/es/table";
-import { ExportOutlined, EyeOutlined } from "@ant-design/icons";
+import Icon, {
+  BlockOutlined,
+  ExportOutlined,
+  EyeOutlined,
+  StopOutlined,
+  UpSquareOutlined,
+} from "@ant-design/icons";
 import DebouncedInputField from "@/modules/components/DebouncedInput";
 import { useEffect, useState } from "react";
 import { MicrofinOrgLoansForm } from "./MicrofinOrgLoansForm";
@@ -10,9 +26,9 @@ import {
   useGetMicrofinLoansQuery,
 } from "@/api/queries/loansQueries";
 import { customLoader } from "@/components/table-loader";
-import { useNavigate } from "react-router-dom";
-import { Reorder } from "framer-motion";
 import { formatCurrency } from "@/utils/formaters";
+import { Check, Send } from "lucide-react";
+import { OrganisationData } from "@/api/queries/summaryQueries";
 
 type MicrofinOrgLoansTableProps = {
   showCreateButton?: boolean;
@@ -20,7 +36,9 @@ type MicrofinOrgLoansTableProps = {
   microfinMemberId: number;
 };
 
-export const loansColumns: ColumnsType<GetMicrofinLoansData> = [
+export const loansColumns = (
+  handleViewMicrofinOrgLoans: (record: GetMicrofinLoansData) => void
+): ColumnsType<GetMicrofinLoansData> => [
   {
     title: "ID",
     dataIndex: "id",
@@ -118,21 +136,61 @@ export const loansColumns: ColumnsType<GetMicrofinLoansData> = [
         {
           key: "1",
           label: (
-            <span className="flex gap-2" onClick={() => alert("clicked")}>
+            <span
+              className="flex gap-2 text-slate-500"
+              onClick={() => handleViewMicrofinOrgLoans(record)}
+            >
               <EyeOutlined />
               View
             </span>
           ),
         },
-        {
-          key: "2",
-          label: (
-            <span className="flex gap-2" onClick={() => alert("clicked")}>
-              <EyeOutlined />
-              Approve
-            </span>
-          ),
-        },
+        ...(record.loanStatus.toLowerCase() === "approved"
+          ? [
+              {
+                key: "2",
+                label: (
+                  <span
+                    className="flex gap-2 text-green-500"
+                    onClick={() => alert("clicked")}
+                  >
+                    <UpSquareOutlined />
+                    Disburse
+                  </span>
+                ),
+              },
+            ]
+          : record.loanStatus.toLowerCase() === "underreview"
+          ? [
+              {
+                key: "3",
+                label: (
+                  <span
+                    className="flex gap-2 text-blue-500"
+                    onClick={() => alert("clicked")}
+                  >
+                    <div className=" w-4">
+                      {" "}
+                      <Check className=" w-4" />
+                    </div>
+                    Approve
+                  </span>
+                ),
+              },
+              {
+                key: "4",
+                label: (
+                  <span
+                    className="flex gap-2 text-red-500"
+                    onClick={() => alert("clicked")}
+                  >
+                    <StopOutlined />
+                    Reject
+                  </span>
+                ),
+              },
+            ]
+          : []),
       ];
 
       return (
@@ -162,6 +220,13 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
   const [pageNumber, setPageNumber] = useState<number | null>(1);
   const [pageSize, setPageSize] = useState(10);
 
+  const [isOrganisationDrawerVisible, setIsOrganisationDrawerVisible] =
+    useState(false);
+
+  const [isLoansDrawerVisible, setIsLoansDrawerVisible] = useState(false);
+  const [loans, setLoans] = useState<GetMicrofinLoansData[]>([]);
+  const [selectedLoan, setSelectedLoan] = useState<GetMicrofinLoansData>();
+
   const handleSearch = () => {
     setSearchId(id);
     setSearchQuery(searchQuery);
@@ -183,10 +248,36 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
     pageSize: pageSize,
   });
 
-  useEffect(() => {
-    if (apiResponse) {
+  const handleViewMicrofinOrgLoans = (record: GetMicrofinLoansData) => {
+    if (record) {
+      const loan = loans.find((a) => a.id === record.id);
+      setSelectedLoan(loan);
+
+      if (loan) {
+        setIsLoansDrawerVisible(true);
+      }
     }
-  });
+  };
+  useEffect(() => {
+    if (apiResponse?.data) {
+      setLoans(apiResponse.data);
+    }
+  }, [apiResponse]);
+
+  const statusColors: Record<string, string> = {
+    UnderReview: "orange",
+    Rejected: "red",
+    Approved: "blue",
+    DisbursementInitiated: "purple",
+    Disbursed: "green",
+    PartiallySettled: "gold",
+    FullySettled: "cyan",
+    Overdue: "volcano",
+    Defaulted: "magenta",
+  };
+
+  const color = statusColors[selectedLoan?.loanStatus || ""] || "default";
+
   return (
     <div>
       <section className="w-full h-full py-3 flex   gap-2 ">
@@ -214,7 +305,7 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
       <section className="w-full h-full hidden md:flex md:flex-col">
         <Table
           dataSource={apiResponse?.data || []}
-          columns={loansColumns}
+          columns={loansColumns(handleViewMicrofinOrgLoans)}
           rowKey="id"
           // onChange={handleTableChange}
           loading={{
@@ -257,6 +348,112 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
           microfinOrganisationId={microfinOrganisationId}
           microfinMemberId={microfinMemberId}
         />
+      </Drawer>
+      <Drawer
+        width="50%"
+        open={isLoansDrawerVisible}
+        onClose={() => setIsLoansDrawerVisible(false)}
+        closeIcon={true}
+      >
+        {selectedLoan ? (
+          <div>
+            <Card
+              title={`${selectedLoan.member.user.firstName} ${selectedLoan.member.user.lastName}`}
+            >
+              <div className="">
+                <p className=" pb-2">Loan Details</p>
+                <Descriptions
+                  bordered={true}
+                  column={2}
+                  className=" text-slate-800"
+                >
+                  <Descriptions.Item label="Loan amount">
+                    ZMW{" "}
+                    {selectedLoan.amount
+                      .toFixed(2)
+                      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Interest Rate">
+                    {selectedLoan.interestRate}%
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Duration">
+                    {selectedLoan.duration} days
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Loan Status">
+                    <Tag color={color}> {selectedLoan.loanStatus}</Tag>
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Penalty Calculation Method">
+                    {selectedLoan.penaltyCalculationMethod}
+                  </Descriptions.Item>
+                </Descriptions>
+              </div>
+              <div className=" py-4">
+                <p className=" pb-2">Personal Details</p>
+                <Descriptions
+                  bordered={true}
+                  column={2}
+                  className=" text-slate-800"
+                >
+                  <Descriptions.Item label="Email">
+                    {selectedLoan.member.user.email}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Phone Number">
+                    +260 {selectedLoan.member.user.phoneNumber}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="ID Type">
+                    {selectedLoan.member.idType}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="ID Number">
+                    {selectedLoan.member.idNumber}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Position">
+                    {selectedLoan.member.position}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Activated">
+                    {selectedLoan.member.activated}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Bank Name">
+                    {selectedLoan.member.bankDetails.name}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Bank Branch">
+                    {selectedLoan.member.bankDetails?.branch ?? "NA"}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Bank Code">
+                    {selectedLoan.member.bankDetails?.code}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Account No">
+                    {selectedLoan.member.bankDetails?.accountNumber}
+                  </Descriptions.Item>
+                </Descriptions>
+              </div>
+
+              <div className=" pb-4">
+                <p className=" pb-2">Organization Details</p>
+                <Descriptions
+                  bordered={true}
+                  column={2}
+                  className=" text-slate-800"
+                >
+                  <Descriptions.Item label="Microfin Org">
+                    {selectedLoan.member.organization.name}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Phone">
+                    +260 {selectedLoan.member.organization.contactNo}
+                  </Descriptions.Item>
+                </Descriptions>
+              </div>
+              {/* <div className=" pt-8">
+                <MicrofinOrgLoansTable
+                  showCreateButton={false}
+                  microfinOrganisationId={selectedLoan?.id}
+                  microfinMemberId={selectedLoan.member.id}
+                />
+              </div> */}
+            </Card>
+          </div>
+        ) : (
+          "Invalid process"
+        )}
       </Drawer>
     </div>
   );

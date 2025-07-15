@@ -1,6 +1,7 @@
 import { Api } from "../apiSlice";
 
 export interface GetMicrofinLoansData {
+  id: number;
   member: {
     id: number;
     user: {
