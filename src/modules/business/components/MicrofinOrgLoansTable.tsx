@@ -11,6 +11,8 @@ import {
 } from "@/api/queries/loansQueries";
 import { customLoader } from "@/components/table-loader";
 import { useNavigate } from "react-router-dom";
+import { Reorder } from "framer-motion";
+import { formatCurrency } from "@/utils/formaters";
 
 type MicrofinOrgLoansTableProps = {
   showCreateButton?: boolean;
@@ -33,36 +35,69 @@ export const loansColumns: ColumnsType<GetMicrofinLoansData> = [
     title: "Amount",
     dataIndex: "amount",
     key: "amount",
+    render: (amount: number) => (
+      <div className=" font-semibold">{formatCurrency(amount)}</div>
+    ),
   },
   {
-    title: "Interest Amount",
+    title: "Interest Rate",
     dataIndex: "interestRate",
     key: "interestRate",
+    render: (_, record: GetMicrofinLoansData) => `${record.interestRate}%`,
+  },
+  {
+    title: "Interest with Amount",
+    dataIndex: "interestRate",
+    key: "interestRate",
+    render: (_, record: GetMicrofinLoansData) =>
+      ` ${formatCurrency(
+        record.amount + (record.interestRate / 100) * record.amount
+      )}`,
   },
   {
     title: "Loan Status",
     dataIndex: "loanStatus",
     key: "loanStatus",
     render: (loanStatus: string) => {
-      const status = loanStatus ? "UnderReview" : "Not Withdrawn";
-      const color = loanStatus ? "orange" : "green";
+      const statusColors: Record<string, string> = {
+        UnderReview: "orange",
+        Rejected: "red",
+        Approved: "blue",
+        DisbursementInitiated: "purple",
+        Disbursed: "green",
+        PartiallySettled: "gold",
+        FullySettled: "cyan",
+        Overdue: "volcano",
+        Defaulted: "magenta",
+      };
+
+      const displayName: Record<string, string> = {
+        UnderReview: "Under Review",
+        Rejected: "Rejected",
+        Approved: "Approved",
+        DisbursementInitiated: "Disbursement Initiated",
+        Disbursed: "Disbursed",
+        PartiallySettled: "Partially Settled",
+        FullySettled: "Fully Settled",
+        Overdue: "Overdue",
+        Defaulted: "Defaulted",
+      };
+
+      const color = statusColors[loanStatus] || "default";
+      const label = displayName[loanStatus] || loanStatus;
 
       return (
-        <Tag color={color} style={{ fontWeight: "500" }}>
-          {status}
+        <Tag color={color} style={{ fontWeight: 500 }}>
+          {label}
         </Tag>
       );
     },
   },
   {
-    title: "Interest Rate",
-    dataIndex: "interestRate",
-    key: "interestRate",
-  },
-  {
     title: "Duration",
     dataIndex: "duration",
     key: "duration",
+    render: (_, record: GetMicrofinLoansData) => `${record.duration} days`,
   },
   {
     title: "Penalty Calculation Method",
@@ -73,6 +108,7 @@ export const loansColumns: ColumnsType<GetMicrofinLoansData> = [
     title: "Start Date",
     dataIndex: "startDate",
     key: "startDate",
+    render: (date: string) => new Date(date).toLocaleDateString(),
   },
   {
     title: "Actions",
@@ -89,11 +125,11 @@ export const loansColumns: ColumnsType<GetMicrofinLoansData> = [
           ),
         },
         {
-          key: "1",
+          key: "2",
           label: (
             <span className="flex gap-2" onClick={() => alert("clicked")}>
               <EyeOutlined />
-              View
+              Approve
             </span>
           ),
         },
