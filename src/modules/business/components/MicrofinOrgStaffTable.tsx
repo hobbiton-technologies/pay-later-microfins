@@ -34,9 +34,9 @@ export const MicrofinOrgStaffTable: React.FC<StaffTableProps> = ({
 
   const { data: staffResponse, isFetching } =
     useGetMicrofinOrgStaffMembersQuery({
-      id: id,
+      id: Number(localStorage.getItem("organizationId")),
       query: searchQuery,
-      organizationId: Number(localStorage.getItem("organizationId")),
+      organizationId: microfinOrganisationId,
       pageNumber: pageNumber ?? 1,
       pageSize: pageSize,
     });

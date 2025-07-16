@@ -44,6 +44,25 @@
   }
 }
 
+.ant-tabs-card.ant-tabs-small > .ant-tabs-nav .ant-tabs-tab {
+  padding: 6px 16px 6px 0;
+}
+
+.ant-tabs-card > .ant-tabs-nav .ant-tabs-tab,
+.ant-tabs-card > div > .ant-tabs-nav .ant-tabs-tab {
+  margin: 0;
+  background: transparent;
+  border: none;
+  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+.ant-tabs-card .ant-tabs-tab-active .ant-tabs-tab-btn {
+  padding: 3px 30px 3px 30px;
+  border-radius: 16px;
+  background-color: #e7e7e7;
+  margin-bottom: 3px;
+}
+
 /* #root {
   max-width: 1280px;
   margin: 0 auto;

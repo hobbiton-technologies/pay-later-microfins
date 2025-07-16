@@ -53,6 +53,13 @@ const Organisation = () => {
       setOrganisations(organisationData.data);
     }
   }, [organisationData]);
+
+  useEffect(() => {
+    if (selectedOrganisation) {
+      setIsLoansDrawerVisible(true);
+    }
+  }, [selectedOrganisation]);
+
   const handleTableChange = (pagination: any) => {
     setPageNumber(pagination.current);
     setPageSize(pagination.pageSize);

@@ -1,13 +1,17 @@
-import { Tabs, TabsProps } from "antd";
+import { Segmented, Tabs, TabsProps } from "antd";
 import { motion } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
 import { MicrofinOrgStaffTable } from "./MicrofinOrgStaffTable";
 import { MicrofinOrgLoansTable } from "./MicrofinOrgLoansTable";
+import React from "react";
+
+type Align = "start" | "center" | "end";
 
 export const MicrofinOrgDetailsPage = () => {
   const location = useLocation();
   const organisation = location.state?.member;
   const navigate = useNavigate();
+  const [alignValue, setAlignValue] = React.useState<Align>("start");
 
   const items: TabsProps["items"] = [
     {
@@ -15,7 +19,7 @@ export const MicrofinOrgDetailsPage = () => {
       label: "Staff Members",
       children: (
         <MicrofinOrgStaffTable
-          microfinOrganisationId={0}
+          microfinOrganisationId={organisation.id}
           microfinMemberId={0}
         />
       ),
@@ -25,7 +29,7 @@ export const MicrofinOrgDetailsPage = () => {
       label: "Loans",
       children: (
         <MicrofinOrgLoansTable
-          microfinOrganisationId={0}
+          microfinOrganisationId={organisation.id}
           microfinMemberId={0}
         />
       ),
@@ -64,7 +68,12 @@ export const MicrofinOrgDetailsPage = () => {
         </motion.div>
       </div>
       <section className="w-full h-full  justify-evenly items-center">
-        <Tabs defaultActiveKey="1" items={items} onChange={onChange} />
+        <Tabs
+          type="card"
+          defaultActiveKey="1"
+          items={items}
+          onChange={onChange}
+        />
       </section>
     </div>
   );

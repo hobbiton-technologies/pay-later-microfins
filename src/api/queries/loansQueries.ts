@@ -119,12 +119,8 @@ const LoansRequest = Api.injectEndpoints({
         if (memberid) {
           params.append("memberid", memberid.toString());
         }
-        if (microfinOrganisationId) {
-          params.append(
-            "microfinOrganisationId",
-            microfinOrganisationId.toString()
-          );
-        }
+        params.append("organizationId", microfinOrganisationId.toString());
+
         if (query) {
           params.append("query", query.toString());
         }
@@ -146,7 +142,7 @@ const LoansRequest = Api.injectEndpoints({
 
         return `microfins/${id}/microfin-organizations/loans?${params.toString()}`;
       },
-      providesTags: ["ApproveLoan"],
+      providesTags: ["ApproveLoan", "CreateLoan", "DisburseLoan"],
     }),
   }),
 });

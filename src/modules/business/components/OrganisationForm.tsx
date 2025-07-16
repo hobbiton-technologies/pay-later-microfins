@@ -22,7 +22,11 @@ export const OrganisationForm = () => {
         contactNo: values.contactNo,
       };
       await organisationCreation({ organizationId, organisationData });
-    } catch (error) {}
+      message.success("Microfin Organisation successfully created");
+      form.resetFields();
+    } catch (error) {
+      console.log("Failed to create microin orgnisation");
+    }
   };
 
   return (
@@ -30,6 +34,7 @@ export const OrganisationForm = () => {
       <Form
         form={form}
         layout="vertical"
+        onFinish={handleSubmit}
         style={{ maxWidth: 1000, marginTop: 24 }}
         className=" grid grid-cols-1 gap-8 items-center"
       >

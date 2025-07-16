@@ -7,18 +7,16 @@ export interface OrganisationData {
 
 const OrganisationRequest = Api.injectEndpoints({
   endpoints: (builder) => ({
-    CreateOrganisation: builder.mutation<
-      any,
-      { organizationId: number; organisationData: OrganisationData }
-    >({
+    CreateOrganisation: builder.mutation<any, any>({
       query: ({ organizationId, organisationData }) => ({
-        url: `/microfins/${organizationId}/microfin-organizations;`,
+        url: `/microfins/${organizationId}/microfin-organizations`,
         method: "POST",
         body: organisationData,
         headers: {
           "Content-Type": "application/json",
         },
       }),
+      invalidatesTags: ["MicrofinOrganisations"],
     }),
   }),
 });

@@ -1,4 +1,3 @@
-import { url } from "inspector";
 import { Api } from "../apiSlice";
 
 export interface ApproveMicrofinLoansBody {
@@ -35,6 +34,7 @@ const LoansMutations = Api.injectEndpoints({
         method: "POST",
         body: microfinOrgLoanData,
       }),
+      invalidatesTags: ["CreateLoan"],
     }),
 
     ApproveMicrofinOrgLoan: builder.mutation<any, any>({
@@ -50,10 +50,19 @@ const LoansMutations = Api.injectEndpoints({
       }),
       invalidatesTags: ["ApproveLoan"],
     }),
+
+    DisburseMicrofinOrgLoan: builder.mutation<any, any>({
+      query: ({ organizationId, microfinOrganisationId, loanId }) => ({
+        url: `microfins/${organizationId}/microfin-organizations/${microfinOrganisationId}/loans/${loanId}/disbursements`,
+        method: "POST",
+      }),
+      invalidatesTags: ["DisburseLoan"],
+    }),
   }),
 });
 
 export const {
   useCreateMicrofinOrgLoanMutation,
   useApproveMicrofinOrgLoanMutation,
+  useDisburseMicrofinOrgLoanMutation,
 } = LoansMutations;

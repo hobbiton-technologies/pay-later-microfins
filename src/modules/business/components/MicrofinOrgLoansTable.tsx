@@ -31,8 +31,12 @@ import {
 import { customLoader } from "@/components/table-loader";
 import { formatCurrency } from "@/utils/formaters";
 import { Check } from "lucide-react";
-import { useApproveMicrofinOrgLoanMutation } from "@/api/mutations/loansMutation";
+import {
+  useApproveMicrofinOrgLoanMutation,
+  useDisburseMicrofinOrgLoanMutation,
+} from "@/api/mutations/loansMutation";
 import { Option } from "antd/es/mentions";
+import { MicrofinOrgStaffBody } from "@/api/mutations/staffMutation";
 
 type MicrofinOrgLoansTableProps = {
   showCreateButton?: boolean;
@@ -42,7 +46,8 @@ type MicrofinOrgLoansTableProps = {
 
 export const loansColumns = (
   handleViewMicrofinOrgLoans: (record: GetMicrofinLoansData) => void,
-  handleApproveMicrofinOrgLoan: (record: GetMicrofinLoansData) => void
+  handleApproveMicrofinOrgLoan: (record: GetMicrofinLoansData) => void,
+  handleDisburseLoan: (record: GetMicrofinLoansData) => void
 ): ColumnsType<GetMicrofinLoansData> => [
   {
     title: "ID",
@@ -157,7 +162,7 @@ export const loansColumns = (
                 label: (
                   <span
                     className="flex gap-2 text-green-500"
-                    onClick={() => alert("clicked")}
+                    onClick={() => handleDisburseLoan(record)}
                   >
                     <UpSquareOutlined />
                     Disburse
@@ -228,10 +233,13 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
 
   const [isLoanApproveDrawerVisible, setIsLoanApproveDrawerVisible] =
     useState(false);
+  const [isLoanDisburseDrawerVisible, setIsLoanDisburseDrawerVisible] =
+    useState(false);
 
   const [isLoansDrawerVisible, setIsLoansDrawerVisible] = useState(false);
   const [loans, setLoans] = useState<GetMicrofinLoansData[]>([]);
   const [selectedLoan, setSelectedLoan] = useState<GetMicrofinLoansData>();
+  const [selectedMember, setSelectedMember] = useState<MicrofinOrgStaffBody>();
 
   const handleSearch = () => {
     setSearchId(id);
@@ -242,6 +250,8 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
     setSearchId(id);
   };
 
+  const [disburseLoan, { isLoading: disbursementIsLoading }] =
+    useDisburseMicrofinOrgLoanMutation();
   const [approveLoan, { isLoading }] = useApproveMicrofinOrgLoanMutation();
 
   const { data: apiResponse, isFetching } = useGetMicrofinLoansQuery({
@@ -255,6 +265,8 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
     pageNumber: pageNumber ?? 1,
     pageSize: pageSize,
   });
+
+  console.log(microfinOrganisationId);
 
   const handleViewMicrofinOrgLoans = (record: GetMicrofinLoansData) => {
     if (record) {
@@ -277,6 +289,28 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
     }
   };
 
+  const handleDisburseLoan = (record: GetMicrofinLoansData) => {
+    if (record) {
+      const loan = loans.find((a) => a.id === record.id);
+      setSelectedLoan(loan);
+      if (loan) {
+        setIsLoanDisburseDrawerVisible(true);
+      }
+    }
+  };
+
+  // const handleSubmitLoan = (record: MicrofinOrgStaffMembersData) => {
+  //   if (record) {
+  //     const members = selectedMember.find(
+  //       (a) => a.id === record.organization.id
+  //     );
+  //     setSelectedMember(members);
+  //     // if (members) {
+  //     //   setIsLoanDisburseDrawerVisible(true);
+  //     // }
+  //   }
+  // };
+
   useEffect(() => {
     if (apiResponse?.data) {
       setLoans(apiResponse.data);
@@ -297,7 +331,10 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
 
   const color = statusColors[selectedLoan?.loanStatus || ""] || "default";
 
-  const handleSubmit = async (values: { answer: string; comment: string }) => {
+  const handleLoanApproveSubmit = async (values: {
+    answer: string;
+    comment: string;
+  }) => {
     try {
       const approveLoanData = {
         answer: values.answer,
@@ -346,7 +383,8 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
           dataSource={apiResponse?.data || []}
           columns={loansColumns(
             handleViewMicrofinOrgLoans,
-            handleApproveMicrofinOrgLoan
+            handleApproveMicrofinOrgLoan,
+            handleDisburseLoan
           )}
           rowKey="id"
           // onChange={handleTableChange}
@@ -458,21 +496,21 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
                   <Descriptions.Item label="Comment">
                     {selectedLoan.comment}
                   </Descriptions.Item>
-                  <Descriptions.Item label="Resolved By">
+                  {/* <Descriptions.Item label="Resolved By">
                     {selectedLoan?.resolvedBy?.user
                       ? `${selectedLoan.resolvedBy.user.firstName} (${selectedLoan.resolvedBy.user.email})`
                       : "NA"}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="UploadedBy">
+                  </Descriptions.Item> */}
+                  {/* <Descriptions.Item label="UploadedBy">
                     {selectedLoan?.uploadedBy.user
                       ? `${selectedLoan.uploadedBy.user.firstName} (${selectedLoan.uploadedBy.user.email})`
                       : "NA"}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="UploadedBy Phone">
+                  </Descriptions.Item> */}
+                  {/* <Descriptions.Item label="UploadedBy Phone">
                     {selectedLoan?.uploadedBy.user
                       ? `${selectedLoan.uploadedBy.user.phoneNumber}`
                       : "NA"}
-                  </Descriptions.Item>
+                  </Descriptions.Item> */}
                 </Descriptions>
               </div>
               <div className=" py-4">
@@ -552,10 +590,10 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
           form.submit();
         }}
       >
-        <Form form={form} layout="vertical" onFinish={handleSubmit}>
+        <Form form={form} layout="vertical" onFinish={handleLoanApproveSubmit}>
           <div className=" text-center py-6">
             {" "}
-            You're about to approve a{" "}
+            You're about to <span className=" italic">approve</span> a{" "}
             <span className=" font-semibold">
               {selectedLoan?.duration} day(s)
             </span>{" "}
@@ -576,7 +614,6 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
               {selectedLoan?.member.user.lastName}
             </span>
           </div>
-          {/* your loan confirmation text */}
           <div className=" grid grid-cols-2 gap-4">
             <Form.Item required={true} name="comment" label="Comment">
               <Input placeholder="enter comment" />
@@ -588,6 +625,55 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
               </Select>
             </Form.Item>
           </div>
+        </Form>
+      </Modal>
+
+      <Modal
+        centered
+        open={isLoanDisburseDrawerVisible}
+        onCancel={() => setIsLoanDisburseDrawerVisible(false)}
+        confirmLoading={disbursementIsLoading}
+        onOk={() => {
+          form.submit();
+        }}
+      >
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={async () => {
+            await disburseLoan({
+              organizationId: Number(localStorage.getItem("organizationId")),
+              microfinOrganisationId: selectedLoan?.member.organization.id,
+              loanId: selectedLoan?.id,
+            });
+            setIsLoanDisburseDrawerVisible(false);
+          }}
+        >
+          <div className=" text-center py-6">
+            {" "}
+            You're about to <span className=" italic">disburse</span> a{" "}
+            <span className=" font-semibold">
+              {selectedLoan?.duration} day(s)
+            </span>{" "}
+            loan application of amount{" "}
+            <div className=" text-lg font-semibold">
+              ZMW{" "}
+              {selectedLoan?.amount
+                .toFixed(2)
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+            </div>{" "}
+            at an interest rate of{" "}
+            <span className=" font-semibold">
+              {selectedLoan?.interestRate}%
+            </span>{" "}
+            to{" "}
+            <span className=" font-semibold">
+              {selectedLoan?.member.user.firstName}{" "}
+              {selectedLoan?.member.user.lastName}
+            </span>
+          </div>
+          {/* your loan confirmation text */}
+          <div className=" grid grid-cols-2 gap-4"></div>
         </Form>
       </Modal>
     </div>
