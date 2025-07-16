@@ -222,19 +222,11 @@ export const MainMicrofinOrgLoansTable: React.FC<
                         {" "}
                         <Check className=" w-4" />
                       </div>
-                      Approve
-                    </span>
-                  ),
-                },
-                {
-                  key: "4",
-                  label: (
-                    <span
-                      className="flex gap-2 text-red-500"
-                      onClick={() => alert("clicked")}
-                    >
-                      <StopOutlined />
-                      Reject
+                      Approve <span className=" text-slate-500">|</span>
+                      <span className="flex gap-2 text-red-500">
+                        <StopOutlined />
+                        Reject
+                      </span>
                     </span>
                   ),
                 },
