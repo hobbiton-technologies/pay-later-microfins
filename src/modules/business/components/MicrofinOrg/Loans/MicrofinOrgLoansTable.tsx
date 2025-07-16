@@ -23,7 +23,7 @@ import {
 } from "@ant-design/icons";
 import DebouncedInputField from "@/modules/components/DebouncedInput";
 import { useEffect, useState } from "react";
-import { MicrofinOrgLoansForm } from "./MicrofinOrg/Loans/MicrofinOrgLoansForm";
+import { MicrofinOrgLoansForm } from "./MicrofinOrgLoansForm";
 import {
   GetMicrofinLoansData,
   useGetMicrofinLoansQuery,

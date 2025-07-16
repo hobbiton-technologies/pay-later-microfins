@@ -1,6 +1,6 @@
 import AnimatedHeader from "../components/AnimatedHeader";
 import ProductStats from "../summary/components/ProductStats";
-import { BranchesTable } from "./components/BranchesTable";
+import { BranchesTable } from "./components/Branches/BranchesTable";
 
 const Branches = () => {
   return (

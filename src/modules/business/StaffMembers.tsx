@@ -1,6 +1,6 @@
 import AnimatedHeader from "../components/AnimatedHeader";
 import ProductStats from "../summary/components/ProductStats";
-import { MicrofinStaffTable } from "./components/MicrofinStaffTable";
+import { MicrofinStaffTable } from "./components/MicrofinOrg/StaffMembers/MicrofinStaffTable";
 
 const StaffMembers = () => {
   return (

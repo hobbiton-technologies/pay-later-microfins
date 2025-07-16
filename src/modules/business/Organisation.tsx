@@ -16,10 +16,10 @@ import {
 } from "antd";
 import { ExportOutlined, EyeOutlined } from "@ant-design/icons";
 import { customLoader } from "@/components/table-loader";
-import { OrganisationForm } from "./components/OrganisationForm";
-import { MicrofinOrgStaffTable } from "./components/MicrofinOrgStaffTable";
-import { MicrofinOrgStaffMemberForm } from "./components/MIcrofinOrgStaffMemberForm";
-import { MicrofinOrgLoansTable } from "./components/MicrofinOrgLoansTable";
+import { OrganisationForm } from "./components/Organisation/OrganisationForm";
+import { MicrofinOrgStaffTable } from "./components/MicrofinOrg/StaffMembers/MicrofinOrgStaffTable";
+import { MicrofinOrgStaffMemberForm } from "./components/MicrofinOrg/StaffMembers/MIcrofinOrgStaffMemberForm";
+import { MicrofinOrgLoansTable } from "./components/MicrofinOrg/Loans/MicrofinOrgLoansTable";
 import { GetMicrofinLoansData } from "@/api/queries/loansQueries";
 import { useNavigate } from "react-router-dom";
 

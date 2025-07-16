@@ -3,14 +3,22 @@ import {
   OrganisationData,
   useGetMicrofinOrgStaffMembersQuery,
 } from "@/api/queries/summaryQueries";
-import { Button, Card, Drawer, Dropdown, MenuProps, Space } from "antd";
+import {
+  Button,
+  Card,
+  Descriptions,
+  Drawer,
+  Dropdown,
+  MenuProps,
+  Space,
+} from "antd";
 import Table, { ColumnsType } from "antd/es/table";
 import { ExportOutlined, EyeOutlined } from "@ant-design/icons";
 import DebouncedInputField from "@/modules/components/DebouncedInput";
 import { useState } from "react";
 import { customLoader } from "@/components/table-loader";
 import { MicrofinOrgStaffMemberForm } from "./MIcrofinOrgStaffMemberForm";
-import { MicrofinOrgLoansTable } from "./MicrofinOrgLoansTable";
+import { MicrofinOrgLoansTable } from "../Loans/MicrofinOrgLoansTable";
 
 type StaffTableProps = {
   showCreateButton?: boolean;
@@ -31,6 +39,7 @@ export const MicrofinOrgStaffTable: React.FC<StaffTableProps> = ({
   const [selectedStaffMember, setSelectedStaffMember] =
     useState<MicrofinOrgStaffMembersData | null>(null);
   const [isLoansDrawerVisible, setIsLoansDrawerVisible] = useState(false);
+  const [isStaffDrawerVisble, setIsStaffDrawerVisble] = useState(false);
 
   const { data: staffResponse, isFetching } =
     useGetMicrofinOrgStaffMembersQuery({
@@ -92,7 +101,10 @@ export const MicrofinOrgStaffTable: React.FC<StaffTableProps> = ({
             label: (
               <span
                 className="flex gap-2"
-                onClick={() => alert("View Clicked")}
+                onClick={() => {
+                  setSelectedStaffMember(record);
+                  setIsStaffDrawerVisble(true);
+                }}
               >
                 <EyeOutlined />
                 View
@@ -144,7 +156,7 @@ export const MicrofinOrgStaffTable: React.FC<StaffTableProps> = ({
 
   return (
     <div className=" mt-2">
-      <p className=" font-semibold">Organisation Staff Members</p>
+      {/* <p className=" font-semibold">Organisation Staff Members</p> */}
       <section className="w-full h-full py-3 flex   gap-2 ">
         <div className="w-full">
           <DebouncedInputField
@@ -228,6 +240,41 @@ export const MicrofinOrgStaffTable: React.FC<StaffTableProps> = ({
                   microfinOrganisationId={microfinOrganisationId}
                   microfinMemberId={selectedStaffMember.id}
                 />
+              </div>
+            </Card>
+          </div>
+        ) : (
+          "Invalid process"
+        )}
+      </Drawer>
+      <Drawer
+        width="60%"
+        open={isStaffDrawerVisble}
+        onClose={() => setIsStaffDrawerVisble(false)}
+        closeIcon={true}
+      >
+        {" "}
+        {selectedStaffMember ? (
+          <div>
+            <Card
+              title={`${selectedStaffMember.user.firstName} ${selectedStaffMember.user.lastName} `}
+            >
+              <div className=" pt-8">
+                <Descriptions
+                  bordered={true}
+                  column={2}
+                  className=" text-slate-800"
+                >
+                  <Descriptions.Item label="Position">
+                    {selectedStaffMember.position}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Email">
+                    {selectedStaffMember.user.email}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Phone">
+                    {selectedStaffMember.user.phoneNumber}
+                  </Descriptions.Item>
+                </Descriptions>
               </div>
             </Card>
           </div>

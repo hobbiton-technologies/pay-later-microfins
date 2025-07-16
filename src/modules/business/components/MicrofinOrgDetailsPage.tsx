@@ -1,8 +1,8 @@
 import { Segmented, Tabs, TabsProps } from "antd";
 import { motion } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
-import { MicrofinOrgStaffTable } from "./MicrofinOrgStaffTable";
-import { MicrofinOrgLoansTable } from "./MicrofinOrgLoansTable";
+import { MicrofinOrgStaffTable } from "./MicrofinOrg/StaffMembers/MicrofinOrgStaffTable";
+import { MicrofinOrgLoansTable } from "./MicrofinOrg/Loans/MicrofinOrgLoansTable";
 import React from "react";
 
 type Align = "start" | "center" | "end";
