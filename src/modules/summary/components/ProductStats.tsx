@@ -38,14 +38,13 @@ const ProductStats = () => {
       {productsStats.map(({ title, amount, icon: Icon, descriptionText }) => (
         <div
           className=" bg-white p-4 rounded-md shadow  transition-all duration-300 grid grid-cols-1 gap-4"
-          key={title}
-        >
+          key={title}>
           <div className=" font-semibold  border-b border-slate-300 pb-2 flex items-center justify-between">
-            <div>{title}</div>
+            <div className="text-xs text-slate-500">{title}</div>
             <div className=" text-lg">{Icon}</div>
           </div>
-          <div className=" text-2xl font-bold">{amount}</div>
-          <div className=" text-sm">{descriptionText}</div>
+          <div className=" text-xl font-bold text-blue-950">{amount}</div>
+          <div className=" text-xs text-slate-500">{descriptionText}</div>
         </div>
       ))}
     </div>

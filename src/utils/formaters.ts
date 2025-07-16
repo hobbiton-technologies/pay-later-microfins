@@ -1,5 +1,5 @@
 export const formatCurrency = (amount: number): string => {
-  return `ZMW ${amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
+  return `K ${amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
 };
 
 export const formatNumbers = (amount: number): string => {

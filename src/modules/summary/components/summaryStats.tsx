@@ -140,18 +140,18 @@ const SummaryStats = () => {
               <span className="">{label}</span>
               <Icon />
             </div>
-            <div className=" flex justify-between">
-              <div className=" text-lg font-bold">{values.ytd}</div>
+            <div className=" flex justify-between mb-4">
+              <div className=" text-lg font-bold text-blue-950">{values.ytd}</div>
               <div></div>
             </div>
             <div className=" border-t border-slate-300 pt-2">
               <div className=" flex gap-2 justify-between ">
                 <span>Today </span>
-                <div className=" font-semibold">{values.dtd}</div>
+                <div className="text-blue-950 font-semibold">{values.dtd}</div>
               </div>
               <div className=" flex gap-2 justify-between">
                 <span>This Month </span>
-                <div className=" font-semibold">{values.mtd}</div>
+                <div className="text-blue-950 font-semibold">{values.mtd}</div>
               </div>
             </div>
           </div>

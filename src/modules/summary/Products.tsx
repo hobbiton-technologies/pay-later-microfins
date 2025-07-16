@@ -16,17 +16,16 @@ export const Products = () => {
     <div>
       <div>
         <AnimatedHeader title="Products" />
-        <p>Customizable financial products</p>
+        <p className="text-slate-500 text-xs">Customizable financial products</p>
       </div>
       <div>
         <ProductStats />
         <div>
           <section className="w-full h-full hidden md:flex md:flex-col pt-4">
-            <Tabs defaultActiveKey="1" items={items} />
+            <Tabs type="card" defaultActiveKey="1" items={items} />
           </section>
         </div>
         <div>
-          <p className=" !font-normal wrap-normal">Loan Products</p>
           <ProductsTable />
         </div>
       </div>

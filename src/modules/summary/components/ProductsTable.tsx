@@ -121,9 +121,9 @@ export const ProductsTable = () => {
     setSearchId("");
   };
   return (
-    <div className=" mt-2">
+    <div className="">
       {" "}
-      <section className="w-full h-full py-3 flex   gap-2 ">
+      <section className="w-full h-full py-3 flex gap-2 ">
         <div className="w-full">
           <DebouncedInputField
             placeholder="Search for Product"

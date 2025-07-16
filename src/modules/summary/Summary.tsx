@@ -8,7 +8,7 @@ const Summary: React.FC = () => {
     <div className="min-h-screen">
       <div>
         <AnimatedHeader title="Overview" />
-        <p>Hilights of transaction actions and updates</p>
+        <p className="text-slate-500 text-xs mb-2">Hilights of transaction actions and updates</p>
       </div>
       <div className=" grid grid-cols-1 gap-6">
         <div>
