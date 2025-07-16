@@ -339,7 +339,7 @@ export const SummaryRequest = Api.injectEndpoints({
       MicrofinOrgStaffResponse,
       {
         id: number;
-        organizationId: number;
+        organizationId?: number;
         query: string;
         pageNumber: number;
         pageSize: number;
@@ -350,7 +350,10 @@ export const SummaryRequest = Api.injectEndpoints({
 
         // params.append("id", id.toString());
         if (query) params.append("query", query);
-        params.append("OrganizationId", organizationId.toString());
+        if (organizationId !== undefined) {
+          params.append("OrganizationId", organizationId.toString());
+        }
+
         params.append("pageNumber", pageNumber.toString());
         params.append("pageSize", pageSize.toString());
 

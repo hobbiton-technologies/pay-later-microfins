@@ -1,17 +1,14 @@
-import { Segmented, Tabs, TabsProps } from "antd";
+import { Tabs, TabsProps } from "antd";
 import { motion } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
 import { MicrofinOrgStaffTable } from "./MicrofinOrg/StaffMembers/MicrofinOrgStaffTable";
 import { MicrofinOrgLoansTable } from "./MicrofinOrg/Loans/MicrofinOrgLoansTable";
-import React from "react";
-
-type Align = "start" | "center" | "end";
+import { MainMicrofinOrgLoansTable } from "./MicrofinOrg/Loans/MainMicrofinOrgLoansTable";
 
 export const MicrofinOrgDetailsPage = () => {
   const location = useLocation();
   const organisation = location.state?.member;
   const navigate = useNavigate();
-  const [alignValue, setAlignValue] = React.useState<Align>("start");
 
   const items: TabsProps["items"] = [
     {
@@ -28,7 +25,7 @@ export const MicrofinOrgDetailsPage = () => {
       key: "2",
       label: "Loans",
       children: (
-        <MicrofinOrgLoansTable
+        <MainMicrofinOrgLoansTable
           microfinOrganisationId={organisation.id}
           microfinMemberId={0}
         />
