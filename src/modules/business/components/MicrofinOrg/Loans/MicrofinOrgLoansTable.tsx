@@ -14,7 +14,7 @@ import {
   Table,
   Tag,
 } from "antd";
-import { ColumnsType } from "antd/es/table";
+import { ColumnsType, TableProps } from "antd/es/table";
 import {
   ExportOutlined,
   EyeOutlined,
@@ -44,178 +44,6 @@ type MicrofinOrgLoansTableProps = {
   microfinMemberId: number;
 };
 
-export const loansColumns = (
-  handleViewMicrofinOrgLoans: (record: GetMicrofinLoansData) => void,
-  handleApproveMicrofinOrgLoan: (record: GetMicrofinLoansData) => void,
-  handleDisburseLoan: (record: GetMicrofinLoansData) => void
-): ColumnsType<GetMicrofinLoansData> => [
-  {
-    title: "ID",
-    dataIndex: "id",
-    key: "id",
-  },
-  {
-    title: "Member Name",
-    render: (_, record: GetMicrofinLoansData) =>
-      `${record.member.user.firstName}  ${record.member.user.lastName}`,
-  },
-  {
-    title: "Amount",
-    dataIndex: "amount",
-    key: "amount",
-    render: (amount: number) => (
-      <div className=" font-semibold">{formatCurrency(amount)}</div>
-    ),
-  },
-  {
-    title: "Interest Rate",
-    dataIndex: "interestRate",
-    key: "interestRate",
-    render: (_, record: GetMicrofinLoansData) => `${record.interestRate}%`,
-  },
-  {
-    title: "Interest with Amount",
-    dataIndex: "interestRate",
-    key: "interestRate",
-    render: (_, record: GetMicrofinLoansData) =>
-      ` ${formatCurrency(
-        record.amount + (record.interestRate / 100) * record.amount
-      )}`,
-  },
-  {
-    title: "Loan Status",
-    dataIndex: "loanStatus",
-    key: "loanStatus",
-    render: (loanStatus: string) => {
-      const statusColors: Record<string, string> = {
-        UnderReview: "orange",
-        Rejected: "red",
-        Approved: "blue",
-        DisbursementInitiated: "purple",
-        Disbursed: "green",
-        PartiallySettled: "gold",
-        FullySettled: "cyan",
-        Overdue: "volcano",
-        Defaulted: "magenta",
-      };
-
-      const displayName: Record<string, string> = {
-        UnderReview: "Under Review",
-        Rejected: "Rejected",
-        Approved: "Approved",
-        DisbursementInitiated: "Disbursement Initiated",
-        Disbursed: "Disbursed",
-        PartiallySettled: "Partially Settled",
-        FullySettled: "Fully Settled",
-        Overdue: "Overdue",
-        Defaulted: "Defaulted",
-      };
-
-      const color = statusColors[loanStatus] || "default";
-      const label = displayName[loanStatus] || loanStatus;
-
-      return (
-        <Tag color={color} style={{ fontWeight: 500 }}>
-          {label}
-        </Tag>
-      );
-    },
-  },
-  {
-    title: "Duration",
-    dataIndex: "duration",
-    key: "duration",
-    render: (_, record: GetMicrofinLoansData) => `${record.duration} days`,
-  },
-  {
-    title: "Penalty Calculation Method",
-    dataIndex: "penaltyCalculationMethod",
-    key: "penaltyCalculationMethod",
-  },
-  {
-    title: "Start Date",
-    dataIndex: "startDate",
-    key: "startDate",
-    render: (date: string) => new Date(date).toLocaleDateString(),
-  },
-  {
-    title: "Actions",
-    key: "actions",
-    render: (record: GetMicrofinLoansData) => {
-      const items: MenuProps["items"] = [
-        {
-          key: "1",
-          label: (
-            <span
-              className="flex gap-2 text-slate-500"
-              onClick={() => handleViewMicrofinOrgLoans(record)}
-            >
-              <EyeOutlined />
-              View
-            </span>
-          ),
-        },
-        ...(record.loanStatus.toLowerCase() === "approved"
-          ? [
-              {
-                key: "2",
-                label: (
-                  <span
-                    className="flex gap-2 text-green-500"
-                    onClick={() => handleDisburseLoan(record)}
-                  >
-                    <UpSquareOutlined />
-                    Disburse
-                  </span>
-                ),
-              },
-            ]
-          : record.loanStatus.toLowerCase() === "underreview"
-          ? [
-              {
-                key: "3",
-                label: (
-                  <span
-                    className="flex gap-2 text-blue-500"
-                    onClick={() => handleApproveMicrofinOrgLoan(record)}
-                  >
-                    <div className=" w-4">
-                      {" "}
-                      <Check className=" w-4" />
-                    </div>
-                    Approve
-                  </span>
-                ),
-              },
-              {
-                key: "4",
-                label: (
-                  <span
-                    className="flex gap-2 text-red-500"
-                    onClick={() => alert("clicked")}
-                  >
-                    <StopOutlined />
-                    Reject
-                  </span>
-                ),
-              },
-            ]
-          : []),
-      ];
-
-      return (
-        <Space>
-          <Dropdown menu={{ items }} placement="bottomRight">
-            <Button className=" dark:text-white">
-              <EyeOutlined />
-            </Button>
-          </Dropdown>
-        </Space>
-      );
-    },
-  },
-];
-
 export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
   showCreateButton = true,
   microfinOrganisationId,
@@ -239,7 +67,202 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
   const [isLoansDrawerVisible, setIsLoansDrawerVisible] = useState(false);
   const [loans, setLoans] = useState<GetMicrofinLoansData[]>([]);
   const [selectedLoan, setSelectedLoan] = useState<GetMicrofinLoansData>();
-  const [selectedMember, setSelectedMember] = useState<MicrofinOrgStaffBody>();
+  const [filteredLoanStatus, setFilteredLoanStatus] = useState<string | null>(
+    null
+  );
+
+  const loansColumns = (
+    handleViewMicrofinOrgLoans: (record: GetMicrofinLoansData) => void,
+    handleApproveMicrofinOrgLoan: (record: GetMicrofinLoansData) => void,
+    handleDisburseLoan: (record: GetMicrofinLoansData) => void
+  ): ColumnsType<GetMicrofinLoansData> => [
+    {
+      title: "Amount",
+      dataIndex: "amount",
+      key: "amount",
+      render: (amount: number) => (
+        <div className=" font-semibold">{formatCurrency(amount)}</div>
+      ),
+    },
+    {
+      title: "Rate",
+      dataIndex: "interestRate",
+      key: "interestRate",
+      render: (_, record: GetMicrofinLoansData) => `${record.interestRate}%`,
+    },
+    {
+      title: "Total Amount",
+      dataIndex: "interestRate",
+      key: "interestRate",
+      render: (_, record: GetMicrofinLoansData) =>
+        ` ${formatCurrency(
+          record.amount + (record.interestRate / 100) * record.amount
+        )}`,
+    },
+    {
+      title: "Status",
+      dataIndex: "loanStatus",
+      key: "loanStatus",
+      filters: [
+        { text: "Under Review", value: "UnderReview" },
+        { text: "Approved", value: "Approved" },
+        { text: "Rejected", value: "Rejected" },
+        { text: "Disbursed", value: "Disbursed" },
+        { text: "Partially Settled", value: "PartiallySettled" },
+        { text: "Fully Settled", value: "FullySettled" },
+        { text: "Overdue", value: "Overdue" },
+        { text: "Defaulted", value: "Defaulted" },
+      ],
+      filteredValue: filteredLoanStatus ? [filteredLoanStatus] : null,
+      onFilter: (value, record) => record.loanStatus === value,
+      render: (loanStatus: string) => {
+        const statusColors: Record<string, string> = {
+          UnderReview: "orange",
+          Rejected: "red",
+          Approved: "blue",
+          DisbursementInitiated: "purple",
+          Disbursed: "green",
+          PartiallySettled: "gold",
+          FullySettled: "cyan",
+          Overdue: "volcano",
+          Defaulted: "magenta",
+        };
+
+        const displayName: Record<string, string> = {
+          UnderReview: "Under Review",
+          Rejected: "Rejected",
+          Approved: "Approved",
+          DisbursementInitiated: "Disbursement Initiated",
+          Disbursed: "Disbursed",
+          PartiallySettled: "Partially Settled",
+          FullySettled: "Fully Settled",
+          Overdue: "Overdue",
+          Defaulted: "Defaulted",
+        };
+
+        const color = statusColors[loanStatus] || "default";
+        const label = displayName[loanStatus] || loanStatus;
+
+        return (
+          <Tag color={color} style={{ fontWeight: 500 }}>
+            {label}
+          </Tag>
+        );
+      },
+    },
+    {
+      title: "Duration",
+      dataIndex: "duration",
+      key: "duration",
+      render: (_, record: GetMicrofinLoansData) => `${record.duration} days`,
+    },
+    {
+      title: "Start Date",
+      dataIndex: "startDate",
+      key: "startDate",
+      render: (date: string) => new Date(date).toLocaleDateString(),
+    },
+    {
+      title: "Maturity Data",
+      dataIndex: "maturityDate",
+      key: "maturityDate",
+      render: (date: string) => new Date(date).toLocaleDateString(),
+    },
+    {
+      title: "Actions",
+      key: "actions",
+      render: (record: GetMicrofinLoansData) => {
+        const items: MenuProps["items"] = [
+          {
+            key: "1",
+            label: (
+              <span
+                className="flex gap-2 text-slate-500"
+                onClick={() => handleViewMicrofinOrgLoans(record)}
+              >
+                <EyeOutlined />
+                View
+              </span>
+            ),
+          },
+          ...(record.loanStatus.toLowerCase() === "approved"
+            ? [
+                {
+                  key: "2",
+                  label: (
+                    <span
+                      className="flex gap-2 text-green-500"
+                      onClick={() => handleDisburseLoan(record)}
+                    >
+                      <UpSquareOutlined />
+                      Disburse
+                    </span>
+                  ),
+                },
+              ]
+            : record.loanStatus.toLowerCase() === "underreview"
+            ? [
+                {
+                  key: "3",
+                  label: (
+                    <span
+                      className="flex gap-2 text-blue-500"
+                      onClick={() => handleApproveMicrofinOrgLoan(record)}
+                    >
+                      <div className=" w-4">
+                        {" "}
+                        <Check className=" w-4" />
+                      </div>
+                      Approve
+                    </span>
+                  ),
+                },
+                {
+                  key: "4",
+                  label: (
+                    <span
+                      className="flex gap-2 text-red-500"
+                      onClick={() => alert("clicked")}
+                    >
+                      <StopOutlined />
+                      Reject
+                    </span>
+                  ),
+                },
+              ]
+            : []),
+        ];
+
+        return (
+          <Space>
+            <Dropdown menu={{ items }} placement="bottomRight">
+              <Button className=" dark:text-white">
+                <EyeOutlined />
+              </Button>
+            </Dropdown>
+          </Space>
+        );
+      },
+    },
+  ];
+
+  const handleTableChange: TableProps<GetMicrofinLoansData>["onChange"] = (
+    pagination,
+    filters,
+    sorter
+  ) => {
+    setPageNumber(pagination.current ?? 1);
+    setPageSize(pagination.pageSize ?? 10);
+
+    // Apply loanStatus filter
+    if (filters.loanStatus && filters.loanStatus.length > 0) {
+      setloanStatus(filters.loanStatus[0] as string);
+      setFilteredLoanStatus(filters.loanStatus[0] as string);
+    } else {
+      setloanStatus("");
+      setFilteredLoanStatus(null);
+    }
+  };
 
   const handleSearch = () => {
     setSearchId(id);
@@ -380,6 +403,7 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
       </section>
       <section className="w-full h-full hidden md:flex md:flex-col">
         <Table
+          onChange={handleTableChange}
           dataSource={apiResponse?.data || []}
           columns={loansColumns(
             handleViewMicrofinOrgLoans,
