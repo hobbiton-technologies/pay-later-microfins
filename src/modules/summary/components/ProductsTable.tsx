@@ -47,14 +47,21 @@ export const productsColumns: ColumnsType<ProductsData> = [
     key: "productStatus",
   },
   {
-    title: "Arranged Rate",
+    title: "Interest Type",
     dataIndex: "interestType",
     key: "interestType",
   },
   {
-    title: "Interest Rate",
+    title: "Min Interest Rate",
+    dataIndex: "minimumInterestRate",
+    key: "minimumInterestRate",
+    render: (_, record: ProductsData) => `${record.minimumInterestRate}%`
+  },
+  {
+    title: "Max Interest Rate",
     dataIndex: "maximumInterestRate",
     key: "maximumInterestRate",
+    render: (_, record: ProductsData) => `${record.maximumInterestRate}%`
   },
   {
     title: "Actions",
