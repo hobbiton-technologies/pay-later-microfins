@@ -226,3 +226,8 @@
   border: none !important;
   box-shadow: none !important;
 }
+
+/* styles.css or similar */
+.custom-menu .ant-menu-submenu .ant-menu-item {
+  padding-left: 3.5rem !important; /* Increase indent as desired */
+}

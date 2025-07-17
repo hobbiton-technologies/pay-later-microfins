@@ -37,6 +37,7 @@ export const Sidebar = () => {
       </div>
       <div className="flex flex-col flex-grow overflow-y-auto pt-4   ">
         <Menu
+          className="custom-menu"
           defaultSelectedKeys={["1"]}
           defaultOpenKeys={["sub1"]}
           mode="inline"
