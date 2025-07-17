@@ -7,7 +7,7 @@ const StaffMembers = () => {
     <div>
       <div>
         <AnimatedHeader title="Staff Members" />
-        <p>Manage your members</p>
+        <p className="text-slate-500 text-xs">Manage your members</p>
       </div>
       <div className=" grid grid-cols-1 gap-6">
         <div>

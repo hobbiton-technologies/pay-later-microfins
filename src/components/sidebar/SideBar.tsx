@@ -35,7 +35,7 @@ export const Sidebar = () => {
           />
         </div>
       </div>
-      <div className="flex flex-col flex-grow overflow-y-auto pt-4   ">
+      <div className="flex flex-col flex-grow overflow-y-auto pt-4 bg-white   ">
         <Menu
           className="custom-menu"
           defaultSelectedKeys={["1"]}

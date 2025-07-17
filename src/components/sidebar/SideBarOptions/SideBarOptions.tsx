@@ -23,15 +23,19 @@ export const MenuItems: MenuItem[] = [
     label: "Business",
     icon: <DesktopOutlined />,
     children: [
-      { key: "/branches", label: "Branches", style: { paddingRight: 20 } },
+      {
+        key: "/branches",
+        label: "Branches",
+        style: { paddingRight: 20, backgroundImage: "inherit" },
+      },
       { key: "/staff-members", label: "Staff Members" },
       { key: "/organisations", label: "Organisations" },
       { key: "/mous", label: "MOUs" },
     ],
   },
   {
-    key: "moneylenders",
-    label: "Money Lenders",
+    key: "massMarket",
+    label: "Mass Markets",
     icon: <ContainerOutlined />,
     children: [
       { key: "/clients", label: "Clients" },

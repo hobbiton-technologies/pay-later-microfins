@@ -40,17 +40,19 @@ export const MicrofinOrgDetailsPage = () => {
   return (
     <div>
       <div className=" flex">
-        <button onClick={() => navigate(-1)}>
+        <button type="button" onClick={() => navigate(-1)}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
+            fill="none"
             viewBox="0 0 24 24"
-            fill="currentColor"
-            className=" w-5"
+            stroke-width="1.5"
+            stroke="currentColor"
+            className=" w-4"
           >
             <path
-              fill-rule="evenodd"
-              d="M9.53 2.47a.75.75 0 0 1 0 1.06L4.81 8.25H15a6.75 6.75 0 0 1 0 13.5h-3a.75.75 0 0 1 0-1.5h3a5.25 5.25 0 1 0 0-10.5H4.81l4.72 4.72a.75.75 0 1 1-1.06 1.06l-6-6a.75.75 0 0 1 0-1.06l6-6a.75.75 0 0 1 1.06 0Z"
-              clip-rule="evenodd"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
             />
           </svg>
         </button>
@@ -58,7 +60,7 @@ export const MicrofinOrgDetailsPage = () => {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="  flex w-full mb-5 h-full py-2 text-sm gap-2  md:text-lg rounded-sm font-semibold sticky top-0 z-10 shadow-md md:shadow-none text-gray-600 justify-center items-center min-h-16 bg-white"
+          className="  flex w-full mb-5 h-full py-2 text-sm gap-2  md:text-lg rounded-sm font-semibold sticky top-0 z-10 shadow-md md:shadow-none text-gray-600 justify-center items-center min-h-16 "
         >
           {/*<UserOutlined />*/}
           <h1>{organisation.name}</h1>

@@ -104,8 +104,7 @@ export const BranchesTable = () => {
   };
 
   return (
-    <div className=" mt-2">
-      <p className=" font-semibold">Organisation Branches</p>
+    <div className=" mt-6">
       <section className="w-full h-full py-3 flex   gap-2 ">
         <div className="w-full">
           <DebouncedInputField

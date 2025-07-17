@@ -7,7 +7,7 @@ const Branches = () => {
     <div>
       <div>
         <AnimatedHeader title="Branches" />
-        <p>Interact with your branches</p>
+        <p className="text-slate-500 text-xs">Interact with your branches</p>
       </div>
       <div>
         <ProductStats />
