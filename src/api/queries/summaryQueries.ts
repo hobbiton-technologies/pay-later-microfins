@@ -287,7 +287,7 @@ export const SummaryRequest = Api.injectEndpoints({
         return ``;
       },
     }),
-    getGovernmentBondsRequest: builder.query<
+    getLoanProductRequest: builder.query<
       ProductsDataResponse,
       {
         id?: string;
@@ -434,7 +434,7 @@ export const SummaryRequest = Api.injectEndpoints({
 });
 
 export const {
-  useGetGovernmentBondsRequestQuery,
+  useGetLoanProductRequestQuery,
   useGetMicrofinBranchesRequestQuery,
   useGetOrganisationsRequestQuery,
   useGetMicrofinStaffMembersQuery,

@@ -57,7 +57,7 @@
 }
 
 .ant-tabs-card .ant-tabs-tab-active .ant-tabs-tab-btn {
-  padding: 3px 30px 3px 30px;
+  padding: 3px 30px 5px 30px;
   border-radius: 16px;
   background-color: #e7e7e7;
   margin-bottom: 3px;

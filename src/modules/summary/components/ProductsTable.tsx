@@ -1,96 +1,14 @@
 import {
   ProductsData,
-  useGetGovernmentBondsRequestQuery,
+  useGetLoanProductRequestQuery,
 } from "@/api/queries/summaryQueries";
 import { customLoader } from "@/components/table-loader";
 import DebouncedInputField from "@/modules/components/DebouncedInput";
-import { Button, Drawer, Dropdown, MenuProps, Select, Space } from "antd";
-import Table, { ColumnsType } from "antd/es/table";
+import { Button, Drawer, Dropdown, MenuProps, Select, Space, Tag } from "antd";
+import Table, { ColumnsType, TableProps } from "antd/es/table";
 import { useEffect, useState } from "react";
 import { ExportOutlined, EyeOutlined } from "@ant-design/icons";
 import { NewProductForm } from "./NewProductForm";
-
-export const productsColumns: ColumnsType<ProductsData> = [
-  {
-    title: "ID",
-    dataIndex: "id",
-    key: "id",
-  },
-  {
-    title: "Name",
-    dataIndex: "name",
-    key: "name",
-  },
-  {
-    title: "Type",
-    dataIndex: "loanProductType",
-    key: "loanProductType",
-  },
-  {
-    title: "Max Payment Period",
-    dataIndex: "maximumRepaymentPeriod",
-    key: "maximumRepaymentPeriod",
-  },
-  {
-    title: "Min Amount",
-    dataIndex: "minimumLoanAmount",
-    key: "minimumLoanAmount",
-  },
-  {
-    title: "Max Amount",
-    dataIndex: "maximumLoanAmount",
-    key: "maximumLoanAmount",
-  },
-  {
-    title: "Status",
-    dataIndex: "productStatus",
-    key: "productStatus",
-  },
-  {
-    title: "Interest Type",
-    dataIndex: "interestType",
-    key: "interestType",
-  },
-  {
-    title: "Min Interest Rate",
-    dataIndex: "minimumInterestRate",
-    key: "minimumInterestRate",
-    render: (_, record: ProductsData) => `${record.minimumInterestRate}%`
-  },
-  {
-    title: "Max Interest Rate",
-    dataIndex: "maximumInterestRate",
-    key: "maximumInterestRate",
-    render: (_, record: ProductsData) => `${record.maximumInterestRate}%`
-  },
-  {
-    title: "Actions",
-    key: "actions",
-    render: (record: ProductsData) => {
-      const items: MenuProps["items"] = [
-        {
-          key: "4",
-          label: (
-            <span className="flex gap-2" onClick={() => alert("working")}>
-              <EyeOutlined />
-              View
-            </span>
-          ),
-        },
-      ];
-
-      return (
-        <Space>
-          <Dropdown menu={{ items }} placement="bottomRight">
-            <Button className="dark:border-gray-800  dark:text-white">
-              <EyeOutlined />
-            </Button>
-          </Dropdown>
-        </Space>
-      );
-    },
-  },
-];
 
 export const ProductsTable = () => {
   const [id, setSearchId] = useState<string>("");
@@ -100,25 +18,30 @@ export const ProductsTable = () => {
   const [totalData, setTotalData] = useState<number>(0);
   const [pageAmount, setPageAmount] = useState<number>(0);
   const [isCreateDrawerVisible, setIsCreateDrawerVisible] = useState(false);
+  const [selectedLoanProduct, setSelectedLoanProduct] =
+    useState<ProductsData>();
+  const [filteredLoanProductStatus, setFilteredLoanProductStatus] = useState<
+    string | null
+  >(null);
+  const [filteredLoanProductType, setFilteredLoanProductType] = useState<
+    string | null
+  >(null);
+  const [filteredInterestType, setFilteredInterestType] = useState<
+    string | null
+  >(null);
 
-  const { data: productsResponse, isFetching } =
-    useGetGovernmentBondsRequestQuery({
-      id: id,
-      searchQuery: "",
-      pageNumber: pageNumber ?? 1,
-      pageSize: pageSize,
-    });
+  const { data: productsResponse, isFetching } = useGetLoanProductRequestQuery({
+    id: id,
+    searchQuery: "",
+    pageNumber: pageNumber ?? 1,
+    pageSize: pageSize,
+  });
 
   useEffect(() => {
     if (productsResponse) {
       setProducts(productsResponse?.data || []);
     }
   }, [productsResponse]);
-
-  const handleTableChange = (pagination: any) => {
-    setPageNumber(pagination.current);
-    setPageSize(pagination.pageSize);
-  };
 
   const handleSearch = () => {
     setSearchId(id);
@@ -127,6 +50,201 @@ export const ProductsTable = () => {
   const handleSearchClear = () => {
     setSearchId("");
   };
+
+  const productsColumns: ColumnsType<ProductsData> = [
+    {
+      title: "ID",
+      dataIndex: "id",
+      key: "id",
+    },
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Type",
+      dataIndex: "loanProductType",
+      key: "loanProductType",
+      filters: [
+        { text: "Emergency Advance", value: "EmergencyAdvance" },
+        { text: "Short Term Loan", value: "ShortTermLoan" },
+        { text: "Long Term Loan", value: "LongTermLoan " },
+      ],
+      filteredValue: filteredLoanProductType ? [filteredLoanProductType] : null,
+      onFilter: (value, record) => record.productStatus === value,
+      render: (productStatus: string) => {
+        const statusColors: Record<string, string> = {
+          ShortTermLoan: "blue",
+          EmergencyAdvance: "green",
+          LongTermLoan: "orange",
+        };
+
+        const displayName: Record<string, string> = {
+          EmergencyAdvance: "Emergency Advance",
+          ShortTermLoan: "Short Term Loan",
+          LongTermLoan: "Long Term Loan",
+        };
+
+        const color = statusColors[productStatus] || "default";
+        const label = displayName[productStatus] || productStatus;
+
+        return (
+          <Tag color={color} style={{ fontWeight: 500 }}>
+            {label}
+          </Tag>
+        );
+      },
+    },
+    {
+      title: "Max Payment Period",
+      dataIndex: "maximumRepaymentPeriod",
+      key: "maximumRepaymentPeriod",
+    },
+    {
+      title: "Min Amount",
+      dataIndex: "minimumLoanAmount",
+      key: "minimumLoanAmount",
+    },
+    {
+      title: "Max Amount",
+      dataIndex: "maximumLoanAmount",
+      key: "maximumLoanAmount",
+    },
+    {
+      title: "Status",
+      dataIndex: "productStatus",
+      key: "productStatus",
+      filters: [
+        { text: "Active", value: "Active" },
+        { text: "Inactive", value: "InActive" },
+      ],
+      filteredValue: filteredLoanProductStatus
+        ? [filteredLoanProductStatus]
+        : null,
+      onFilter: (value, record) => record.productStatus === value,
+      render: (productStatus: string) => {
+        const statusColors: Record<string, string> = {
+          Active: "blue",
+          InActive: "red",
+        };
+
+        const displayName: Record<string, string> = {
+          Active: "Active",
+          InActive: "Inactive",
+        };
+
+        const color = statusColors[productStatus] || "default";
+        const label = displayName[productStatus] || productStatus;
+
+        return (
+          <Tag color={color} style={{ fontWeight: 500 }}>
+            {label}
+          </Tag>
+        );
+      },
+    },
+    {
+      title: "Interest Type",
+      dataIndex: "interestType",
+      key: "interestType",
+      filters: [
+        { text: "Flat Rate", value: "FlatRate" },
+        { text: "Reducing Balance ", value: "ReducingBalance " },
+      ],
+      filteredValue: filteredInterestType ? [filteredInterestType] : null,
+      onFilter: (value, record) => record.interestType === value,
+      render: (interestType: string) => {
+        const statusColors: Record<string, string> = {
+          FlatRate: "blue",
+          ReducingBalance: "green",
+        };
+
+        const displayName: Record<string, string> = {
+          FlatRate: "Flat Rate",
+          ReducingBalance: "Reducing Balance",
+        };
+
+        const color = statusColors[interestType] || "default";
+        const label = displayName[interestType] || interestType;
+
+        return (
+          <Tag color={color} style={{ fontWeight: 500 }}>
+            {label}
+          </Tag>
+        );
+      },
+    },
+    {
+      title: "Min Interest Rate",
+      dataIndex: "minimumInterestRate",
+      key: "minimumInterestRate",
+      render: (_, record: ProductsData) => `${record.minimumInterestRate}%`,
+    },
+    {
+      title: "Max Interest Rate",
+      dataIndex: "maximumInterestRate",
+      key: "maximumInterestRate",
+      render: (_, record: ProductsData) => `${record.maximumInterestRate}%`,
+    },
+    {
+      title: "Actions",
+      key: "actions",
+      render: (record: ProductsData) => {
+        const items: MenuProps["items"] = [
+          {
+            key: "4",
+            label: (
+              <span className="flex gap-2" onClick={() => alert("working")}>
+                <EyeOutlined />
+                View
+              </span>
+            ),
+          },
+        ];
+
+        return (
+          <Space>
+            <Dropdown menu={{ items }} placement="bottomRight">
+              <Button className="dark:border-gray-800  dark:text-white">
+                <EyeOutlined />
+              </Button>
+            </Dropdown>
+          </Space>
+        );
+      },
+    },
+  ];
+
+  const handleTableChange: TableProps<ProductsData>["onChange"] = (
+    pagination,
+    filters
+  ) => {
+    setPageNumber(pagination.current ?? 1);
+    setPageSize(pagination.pageSize ?? 10);
+
+    if (filters.productStatus && filters.productStatus.length > 0) {
+      const status = filters.productStatus[0] as string;
+      setFilteredLoanProductStatus(status);
+    } else {
+      setFilteredLoanProductStatus(null);
+    }
+
+    if (filters.loanProductType && filters.loanProductType.length > 0) {
+      const loanType = filters.loanProductType[0] as string;
+      setFilteredLoanProductType(loanType);
+    } else {
+      setFilteredLoanProductType(null);
+    }
+
+    if (filters.interestType && filters.interestType.length > 0) {
+      const interestType = filters.interestType[0] as string;
+      setFilteredInterestType(interestType);
+    } else {
+      setFilteredInterestType(null);
+    }
+  };
+
   return (
     <div className="">
       {" "}
@@ -144,11 +262,11 @@ export const ProductsTable = () => {
             <ExportOutlined className="text-white" />
             Export to CSV
           </Button> */}
-          <Select placeholder="Status" className="min-w-32" allowClear={true}>
+          {/* <Select placeholder="Status" className="min-w-32" allowClear={true}>
             <Select.Option value={105}>Pending</Select.Option>
             <Select.Option value={109}>Failed</Select.Option>
             <Select.Option value={100}>Successful</Select.Option>
-          </Select>
+          </Select> */}
           <Button
             type="primary"
             onClick={() => setIsCreateDrawerVisible(true)}

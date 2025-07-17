@@ -23,7 +23,6 @@ import {
 } from "@ant-design/icons";
 import DebouncedInputField from "@/modules/components/DebouncedInput";
 import { useEffect, useState } from "react";
-import { MicrofinOrgLoansForm } from "./MicrofinOrgLoansForm";
 import {
   GetMicrofinLoansData,
   useGetMicrofinLoansQuery,
@@ -36,7 +35,6 @@ import {
   useDisburseMicrofinOrgLoanMutation,
 } from "@/api/mutations/loansMutation";
 import { Option } from "antd/es/mentions";
-import { MicrofinOrgStaffBody } from "@/api/mutations/staffMutation";
 import { MainMicrofinOrgLoansForm } from "./MainMicrofinOrgLoansForm";
 
 type MicrofinOrgLoansTableProps = {
@@ -255,7 +253,6 @@ export const MainMicrofinOrgLoansTable: React.FC<
     setPageNumber(pagination.current ?? 1);
     setPageSize(pagination.pageSize ?? 10);
 
-    // Apply loanStatus filter
     if (filters.loanStatus && filters.loanStatus.length > 0) {
       setloanStatus(filters.loanStatus[0] as string);
       setFilteredLoanStatus(filters.loanStatus[0] as string);
