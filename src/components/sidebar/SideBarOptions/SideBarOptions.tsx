@@ -30,7 +30,7 @@ export const MenuItems: MenuItem[] = [
       },
       { key: "/staff-members", label: "Staff Members" },
       { key: "/organisations", label: "Organisations" },
-      { key: "/mous", label: "MOUs" },
+      // { key: "/mous", label: "MOUs" },
     ],
   },
   {

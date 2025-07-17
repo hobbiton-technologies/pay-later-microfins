@@ -12,11 +12,6 @@ import { BranchesForm } from "./BranchesForm";
 
 export const branchesColumns: ColumnsType<BranchesData> = [
   {
-    title: "ID",
-    dataIndex: "id",
-    key: "id",
-  },
-  {
     title: "Name",
     dataIndex: "name",
     key: "name",

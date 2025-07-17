@@ -19,6 +19,7 @@ import { useState } from "react";
 import { customLoader } from "@/components/table-loader";
 import { MicrofinOrgStaffMemberForm } from "./MIcrofinOrgStaffMemberForm";
 import { MicrofinOrgLoansTable } from "../Loans/MicrofinOrgLoansTable";
+import { MainMicrofinOrgLoansTable } from "../Loans/MainMicrofinOrgLoansTable";
 
 type StaffTableProps = {
   showCreateButton?: boolean;
@@ -64,11 +65,11 @@ export const MicrofinOrgStaffTable: React.FC<StaffTableProps> = ({
   };
 
   const branchesColumns: ColumnsType<MicrofinOrgStaffMembersData> = [
-    {
-      title: "ID",
-      dataIndex: "id",
-      key: "id",
-    },
+    // {
+    //   title: "ID",
+    //   dataIndex: "id",
+    //   key: "id",
+    // },
     {
       title: "FullName",
       dataIndex: "user",
@@ -85,6 +86,11 @@ export const MicrofinOrgStaffTable: React.FC<StaffTableProps> = ({
       title: "Position",
       dataIndex: "position",
       key: "position",
+    },
+    {
+      title: "ID Type",
+      dataIndex: "idType",
+      key: "idType",
     },
     {
       title: "National ID",
@@ -155,9 +161,9 @@ export const MicrofinOrgStaffTable: React.FC<StaffTableProps> = ({
   ];
 
   return (
-    <div className=" mt-2">
+    <div className=" ">
       {/* <p className=" font-semibold">Organisation Staff Members</p> */}
-      <section className="w-full h-full py-3 flex   gap-2 ">
+      <section className="w-full h-full  flex   gap-2 ">
         <div className="w-full">
           <DebouncedInputField
             placeholder="Search for Staff Member"
@@ -248,7 +254,8 @@ export const MicrofinOrgStaffTable: React.FC<StaffTableProps> = ({
         )}
       </Drawer>
       <Drawer
-        width="60%"
+        title="Client Details"
+        width="70%"
         open={isStaffDrawerVisble}
         onClose={() => setIsStaffDrawerVisble(false)}
         closeIcon={true}
@@ -256,25 +263,67 @@ export const MicrofinOrgStaffTable: React.FC<StaffTableProps> = ({
         {" "}
         {selectedStaffMember ? (
           <div>
-            <Card
-              title={`${selectedStaffMember.user.firstName} ${selectedStaffMember.user.lastName} `}
-            >
-              <div className=" pt-8">
+            <Card>
+              <div className=" pb-4">
+                <p className=" font-semibold pb-2">Personal Details</p>
                 <Descriptions
                   bordered={true}
                   column={2}
                   className=" text-slate-800"
                 >
-                  <Descriptions.Item label="Position">
-                    {selectedStaffMember.position}
+                  <Descriptions.Item label="First Name">
+                    {selectedStaffMember.user.firstName}
                   </Descriptions.Item>
+                  <Descriptions.Item label="Last Name">
+                    {selectedStaffMember.user.lastName}
+                  </Descriptions.Item>
+
                   <Descriptions.Item label="Email">
                     {selectedStaffMember.user.email}
                   </Descriptions.Item>
                   <Descriptions.Item label="Phone">
                     {selectedStaffMember.user.phoneNumber}
                   </Descriptions.Item>
+                  <Descriptions.Item label="ID Number">
+                    {selectedStaffMember.idNumber}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="ID Type">
+                    {selectedStaffMember.idType}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Position">
+                    {selectedStaffMember.position}
+                  </Descriptions.Item>
                 </Descriptions>
+              </div>
+
+              <div className=" ">
+                <p className=" font-semibold pb-2">Bank Details</p>
+                <Descriptions
+                  bordered={true}
+                  column={2}
+                  className=" text-slate-800"
+                >
+                  <Descriptions.Item label="Bank Name">
+                    {selectedStaffMember.bankDetails.name ?? "Not Set"}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Branch Name">
+                    {selectedStaffMember.bankDetails.branch ?? "Not Set"}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Branch Code">
+                    {selectedStaffMember.bankDetails.code ?? "Not Set"}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Account Number">
+                    {selectedStaffMember.bankDetails.accountNumber ?? "Not Set"}
+                  </Descriptions.Item>
+                </Descriptions>
+              </div>
+              <div className=" pt-8">
+                {" "}
+                <p className=" font-semibold pb-2"> Loans</p>
+                <MainMicrofinOrgLoansTable
+                  microfinOrganisationId={microfinOrganisationId}
+                  microfinMemberId={selectedStaffMember.id}
+                />
               </div>
             </Card>
           </div>

@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { MicrofinOrgStaffTable } from "./MicrofinOrg/StaffMembers/MicrofinOrgStaffTable";
 import { MicrofinOrgLoansTable } from "./MicrofinOrg/Loans/MicrofinOrgLoansTable";
 import { MainMicrofinOrgLoansTable } from "./MicrofinOrg/Loans/MainMicrofinOrgLoansTable";
+import MicrofinOrganisationStats from "./Organisation/OrganisationStats";
 
 export const MicrofinOrgDetailsPage = () => {
   const location = useLocation();
@@ -13,7 +14,7 @@ export const MicrofinOrgDetailsPage = () => {
   const items: TabsProps["items"] = [
     {
       key: "1",
-      label: "Staff Members",
+      label: "Members",
       children: (
         <MicrofinOrgStaffTable
           microfinOrganisationId={organisation.id}
@@ -66,7 +67,10 @@ export const MicrofinOrgDetailsPage = () => {
           <h1>{organisation.name}</h1>
         </motion.div>
       </div>
-      <section className="w-full h-full  justify-evenly items-center">
+      <div>
+        <MicrofinOrganisationStats />
+      </div>
+      <section className="w-full h-full  justify-evenly items-center mt-10">
         <Tabs
           type="card"
           defaultActiveKey="1"

@@ -74,18 +74,16 @@ export const MicrofinStaffTable = () => {
   const membersColumns = (
     handleViewStaffMember: (id: number) => void
   ): ColumnsType<MicrofinStaffMembersData> => [
-    {
-      title: "ID",
-      dataIndex: "id",
-      key: "id",
-    },
+    // {
+    //   title: "ID",
+    //   dataIndex: "id",
+    //   key: "id",
+    // },
     {
       title: "FullName",
       dataIndex: "user",
       render: (_, record: MicrofinStaffMembersData) =>
-        `${
-          record?.user.firstName ?? "NA" + " " + record?.user.lastName ?? "NA"
-        } `,
+        `${record.user.firstName} ${record.user.lastName}`,
     },
     {
       title: "Email",
@@ -98,7 +96,8 @@ export const MicrofinStaffTable = () => {
       title: "Branch",
       dataIndex: "branch",
       key: "branch",
-      render: (_, record: MicrofinStaffMembersData) => record?.branch ?? "NA",
+      render: (_, record: MicrofinStaffMembersData) =>
+        record?.branch ?? "Not Set",
     },
     {
       title: "EmployeeId Number",
@@ -214,41 +213,54 @@ export const MicrofinStaffTable = () => {
       >
         <MicrofinStaffMemberForm />
       </Drawer>
-      <Drawer
-        width="50%"
-        open={isStaffMembersDrawerVisible}
-        onClose={() => setIsStaffMembersDrawerVisible(false)}
-        closeIcon={true}
-      >
-        {selectedStaffMembers ? (
+      {selectedStaffMembers ? (
+        <Drawer
+          title="Staff Member Details"
+          width="50%"
+          open={isStaffMembersDrawerVisible}
+          onClose={() => setIsStaffMembersDrawerVisible(false)}
+          closeIcon={true}
+        >
           <div>
-            <Card title="Staff Member Details">
+            <Card>
               <Descriptions bordered={true} column={1} className="text-black">
-                <Descriptions.Item label="Staff Id">
-                  {selectedStaffMembers.id}
+                <Descriptions.Item label="First Name">
+                  {selectedStaffMembers.user.firstName}
                 </Descriptions.Item>
-                <Descriptions.Item label="Staff Member Branch">
-                  {selectedStaffMembers.branch}
+                <Descriptions.Item label="Last Name">
+                  {selectedStaffMembers.user.lastName}
                 </Descriptions.Item>
-                <Descriptions.Item label="Staff Employee ID ">
-                  {selectedStaffMembers.employeeIdNumber}
+                <Descriptions.Item label="Email">
+                  {selectedStaffMembers.user.email ?? "Not set"}
                 </Descriptions.Item>
-                <Descriptions.Item label="Staff ID">
+                <Descriptions.Item label="ID Number">
                   {selectedStaffMembers.idNumber}
                 </Descriptions.Item>
-                <Descriptions.Item label="Staff is Microfin ID">
-                  {selectedStaffMembers.isMicrofinAdmin}
+                <Descriptions.Item label="ID Type">
+                  {selectedStaffMembers.idType}
                 </Descriptions.Item>
-                <Descriptions.Item label="Staff Position">
+                <Descriptions.Item label="Position">
                   {selectedStaffMembers.position}
+                </Descriptions.Item>
+                <Descriptions.Item label="Employee Number">
+                  {selectedStaffMembers.employeeIdNumber}
+                </Descriptions.Item>
+                <Descriptions.Item label="Branch">
+                  {selectedStaffMembers.branch ?? "Not set"}
+                </Descriptions.Item>
+                <Descriptions.Item label="Role">
+                  {selectedStaffMembers.isMicrofinAdmin ? "Admin" : "Member"}
+                </Descriptions.Item>
+                <Descriptions.Item label="Activated">
+                  {selectedStaffMembers.isEnabled ? "Yes" : "No"}
                 </Descriptions.Item>
               </Descriptions>
             </Card>
           </div>
-        ) : (
-          "Invalid process"
-        )}
-      </Drawer>
+        </Drawer>
+      ) : (
+        "Invalid process"
+      )}
     </div>
   );
 };

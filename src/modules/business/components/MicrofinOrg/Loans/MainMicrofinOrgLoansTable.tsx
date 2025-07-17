@@ -247,8 +247,7 @@ export const MainMicrofinOrgLoansTable: React.FC<
 
   const handleTableChange: TableProps<GetMicrofinLoansData>["onChange"] = (
     pagination,
-    filters,
-    sorter
+    filters
   ) => {
     setPageNumber(pagination.current ?? 1);
     setPageSize(pagination.pageSize ?? 10);
@@ -376,7 +375,7 @@ export const MainMicrofinOrgLoansTable: React.FC<
 
   return (
     <div>
-      <section className="w-full h-full py-3 flex   gap-2 ">
+      <section className="w-full h-full  flex   gap-2 ">
         <div className="w-full">
           <DebouncedInputField
             placeholder="Search for Microfin Organisation loan"

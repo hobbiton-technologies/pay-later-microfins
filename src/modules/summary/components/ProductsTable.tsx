@@ -4,7 +4,16 @@ import {
 } from "@/api/queries/summaryQueries";
 import { customLoader } from "@/components/table-loader";
 import DebouncedInputField from "@/modules/components/DebouncedInput";
-import { Button, Drawer, Dropdown, MenuProps, Select, Space, Tag } from "antd";
+import {
+  Button,
+  Card,
+  Descriptions,
+  Drawer,
+  Dropdown,
+  MenuProps,
+  Space,
+  Tag,
+} from "antd";
 import Table, { ColumnsType, TableProps } from "antd/es/table";
 import { useEffect, useState } from "react";
 import { ExportOutlined, EyeOutlined } from "@ant-design/icons";
@@ -19,7 +28,7 @@ export const ProductsTable = () => {
   const [pageAmount, setPageAmount] = useState<number>(0);
   const [isCreateDrawerVisible, setIsCreateDrawerVisible] = useState(false);
   const [selectedLoanProduct, setSelectedLoanProduct] =
-    useState<ProductsData>();
+    useState<ProductsData | null>(null);
   const [filteredLoanProductStatus, setFilteredLoanProductStatus] = useState<
     string | null
   >(null);
@@ -29,6 +38,10 @@ export const ProductsTable = () => {
   const [filteredInterestType, setFilteredInterestType] = useState<
     string | null
   >(null);
+  const [isLoanProductsDrawerVisible, setIsLoanProductsDrawerVisible] =
+    useState(false);
+
+  // const [loanProducts, setLoanProducts] = useState<ProductsData[]>([]);
 
   const { data: productsResponse, isFetching } = useGetLoanProductRequestQuery({
     id: id,
@@ -40,6 +53,8 @@ export const ProductsTable = () => {
   useEffect(() => {
     if (productsResponse) {
       setProducts(productsResponse?.data || []);
+      setTotalData(productsResponse?.totalItems || 0);
+      setPageAmount(productsResponse?.pageSize || 0);
     }
   }, [productsResponse]);
 
@@ -51,7 +66,9 @@ export const ProductsTable = () => {
     setSearchId("");
   };
 
-  const productsColumns: ColumnsType<ProductsData> = [
+  const productsColumns = (
+    handleViewLoanProduct: (record: ProductsData) => void
+  ): ColumnsType<ProductsData> => [
     {
       title: "ID",
       dataIndex: "id",
@@ -195,7 +212,10 @@ export const ProductsTable = () => {
           {
             key: "4",
             label: (
-              <span className="flex gap-2" onClick={() => alert("working")}>
+              <span
+                className="flex gap-2"
+                onClick={() => handleViewLoanProduct(record)}
+              >
                 <EyeOutlined />
                 View
               </span>
@@ -215,6 +235,11 @@ export const ProductsTable = () => {
       },
     },
   ];
+
+  const handleViewLoanProduct = (record: ProductsData) => {
+    setSelectedLoanProduct(record);
+    setIsLoanProductsDrawerVisible(true);
+  };
 
   const handleTableChange: TableProps<ProductsData>["onChange"] = (
     pagination,
@@ -280,7 +305,7 @@ export const ProductsTable = () => {
       <section className="w-full h-full hidden md:flex md:flex-col">
         <Table
           dataSource={productsResponse?.data || []}
-          columns={productsColumns}
+          columns={productsColumns(handleViewLoanProduct)}
           rowKey="id"
           onChange={handleTableChange}
           loading={{
@@ -321,6 +346,116 @@ export const ProductsTable = () => {
       >
         <NewProductForm />
       </Drawer>
+      {selectedLoanProduct && (
+        <Drawer
+          title={`${selectedLoanProduct.name}`}
+          open={isLoanProductsDrawerVisible}
+          onClose={() => {
+            setIsLoanProductsDrawerVisible(false);
+            setSelectedLoanProduct(null);
+          }}
+          width="55%"
+        >
+          {selectedLoanProduct ? (
+            <div>
+              <Card className=" grid grid-cols-1 gap-4">
+                <div>
+                  <p className=" font-semibold pb-2">Loan Details</p>
+                  <Descriptions bordered={true} column={2}>
+                    <Descriptions.Item label="Minimum Loan Amount">
+                      {selectedLoanProduct.minimumLoanAmount}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Maximum Loan Amount">
+                      {selectedLoanProduct.maximumLoanAmount}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Distribution Channels">
+                      {selectedLoanProduct.distributionChannels}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Product Status">
+                      {selectedLoanProduct.productStatus}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Collateral Based">
+                      {selectedLoanProduct.isCollateralBased ? "Yes" : "No"}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Disbursement Methods">
+                      {selectedLoanProduct.loanDisbursementTypes}
+                    </Descriptions.Item>
+                  </Descriptions>
+                </div>
+
+                <div className=" pt-4">
+                  <p className=" font-semibold pb-2">Interests</p>
+                  <Descriptions bordered={true} column={2}>
+                    <Descriptions.Item label="Interest Calculation Type">
+                      {selectedLoanProduct.calculateInterestByRate
+                        ? "Rate"
+                        : "Fixed Amount"}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Interest Type">
+                      {selectedLoanProduct.interestType}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Minimum Interest Rate">
+                      {selectedLoanProduct.minimumInterestRate}%
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Maximum Interest Rate">
+                      {selectedLoanProduct.maximumInterestRate}%
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Minimum Interest Amount">
+                      K{selectedLoanProduct.minimumInterestAmount}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Maximum Interest Amount">
+                      K{selectedLoanProduct.maximumInterestAmount}
+                    </Descriptions.Item>
+                  </Descriptions>
+                </div>
+
+                <div className=" pt-4">
+                  <p className=" font-semibold pb-2">Repayments</p>
+                  <Descriptions bordered={true} column={2}>
+                    <Descriptions.Item label="Minimum Repayment Period">
+                      {selectedLoanProduct.minimumRepaymentPeriod} days
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Maximum Repayment Period">
+                      {selectedLoanProduct.maximumRepaymentPeriod} days
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Repayment Cycles">
+                      {selectedLoanProduct.repaymentCycles}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Grace Period">
+                      {selectedLoanProduct.gracePeriodInDays} days
+                    </Descriptions.Item>
+                  </Descriptions>
+                </div>
+
+                <div className=" pt-4">
+                  <p className=" font-semibold pb-2">Penalties</p>
+                  <Descriptions bordered={true} column={2}>
+                    <Descriptions.Item label="Penalty Calculations Enabled">
+                      {selectedLoanProduct.calculatePenalty ? "Yes" : "No"}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Calculate Penalty By Rate">
+                      {selectedLoanProduct.calculatePenaltyByRate
+                        ? "Yes"
+                        : "No"}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Penalty Rate">
+                      {selectedLoanProduct.penaltyRate}%
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Penalty Amount">
+                      K{selectedLoanProduct.penaltyAmount}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Penalty Calculation Method">
+                      {selectedLoanProduct.penaltyCalculationMethod}
+                    </Descriptions.Item>
+                  </Descriptions>
+                </div>
+              </Card>
+            </div>
+          ) : (
+            "Invalid process"
+          )}
+        </Drawer>
+      )}
     </div>
   );
 };
