@@ -95,6 +95,29 @@ export const MassMarketLoansTable = () => {
       render: (_, record: MassMarketLoantData) => formatCurrency(record.amount),
     },
     {
+      title: "Rate",
+      dataIndex: "interestRate",
+      key: "interestRate",
+      render: (_, record: MassMarketLoantData) => `${record.amount}%`,
+    },
+    {
+      title: "Repayment Amount",
+      dataIndex: "repaymentAmount",
+      key: "repaymentAmount",
+      render: (_, record: MassMarketLoantData) =>
+        `${formatCurrency(record.repaymentAmount)}`,
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+    },
+    {
+      title: "Loan Status",
+      dataIndex: "loanStatus",
+      key: "loanStatus",
+    },
+    {
       title: "Date Created",
       dataIndex: "createdAt",
       key: "createdAt",
