@@ -9,7 +9,12 @@ import {
   Descriptions,
   Drawer,
   Dropdown,
+  Form,
+  Input,
   MenuProps,
+  message,
+  Modal,
+  Select,
   Space,
   Table,
 } from "antd";
@@ -19,19 +24,48 @@ import { useEffect, useState } from "react";
 import { customLoader } from "@/components/table-loader";
 import DebouncedInputField from "@/modules/components/DebouncedInput";
 import { formatCurrency } from "@/utils/formaters";
+import { TimerIcon } from "lucide-react";
+import {
+  ProductsData,
+  useGetLoanProductRequestQuery,
+} from "@/api/queries/summaryQueries";
+import {
+  TenureBody,
+  useCreateTenureMutation,
+} from "@/api/mutations/tenureMutation";
 
 export const MassMarketClientsTable = () => {
+  const [id, setSearchId] = useState<string>("");
   const [pageNumber, setPageNumber] = useState<number | null>(1);
   const [pageSize, setPageSize] = useState(10);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [searchProductQuery, setSearchProductQuery] = useState<string>("");
+
   const [massMarketClient, setMassMarketClient] = useState<
     MassMarketClientData[]
   >([]);
+
+  const [form] = Form.useForm();
+
+  const [clients, setClients] = useState<MassMarketClientData[]>([]);
+  const [selectedClients, setSelectedClients] =
+    useState<MassMarketClientData>();
 
   const [selectedMassMarketClient, setSelectedMassMarketClient] =
     useState<MassMarketClientData | null>(null);
 
   const [isClientDrawerVisible, setIsClientDrawerVisible] = useState(false);
+  const [isMassMarketClientDrawerVisible, setIsMassMarketClientDrawerVisible] =
+    useState(false);
+
+  const [submitTenureData, { isLoading }] = useCreateTenureMutation();
+  const { data: productsResponse, isFetching: productIsFetching } =
+    useGetLoanProductRequestQuery({
+      id: id,
+      searchQuery: searchProductQuery,
+      pageNumber: pageNumber ?? 1,
+      pageSize: pageSize,
+    });
 
   const { data: apiResponse, isFetching } = useGetMassMarketClientsQuery({
     id: Number(localStorage.getItem("organizationId")),
@@ -54,7 +88,9 @@ export const MassMarketClientsTable = () => {
     setSearchQuery(searchQuery);
   };
 
-  const clientColumns: ColumnsType<MassMarketClientData> = [
+  const clientColumns = (
+    handleAddTenure: (record: MassMarketClientData) => void
+  ): ColumnsType<MassMarketClientData> => [
     {
       title: "Fullname",
       dataIndex: "name",
@@ -107,6 +143,21 @@ export const MassMarketClientsTable = () => {
               </span>
             ),
           },
+          {
+            key: "3",
+            label: (
+              <span
+                className="flex gap-2 text-blue-500"
+                onClick={() => handleAddTenure(record)}
+              >
+                <div className=" w-4">
+                  {" "}
+                  <TimerIcon className=" w-4" />
+                </div>
+                Add Tenure
+              </span>
+            ),
+          },
         ];
 
         return (
@@ -121,6 +172,33 @@ export const MassMarketClientsTable = () => {
       },
     },
   ];
+
+  const handleAddTenure = (record: MassMarketClientData) => {
+    setSelectedMassMarketClient(record);
+    setIsMassMarketClientDrawerVisible(true);
+  };
+
+  const handleSubmit = async (values: any) => {
+    try {
+      const organizationId = Number(localStorage.getItem("organizationId"));
+
+      const tenureData: TenureBody = {
+        period: values.period || "",
+        interestRate: values.interestRate || "",
+        loanProductId: values.loanProductId || "",
+      };
+      await submitTenureData({
+        organizationId,
+        tenureData,
+        clientId: selectedMassMarketClient?.id,
+      });
+      message.success("Successfully added Tenure");
+      form.resetFields();
+    } catch (error) {
+      console.error("Failed to add Tenure ", error);
+    }
+  };
+
   return (
     <div>
       <section className="w-full h-full hidden md:flex md:flex-col gap-4">
@@ -138,7 +216,7 @@ export const MassMarketClientsTable = () => {
         </div>
         <Table
           dataSource={apiResponse?.data || []}
-          columns={clientColumns}
+          columns={clientColumns(handleAddTenure)}
           rowKey="id"
           // onChange={handleTableChange}
           loading={{
@@ -237,30 +315,81 @@ export const MassMarketClientsTable = () => {
             </div>
             <div className=" pb-4">
               <p className=" font-semibold pb-2">Tenures</p>
-              <Descriptions
-                bordered={true}
-                column={2}
-                className=" text-slate-800"
-              >
-                {/* <Descriptions.Item label=" Period">
-                  {selectedMassMarketClient.id}
-                </Descriptions.Item>
-                <Descriptions.Item label=" Microfin Number">
-                  {selectedMassMarketClient.microfin.contactNo}
-                </Descriptions.Item>
-                <Descriptions.Item label=" Email">
-                  {selectedMassMarketClient.microfin.email ?? "Not set"}
-                </Descriptions.Item>
-                <Descriptions.Item label=" Address">
-                  {selectedMassMarketClient.microfin.address}
-                </Descriptions.Item> */}
-              </Descriptions>
+              {selectedMassMarketClient.tenures.map((tenure, index) => (
+                <Descriptions
+                  key={tenure.id}
+                  bordered={true}
+                  column={2}
+                  className=" text-slate-800"
+                  title={`Tenure ${index + 1}`}
+                >
+                  <Descriptions.Item label="Period">
+                    {tenure.period}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Interest Rate">
+                    {tenure.interestRate}%
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Loan Product">
+                    {tenure.loanProductName}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Created At">
+                    {new Date(tenure.createdAt).toLocaleDateString()}
+                  </Descriptions.Item>
+                </Descriptions>
+              ))}
             </div>
           </Card>
         ) : (
           "Invalid"
         )}
       </Drawer>
+
+      <Modal
+        centered
+        open={isMassMarketClientDrawerVisible}
+        onCancel={() => setIsMassMarketClientDrawerVisible(false)}
+        confirmLoading={isLoading}
+        onOk={() => {
+          form.submit();
+        }}
+      >
+        <Form form={form} layout="vertical" onFinish={handleSubmit}>
+          <div className=" grid grid-cols-2 gap-4">
+            <Form.Item
+              name="loanProductId"
+              label="Loan Product"
+              rules={[
+                { required: true, message: "Please select a Loan Product" },
+              ]}
+            >
+              <Select
+                showSearch
+                placeholder="Search Loan Product"
+                onSearch={(value) => setSearchProductQuery(value)}
+                filterOption={false}
+                loading={productIsFetching}
+                allowClear
+              >
+                {productsResponse?.data?.map((member: ProductsData) => (
+                  <Select.Option key={member.id} value={member.id}>
+                    {member.name}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+            <Form.Item required={true} name="period" label="Period">
+              <Input placeholder="enter period" />
+            </Form.Item>
+            <Form.Item
+              required={true}
+              name="interestRate"
+              label="Interest Rate"
+            >
+              <Input placeholder="enter interest rate" />
+            </Form.Item>
+          </div>
+        </Form>
+      </Modal>
     </div>
   );
 };
