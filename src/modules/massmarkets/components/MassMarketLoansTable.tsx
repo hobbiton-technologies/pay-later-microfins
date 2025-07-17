@@ -1,6 +1,7 @@
 import {
-  MassMarketClientData,
+  MassMarketLoantData,
   useGetMassMarketClientsQuery,
+  useGetMassMarketLoansQuery,
 } from "@/api/queries/massMarketQueries";
 import AnimatedHeader from "@/modules/components/AnimatedHeader";
 import {
@@ -14,30 +15,44 @@ import {
   Table,
 } from "antd";
 import { ColumnsType } from "antd/es/table";
-import { ExportOutlined, EyeOutlined } from "@ant-design/icons";
+import { EyeOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { customLoader } from "@/components/table-loader";
 import DebouncedInputField from "@/modules/components/DebouncedInput";
 import { formatCurrency } from "@/utils/formaters";
 
 export const MassMarketLoansTable = () => {
+  const [id, setId] = useState<number>(1);
+  const [clientId, setClientId] = useState<number>(1);
+  const [status, setStatus] = useState<string[]>([]);
+  const [loanStatus, setloanStatus] = useState<string[]>([]);
+  const [query, setQuery] = useState<string>("");
+  const [startDate, setStartDate] = useState<string>("");
+  const [endDate, setEndDate] = useState<string>("");
+
   const [pageNumber, setPageNumber] = useState<number | null>(1);
   const [pageSize, setPageSize] = useState(10);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [massMarketClient, setMassMarketClient] = useState<
-    MassMarketClientData[]
-  >([]);
+  const [massMarketLoan, setMassMarketClient] = useState<MassMarketLoantData[]>(
+    []
+  );
 
-  const [selectedMassMarketClient, setSelectedMassMarketClient] =
-    useState<MassMarketClientData | null>(null);
+  const [selectedMassMarketLoan, setSelectedMassMarketLoan] =
+    useState<MassMarketLoantData | null>(null);
 
-  const [isClientDrawerVisible, setIsClientDrawerVisible] = useState(false);
+  const [isLoanDrawerVisible, setIsLoanDrawerVisible] = useState(false);
 
-  const { data: apiResponse, isFetching } = useGetMassMarketClientsQuery({
-    id: Number(localStorage.getItem("organizationId")),
+  const { data: apiResponse, isFetching } = useGetMassMarketLoansQuery({
+    organisationId: Number(localStorage.getItem("organizationId")),
+    id: id,
+    clientId: clientId,
+    status: status,
+    loanStatus: loanStatus,
+    query: query,
+    startDate: startDate,
+    endDate: endDate,
     pageNumber: pageNumber ?? 1,
     pageSize: pageSize,
-    query: searchQuery,
   });
 
   useEffect(() => {
@@ -54,19 +69,19 @@ export const MassMarketLoansTable = () => {
     setSearchQuery(searchQuery);
   };
 
-  const loanColumns: ColumnsType<MassMarketClientData> = [
+  const loanColumns: ColumnsType<MassMarketLoantData> = [
     {
       title: "Fullname",
       dataIndex: "name",
       key: "name",
-      render: (_, record: MassMarketClientData) =>
-        `${record.user.firstName} ${record.user.lastName}`,
+      render: (_, record: MassMarketLoantData) =>
+        `${record.borrowerFirstName} ${record.borrowerLastName}`,
     },
     {
       title: "Microfin Name",
       dataIndex: "name",
       key: "name",
-      render: (_, record: MassMarketClientData) => `${record.microfin.name} `,
+      render: (_, record: MassMarketLoantData) => `${record.microfin.name} `,
     },
     {
       title: "ID Number",
@@ -74,23 +89,20 @@ export const MassMarketLoansTable = () => {
       key: "idNumber",
     },
     {
-      title: "Loan Limit",
-      dataIndex: "loanLimit",
-      key: "loanLimit",
-      render: (_, record: MassMarketClientData) =>
-        formatCurrency(record.loanLimit),
+      title: "Amount",
+      dataIndex: "amount",
+      key: "amount",
+      render: (_, record: MassMarketLoantData) => formatCurrency(record.amount),
     },
     {
-      title: "Enabled",
-      dataIndex: "isEnabled",
-      key: "isEnabled",
-      render: (_, record: MassMarketClientData) =>
-        record?.isEnabled ? "Yes" : "No",
+      title: "Date Created",
+      dataIndex: "createdAt",
+      key: "createdAt",
     },
     {
       title: "Actions",
       key: "actions",
-      render: (record: MassMarketClientData) => {
+      render: (record: MassMarketLoantData) => {
         const items: MenuProps["items"] = [
           {
             key: "4",
@@ -98,8 +110,8 @@ export const MassMarketLoansTable = () => {
               <span
                 className="flex gap-2"
                 onClick={() => {
-                  setSelectedMassMarketClient(record);
-                  setIsClientDrawerVisible(true);
+                  setSelectedMassMarketLoan(record);
+                  setIsLoanDrawerVisible(true);
                 }}
               >
                 <EyeOutlined />
@@ -173,13 +185,13 @@ export const MassMarketLoansTable = () => {
       </section>
 
       <Drawer
-        title="Client Details"
+        title="Loan Details"
         width="50%"
-        open={isClientDrawerVisible}
-        onClose={() => setIsClientDrawerVisible(false)}
+        open={isLoanDrawerVisible}
+        onClose={() => setIsLoanDrawerVisible(false)}
         closeIcon={true}
       >
-        {selectedMassMarketClient ? (
+        {selectedMassMarketLoan ? (
           <Card>
             <div className=" pb-4">
               <p className=" font-semibold pb-2">Personal Details</p>
@@ -189,28 +201,13 @@ export const MassMarketLoansTable = () => {
                 className=" text-slate-800"
               >
                 <Descriptions.Item label=" First Name">
-                  {selectedMassMarketClient.user.firstName}
+                  {selectedMassMarketLoan.borrowerFirstName}
                 </Descriptions.Item>
                 <Descriptions.Item label=" Last Name">
-                  {selectedMassMarketClient.user.lastName}
-                </Descriptions.Item>
-                <Descriptions.Item label=" Email">
-                  {selectedMassMarketClient.user.email ?? "Not set"}
-                </Descriptions.Item>
-                <Descriptions.Item label=" Phone number">
-                  {selectedMassMarketClient.user.phoneNumber}
-                </Descriptions.Item>
-                <Descriptions.Item label="ID Type">
-                  {selectedMassMarketClient.idType}
+                  {selectedMassMarketLoan.borrowerLastName}
                 </Descriptions.Item>
                 <Descriptions.Item label="ID Number">
-                  {selectedMassMarketClient.idNumber}
-                </Descriptions.Item>
-                <Descriptions.Item label="Loan Limit">
-                  {formatCurrency(selectedMassMarketClient.loanLimit)}
-                </Descriptions.Item>
-                <Descriptions.Item label="Enabled">
-                  {selectedMassMarketClient.isEnabled ? "Yes" : "No"}
+                  {selectedMassMarketLoan.borrowerIdNumber}
                 </Descriptions.Item>
               </Descriptions>
             </div>
@@ -222,38 +219,50 @@ export const MassMarketLoansTable = () => {
                 className=" text-slate-800"
               >
                 <Descriptions.Item label=" Microfin Name">
-                  {selectedMassMarketClient.microfin.name}
+                  {selectedMassMarketLoan.microfin.name}
                 </Descriptions.Item>
                 <Descriptions.Item label=" Microfin Number">
-                  {selectedMassMarketClient.microfin.contactNo}
+                  {selectedMassMarketLoan.microfin.contactNo}
                 </Descriptions.Item>
                 <Descriptions.Item label=" Email">
-                  {selectedMassMarketClient.microfin.email ?? "Not set"}
+                  {selectedMassMarketLoan.microfin.email ?? "Not set"}
                 </Descriptions.Item>
                 <Descriptions.Item label=" Address">
-                  {selectedMassMarketClient.microfin.address}
+                  {selectedMassMarketLoan.microfin.address}
                 </Descriptions.Item>
               </Descriptions>
             </div>
             <div className=" pb-4">
-              <p className=" font-semibold pb-2">Tenures</p>
+              <p className=" font-semibold pb-2">Loan Details</p>
               <Descriptions
                 bordered={true}
                 column={2}
                 className=" text-slate-800"
               >
-                {/* <Descriptions.Item label=" Period">
-                  {selectedMassMarketClient.id}
+                <Descriptions.Item label=" Amount">
+                  {selectedMassMarketLoan.amount}
                 </Descriptions.Item>
-                <Descriptions.Item label=" Microfin Number">
-                  {selectedMassMarketClient.microfin.contactNo}
+                <Descriptions.Item label=" Interest Rate">
+                  {selectedMassMarketLoan.interestRate}
                 </Descriptions.Item>
-                <Descriptions.Item label=" Email">
-                  {selectedMassMarketClient.microfin.email ?? "Not set"}
+                <Descriptions.Item label="Repayment Amount">
+                  {selectedMassMarketLoan.repaymentAmount}
                 </Descriptions.Item>
-                <Descriptions.Item label=" Address">
-                  {selectedMassMarketClient.microfin.address}
-                </Descriptions.Item> */}
+                <Descriptions.Item label=" Status">
+                  {selectedMassMarketLoan.status}
+                </Descriptions.Item>
+                <Descriptions.Item label="Loan Status">
+                  {selectedMassMarketLoan.loanStatus}
+                </Descriptions.Item>
+                <Descriptions.Item label="Maturity Date">
+                  {selectedMassMarketLoan.maturityDate}
+                </Descriptions.Item>
+                <Descriptions.Item label="Date Created">
+                  {selectedMassMarketLoan.createdAt}
+                </Descriptions.Item>
+                <Descriptions.Item label="Total Repayments">
+                  {selectedMassMarketLoan.totalRepayments}
+                </Descriptions.Item>
               </Descriptions>
             </div>
           </Card>
