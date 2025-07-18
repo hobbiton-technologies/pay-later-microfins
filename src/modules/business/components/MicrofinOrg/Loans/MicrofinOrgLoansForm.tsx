@@ -1,10 +1,10 @@
 import {
+  App,
   Button,
   DatePicker,
   Form,
   FormInstance,
   Input,
-  message,
   Upload,
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
@@ -54,6 +54,7 @@ export const MicrofinOrgLoansForm: React.FC<MicrofinOrgLoansFormProps> = ({
   microfinOrganisationId,
 }) => {
   const [form] = Form.useForm();
+  const { message } = App.useApp();
   const [loadDataSubmit] = useCreateMicrofinOrgLoanMutation();
 
   const handleSubmit = async (values: any) => {

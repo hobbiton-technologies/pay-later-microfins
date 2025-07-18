@@ -6,7 +6,7 @@ import {
   OrganisationData,
   useGetOrganisationsRequestQuery,
 } from "@/api/queries/summaryQueries";
-import { Button, Form, Input, message, Select, Spin } from "antd";
+import { App, Button, Form, Input, Select, Spin } from "antd";
 import { Option } from "antd/es/mentions";
 import { useEffect, useState } from "react";
 
@@ -14,6 +14,7 @@ export const BranchesForm = () => {
   const [pageNumber] = useState<number | null>(1);
   const [pageSize] = useState(10);
   const [form] = Form.useForm();
+  const { message } = App.useApp();
   const [, setMicrofinOrganisations] = useState<OrganisationData[]>();
 
   const [createBranch] = useCreateBranchMutation();

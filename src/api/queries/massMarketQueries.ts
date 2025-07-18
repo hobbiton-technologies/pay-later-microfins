@@ -94,6 +94,7 @@ const MassMarketRequest = Api.injectEndpoints({
         params.append("pageNumber", pageNumber.toString());
         return `microfins/${id}/mass-market/clients?${params.toString()}`;
       },
+      providesTags: ["ClientTenure"],
     }),
 
     GetMassMarketLoans: builder.query<
@@ -150,6 +151,7 @@ const MassMarketRequest = Api.injectEndpoints({
 
         return `microfins/${organisationId}/mass-market/loans?${params.toString()}`;
       },
+      providesTags: ["ClientTenure"],
     }),
   }),
 });

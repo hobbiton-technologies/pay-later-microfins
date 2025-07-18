@@ -1,10 +1,10 @@
 import {
+  App,
   Button,
   Checkbox,
   Form,
   FormInstance,
   Input,
-  message,
   Select,
   Spin,
 } from "antd";
@@ -163,6 +163,7 @@ const LoanDocumentItem: React.FC<ProductChargeItemProps> = ({
 
 export const NewProductForm = () => {
   const [form] = Form.useForm();
+  const { message } = App.useApp();
   const calculateInterestByRate = Form.useWatch(
     "calculateInterestByRate",
     form

@@ -2,7 +2,7 @@ import {
   MicrofinOrgStaffBody,
   useCreateMicrofinOrgStaffMemberMutation,
 } from "@/api/mutations/staffMutation";
-import { Button, Form, FormInstance, Input, message, Select } from "antd";
+import { App, Button, Form, FormInstance, Input, Select } from "antd";
 import { Option } from "antd/es/mentions";
 
 type ItemProps = {
@@ -82,6 +82,7 @@ export const MicrofinOrgStaffMemberForm: React.FC<
   MicrofinOrgStaffMemberFormProps
 > = ({ microfinOrganisationId }) => {
   const [form] = Form.useForm();
+  const { message } = App.useApp();
   const [orgStaffMemberData] = useCreateMicrofinOrgStaffMemberMutation();
 
   const handleSubmit = async (values: any) => {

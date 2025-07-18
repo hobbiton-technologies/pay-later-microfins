@@ -13,7 +13,11 @@ const TenureMutations = Api.injectEndpoints({
         url: `microfins/${organizationId}/mass-market/clients/${clientId}/tenures`,
         method: "POST",
         body: tenureData,
+        headers: {
+          "Content-Type": "application/json",
+        },
       }),
+      invalidatesTags: ["ClientTenure"],
     }),
   }),
 });

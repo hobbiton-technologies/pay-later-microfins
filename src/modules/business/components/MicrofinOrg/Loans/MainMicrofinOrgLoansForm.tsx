@@ -1,10 +1,10 @@
 import {
+  App,
   Button,
   DatePicker,
   Form,
   FormInstance,
   Input,
-  message,
   Select,
   Upload,
 } from "antd";
@@ -60,6 +60,7 @@ export const MainMicrofinOrgLoansForm: React.FC<MicrofinOrgLoansFormProps> = ({
   microfinOrganisationId,
 }) => {
   const [form] = Form.useForm();
+  const { message } = App.useApp();
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [pageNumber] = useState<number | null>(1);
   const [pageSize] = useState(10);

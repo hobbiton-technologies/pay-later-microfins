@@ -231,3 +231,7 @@
 .custom-menu .ant-menu-submenu .ant-menu-item {
   padding-left: 3.5rem !important; /* Increase indent as desired */
 }
+
+.ant-message {
+  z-index: 9999 !important;
+}

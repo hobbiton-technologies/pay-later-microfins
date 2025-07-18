@@ -1,11 +1,12 @@
 import { useCreateOrganisationMutation } from "@/api/mutations/organisationMutation";
-import { Button, Form, Input, message } from "antd";
+import { App, Button, Form, Input } from "antd";
 import { useState } from "react";
 
 export const OrganisationForm = () => {
   const [pageNumber] = useState<number | null>(1);
   const [pageSize] = useState(10);
   const [form] = Form.useForm();
+  const { message } = App.useApp();
 
   const [organisationCreation] = useCreateOrganisationMutation();
 

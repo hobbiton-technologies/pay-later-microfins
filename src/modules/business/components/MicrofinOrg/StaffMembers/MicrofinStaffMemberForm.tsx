@@ -4,11 +4,9 @@ import {
 } from "@/api/mutations/staffMutation";
 import {
   BranchesData,
-  MicrofinStaffMembersData,
   useGetMicrofinBranchesRequestQuery,
 } from "@/api/queries/summaryQueries";
-import { orange } from "@mui/material/colors";
-import { Button, Form, FormInstance, Input, message, Select, Spin } from "antd";
+import { App, Button, Form, FormInstance, Input, Select, Spin } from "antd";
 import { Option } from "antd/es/mentions";
 import { useEffect, useState } from "react";
 
@@ -58,6 +56,7 @@ export const MicrofinStaffMemberForm = () => {
   const [pageSize] = useState(10);
   const [, setBranches] = useState<BranchesData[]>([]);
   const [form] = Form.useForm();
+  const { message } = App.useApp();
 
   const { data: branchesData, isFetching } = useGetMicrofinBranchesRequestQuery(
     {
