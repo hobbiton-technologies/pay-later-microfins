@@ -6,7 +6,7 @@ export const Loans = () => {
     <div>
       <div>
         <AnimatedHeader title="Mass Market Loans" />
-        <p className="text-slate-500 text-xs">Manage your loans</p>
+        <p className="text-slate-500 text-xs pb-4">Manage your loans</p>
       </div>
       <MassMarketLoansTable />
     </div>

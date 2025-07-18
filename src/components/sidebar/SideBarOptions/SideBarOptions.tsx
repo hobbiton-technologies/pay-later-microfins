@@ -1,10 +1,18 @@
 import { MenuProps } from "antd";
-import {
+import Icon, {
   PieChartOutlined,
   DesktopOutlined,
   ContainerOutlined,
   BarChartOutlined,
+  BranchesOutlined,
+  UserOutlined,
+  HomeOutlined,
+  UsergroupAddOutlined,
+  FileProtectOutlined,
+  AreaChartOutlined,
+  FolderOpenOutlined,
 } from "@ant-design/icons";
+import Tree from "antd/es/tree/Tree";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -14,8 +22,16 @@ export const MenuItems: MenuItem[] = [
     label: "Dashboard",
     icon: <PieChartOutlined />,
     children: [
-      { key: "/", label: "Overview" },
-      { key: "/products", label: "Products" },
+      {
+        key: "/",
+        label: <div className=" font-light">Overview</div>,
+        icon: <BarChartOutlined />,
+      },
+      {
+        key: "/products",
+        label: <div className=" font-light">Products</div>,
+        icon: <FolderOpenOutlined className=" font-light" />,
+      },
     ],
   },
   {
@@ -25,11 +41,20 @@ export const MenuItems: MenuItem[] = [
     children: [
       {
         key: "/branches",
-        label: "Branches",
+        label: <div className=" font-light">Branches</div>,
         style: { paddingRight: 20, backgroundImage: "inherit" },
+        icon: <BranchesOutlined className="w-4 text-slate-700" />,
       },
-      { key: "/staff-members", label: "Staff Members" },
-      { key: "/organisations", label: "Organisations" },
+      {
+        key: "/staff-members",
+        label: <div className=" font-light">Staff Members</div>,
+        icon: <UserOutlined />,
+      },
+      {
+        key: "/organisations",
+        label: <div className=" font-light">Organisations</div>,
+        icon: <HomeOutlined />,
+      },
       // { key: "/mous", label: "MOUs" },
     ],
   },
@@ -38,18 +63,26 @@ export const MenuItems: MenuItem[] = [
     label: "Mass Markets",
     icon: <ContainerOutlined />,
     children: [
-      { key: "/clients", label: "Clients" },
-      { key: "/loans", label: "Loans" },
+      {
+        key: "/clients",
+        label: <div className=" font-light">Clients</div>,
+        icon: <UsergroupAddOutlined />,
+      },
+      {
+        key: "/loans",
+        label: <div className=" font-light">Loans</div>,
+        icon: <FileProtectOutlined />,
+      },
     ],
   },
-  {
-    key: "financials",
-    label: "Financials",
-    icon: <BarChartOutlined />,
-    children: [
-      { key: "/salary-loans", label: "Salary Loans" },
-      { key: "/recovery-schedules", label: "Recovery Schedules" },
-      { key: "/reporting", label: "Reporting" },
-    ],
-  },
+  // {
+  //   key: "financials",
+  //   label: "Financials",
+  //   icon: <BarChartOutlined />,
+  //   children: [
+  //     { key: "/salary-loans", label: "Salary Loans" },
+  //     { key: "/recovery-schedules", label: "Recovery Schedules" },
+  //     { key: "/reporting", label: "Reporting" },
+  //   ],
+  // },
 ];
