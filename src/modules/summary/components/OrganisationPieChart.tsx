@@ -77,7 +77,7 @@ export const OrganisationPieChart = () => {
             })}
           </CardDescription>
         </CardHeader>
-        <div className="w-full h-full flex justify-center items-center min-h-96">
+        <div className="w-full h-full flex justify-center items-center min-h-70">
           {isFetching ? (
             <div className="flex flex-col gap-2">
               <Spin tip="Loading..." />
@@ -88,7 +88,7 @@ export const OrganisationPieChart = () => {
               <CardContent className="flex-1 flex justify-center items-center">
                 <ChartContainer
                   config={chartConfig}
-                  className="mx-auto aspect-square max-h-[250px] h-full [&_.recharts-text]:fill-background"
+                  className="mx-auto aspect-square max-h-[250px] h-60 [&_.recharts-text]:fill-background"
                 >
                   <PieChart>
                     <ChartTooltip
@@ -115,7 +115,7 @@ export const OrganisationPieChart = () => {
                       nameKey="key"
                       cx="50%"
                       cy="50%"
-                      outerRadius={120}
+                      outerRadius={100}
                     >
                       {[
                         {

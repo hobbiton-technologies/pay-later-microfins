@@ -31,6 +31,8 @@ export interface MassMarketLoantData {
     email: string;
   };
   totalRepayments: number;
+  transactionId: number;
+  externalId: number;
 }
 
 export interface MassMarketClientData {
@@ -114,38 +116,38 @@ const MassMarketRequest = Api.injectEndpoints({
     >({
       query: ({
         organisationId,
-        id,
-        clientId,
-        status,
-        loanStatus,
-        query,
-        startDate,
-        endDate,
+        // id,
+        // clientId,
+        // status,
+        // loanStatus,
+        // query,
+        // startDate,
+        // endDate,
         pageSize,
         pageNumber,
       }) => {
         const params = new URLSearchParams();
-        if (id) {
-          params.append("id", id.toString());
-        }
-        if (clientId) {
-          params.append("clientId", clientId.toString());
-        }
-        if (status) {
-          params.append("status", status.toString());
-        }
-        if (loanStatus) {
-          params.append("loanStatus", loanStatus.toString());
-        }
-        if (query) {
-          params.append("query", query.toString());
-        }
-        if (startDate) {
-          params.append("startDate", startDate.toString());
-        }
-        if (endDate) {
-          params.append("endDate", endDate.toString());
-        }
+        // if (id) {
+        //   params.append("id", id.toString());
+        // }
+        // if (clientId) {
+        //   params.append("clientId", clientId.toString());
+        // }
+        // if (status) {
+        //   params.append("status", status.toString());
+        // }
+        // if (loanStatus) {
+        //   params.append("loanStatus", loanStatus.toString());
+        // }
+        // if (query) {
+        //   params.append("query", query.toString());
+        // }
+        // if (startDate) {
+        //   params.append("startDate", startDate.toString());
+        // }
+        // if (endDate) {
+        //   params.append("endDate", endDate.toString());
+        // }
         params.append("PageSize", pageSize.toString());
         params.append("PageNumber", pageNumber.toString());
 

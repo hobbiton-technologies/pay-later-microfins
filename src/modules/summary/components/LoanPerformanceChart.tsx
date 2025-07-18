@@ -106,7 +106,7 @@ export const LoanPerformaceChart = () => {
             <div className="h-full flex flex-col justify-center items-center w-full">
               <CardContent className="flex-1 w-full border-none p-0">
                 {transformedData.length > 0 ? (
-                  <ResponsiveContainer width="100%" height={350}>
+                  <ResponsiveContainer width="100%" height={200}>
                     <BarChart
                       data={transformedData}
                       margin={{ top: 20, right: 30, left: 20, bottom: 5 }}

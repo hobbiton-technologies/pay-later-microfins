@@ -114,8 +114,8 @@ export const MicrofinStaffMemberForm = () => {
         microfinStaffMemberData,
       }).unwrap();
 
-      console.log("Staff Member: ", microfinStaffMemberData);
-      message.success("Product Successfully Created");
+      // console.log("Staff Member: ", microfinStaffMemberData);
+      message.success("Staff Member Successfully Created");
       form.resetFields();
     } catch (error) {
       console.error("Failed to create Staff Member", error);

@@ -13,6 +13,7 @@ import {
   MenuProps,
   Space,
   Table,
+  Tag,
 } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { EyeOutlined } from "@ant-design/icons";
@@ -21,6 +22,7 @@ import { customLoader } from "@/components/table-loader";
 import DebouncedInputField from "@/modules/components/DebouncedInput";
 import { formatCurrency } from "@/utils/formaters";
 import { TimerIcon } from "lucide-react";
+import dayjs from "dayjs";
 
 export const MassMarketLoansTable = () => {
   const [id, setId] = useState<number>(1);
@@ -86,8 +88,8 @@ export const MassMarketLoansTable = () => {
     },
     {
       title: "ID Number",
-      dataIndex: "idNumber",
-      key: "idNumber",
+      dataIndex: "borrowerIdNumber",
+      key: "borrowerIdNumber",
     },
     {
       title: "Amount",
@@ -99,7 +101,7 @@ export const MassMarketLoansTable = () => {
       title: "Rate",
       dataIndex: "interestRate",
       key: "interestRate",
-      render: (_, record: MassMarketLoantData) => `${record.amount}%`,
+      render: (_, record: MassMarketLoantData) => `${record.interestRate}%`,
     },
     {
       title: "Repayment Amount",
@@ -112,16 +114,75 @@ export const MassMarketLoansTable = () => {
       title: "Status",
       dataIndex: "status",
       key: "status",
+      render: (status: string) => {
+        const statusColors: Record<string, string> = {
+          Pending: "orange",
+          Failed: "red",
+          Successful: "green",
+        };
+
+        const displayName: Record<string, string> = {
+          Pending: "Pending",
+          Failed: "Failed",
+          Successful: "Successful",
+        };
+
+        const color = statusColors[status] || "default";
+        const label = displayName[status] || status;
+
+        return (
+          <Tag color={color} style={{ fontWeight: 500 }}>
+            {label}
+          </Tag>
+        );
+      },
     },
     {
       title: "Loan Status",
       dataIndex: "loanStatus",
       key: "loanStatus",
+      render: (loanStatus: string) => {
+        const statusColors: Record<string, string> = {
+          Pending: "orange",
+          Failed: "red",
+          Open: "blue",
+          PartiallySettled: "gold",
+          FullySettled: "cyan",
+          Overdue: "volcano",
+          Defaulted: "magenta",
+          UnderReview: "orange",
+          Rejected: "red",
+          Approved: "blue",
+        };
+
+        const displayName: Record<string, string> = {
+          Pending: "Pending",
+          Failed: "Failed",
+          Open: "Open",
+          PartiallySettled: "Partially Settled",
+          FullySettled: "Fully Settled",
+          Overdue: "Overdue",
+          Defaulted: "Defaulted",
+          UnderReview: "Under Review",
+          Rejected: "Rejected",
+          Approved: "Approved",
+        };
+
+        const color = statusColors[loanStatus] || "default";
+        const label = displayName[loanStatus] || loanStatus;
+
+        return (
+          <Tag color={color} style={{ fontWeight: 500 }}>
+            {label}
+          </Tag>
+        );
+      },
     },
     {
       title: "Date Created",
       dataIndex: "createdAt",
       key: "createdAt",
+      render: (date: string) => new Date(date).toLocaleDateString(),
     },
     {
       title: "Actions",
@@ -160,10 +221,6 @@ export const MassMarketLoansTable = () => {
   return (
     <div>
       <section className="w-full h-full hidden md:flex md:flex-col gap-4">
-        <div>
-          <AnimatedHeader title="Mass Market Loans" />
-          <p className="text-slate-500 text-xs">Manage your loans</p>
-        </div>
         <div className="w-full">
           <DebouncedInputField
             placeholder="Search for loan"
@@ -279,13 +336,20 @@ export const MassMarketLoansTable = () => {
                   {selectedMassMarketLoan.loanStatus}
                 </Descriptions.Item>
                 <Descriptions.Item label="Maturity Date">
-                  {selectedMassMarketLoan.maturityDate}
+                  {dayjs(selectedMassMarketLoan.maturityDate).format(
+                    "DD MMM YYYY"
+                  )}
                 </Descriptions.Item>
                 <Descriptions.Item label="Date Created">
-                  {selectedMassMarketLoan.createdAt}
+                  {dayjs(selectedMassMarketLoan.createdAt).format(
+                    "DD MMM YYYY"
+                  )}
                 </Descriptions.Item>
                 <Descriptions.Item label="Total Repayments">
                   {selectedMassMarketLoan.totalRepayments}
+                </Descriptions.Item>
+                <Descriptions.Item label="Transaction ID">
+                  {selectedMassMarketLoan.transactionId}
                 </Descriptions.Item>
               </Descriptions>
             </div>

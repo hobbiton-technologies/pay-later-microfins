@@ -213,15 +213,15 @@ export const MicrofinStaffTable = () => {
       >
         <MicrofinStaffMemberForm />
       </Drawer>
-      {selectedStaffMembers ? (
-        <Drawer
-          title="Staff Member Details"
-          width="50%"
-          open={isStaffMembersDrawerVisible}
-          onClose={() => setIsStaffMembersDrawerVisible(false)}
-          closeIcon={true}
-        >
-          <div>
+      <Drawer
+        title="Staff Member Details"
+        width="50%"
+        open={isStaffMembersDrawerVisible}
+        onClose={() => setIsStaffMembersDrawerVisible(false)}
+        closeIcon={true}
+      >
+        <div>
+          {selectedStaffMembers ? (
             <Card>
               <Descriptions bordered={true} column={1} className="text-black">
                 <Descriptions.Item label="First Name">
@@ -256,11 +256,11 @@ export const MicrofinStaffTable = () => {
                 </Descriptions.Item>
               </Descriptions>
             </Card>
-          </div>
-        </Drawer>
-      ) : (
-        "Invalid process"
-      )}
+          ) : (
+            "Invalid process"
+          )}
+        </div>
+      </Drawer>
     </div>
   );
 };
