@@ -107,7 +107,7 @@ const MassMarketRequest = Api.injectEndpoints({
         clientId: number;
         status: string[];
         loanStatus: string[];
-        query: string;
+        Query: string;
         startDate: string;
         endDate: string;
         pageSize: number;
@@ -120,7 +120,7 @@ const MassMarketRequest = Api.injectEndpoints({
         // clientId,
         // status,
         // loanStatus,
-        // query,
+        Query,
         // startDate,
         // endDate,
         pageSize,
@@ -139,9 +139,8 @@ const MassMarketRequest = Api.injectEndpoints({
         // if (loanStatus) {
         //   params.append("loanStatus", loanStatus.toString());
         // }
-        // if (query) {
-        //   params.append("query", query.toString());
-        // }
+        params.append("Query", Query.toString());
+
         // if (startDate) {
         //   params.append("startDate", startDate.toString());
         // }

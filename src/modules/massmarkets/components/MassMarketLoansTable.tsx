@@ -29,13 +29,12 @@ export const MassMarketLoansTable = () => {
   const [clientId, setClientId] = useState<number>(1);
   const [status, setStatus] = useState<string[]>([]);
   const [loanStatus, setloanStatus] = useState<string[]>([]);
-  const [query, setQuery] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [searchInput, setSearchInput] = useState<string>("");
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
-
   const [pageNumber, setPageNumber] = useState<number | null>(1);
   const [pageSize, setPageSize] = useState(10);
-  const [searchQuery, setSearchQuery] = useState<string>("");
   const [massMarketLoan, setMassMarketClient] = useState<MassMarketLoantData[]>(
     []
   );
@@ -51,7 +50,7 @@ export const MassMarketLoansTable = () => {
     clientId: clientId,
     status: status,
     loanStatus: loanStatus,
-    query: query,
+    Query: searchQuery,
     startDate: startDate,
     endDate: endDate,
     pageNumber: pageNumber ?? 1,
@@ -64,12 +63,12 @@ export const MassMarketLoansTable = () => {
     }
   }, [apiResponse]);
 
-  const handleSearch = () => {
-    setSearchQuery(searchQuery);
+  const handleSearch = (value: string) => {
+    setSearchQuery(value.trim());
   };
 
   const handleSearchClear = () => {
-    setSearchQuery(searchQuery);
+    setSearchQuery(searchInput);
   };
 
   const loanColumns: ColumnsType<MassMarketLoantData> = [
