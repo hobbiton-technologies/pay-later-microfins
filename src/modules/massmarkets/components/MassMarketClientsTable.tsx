@@ -35,10 +35,11 @@ import {
 } from "@/api/mutations/tenureMutation";
 
 export const MassMarketClientsTable = () => {
-  const [id, setSearchId] = useState<string>("");
+  const [id, setSearchId] = useState<number>(0);
   const [pageNumber, setPageNumber] = useState<number | null>(1);
   const [pageSize, setPageSize] = useState(10);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [searchInput, setSearchInput] = useState<string>("");
   const [searchProductQuery, setSearchProductQuery] = useState<string>("");
 
   const [massMarketClient, setMassMarketClient] = useState<
@@ -61,8 +62,8 @@ export const MassMarketClientsTable = () => {
   const [submitTenureData, { isLoading }] = useCreateTenureMutation();
   const { data: productsResponse, isFetching: productIsFetching } =
     useGetLoanProductRequestQuery({
-      id: id,
-      searchQuery: searchProductQuery,
+      id: Number(localStorage.getItem("organizationId")),
+      Query: searchProductQuery,
       pageNumber: pageNumber ?? 1,
       pageSize: pageSize,
     });
@@ -80,8 +81,8 @@ export const MassMarketClientsTable = () => {
     }
   }, [apiResponse]);
 
-  const handleSearch = () => {
-    setSearchQuery(searchQuery);
+  const handleSearch = (value: string) => {
+    setSearchQuery(value.trim());
   };
 
   const handleSearchClear = () => {
