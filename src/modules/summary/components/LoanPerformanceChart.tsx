@@ -26,6 +26,16 @@ export const LoanPerformaceChart = () => {
     organizationId: Number(localStorage.getItem("organizationId")),
   });
 
+  // Updated mock data with correct structure matching your chart config
+  const chartData = [
+    { month: "Jan", loansTotal: 186000, repaymentsTotal: 80000 },
+    { month: "Feb", loansTotal: 305000, repaymentsTotal: 200000 },
+    { month: "Mar", loansTotal: 237000, repaymentsTotal: 120000 },
+    { month: "Apr", loansTotal: 173000, repaymentsTotal: 190000 },
+    { month: "May", loansTotal: 209000, repaymentsTotal: 130000 },
+    { month: "Jun", loansTotal: 214000, repaymentsTotal: 140000 },
+  ];
+
   const chartConfig = {
     loansTotal: {
       label: "Total Loans",
@@ -68,10 +78,11 @@ export const LoanPerformaceChart = () => {
   });
 
   const calculateTrend = () => {
-    if (transformedData.length < 2) return 0;
+    const dataToUse = transformedData.length > 0 ? transformedData : chartData;
+    if (dataToUse.length < 2) return 0;
 
-    const lastMonth = transformedData[transformedData.length - 1];
-    const previousMonth = transformedData[transformedData.length - 2];
+    const lastMonth = dataToUse[dataToUse.length - 1];
+    const previousMonth = dataToUse[dataToUse.length - 2];
 
     const lastTotal = lastMonth.loansTotal + lastMonth.repaymentsTotal;
     const previousTotal =
@@ -83,13 +94,19 @@ export const LoanPerformaceChart = () => {
   };
 
   const trendPercentage = calculateTrend();
+  // const dataToDisplay =
+  //   transformedData.length > 0 ? transformedData : chartData;
+
+  const dataToDisplay = chartData;
 
   return (
     <div className="">
       <Card className="h-full flex flex-col">
         <CardHeader className=" items-center">
-          <CardTitle>Loan Performance by Month</CardTitle>
-          <CardDescription>
+          <CardTitle className=" text-slate-700">
+            Loan Performance by Month
+          </CardTitle>
+          <CardDescription className=" text-slate-500">
             Monthly loans vs repayments comparison
           </CardDescription>
         </CardHeader>
@@ -105,10 +122,10 @@ export const LoanPerformaceChart = () => {
           ) : (
             <div className="h-full flex flex-col justify-center items-center w-full">
               <CardContent className="flex-1 w-full border-none p-0">
-                {transformedData.length > 0 ? (
+                {dataToDisplay.length > 0 ? (
                   <ResponsiveContainer width="100%" height={200}>
                     <BarChart
-                      data={transformedData}
+                      data={dataToDisplay}
                       margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
                     >
                       <CartesianGrid strokeDasharray="3 3" vertical={false} />
@@ -123,8 +140,8 @@ export const LoanPerformaceChart = () => {
                         content={({ active, payload, label }) => {
                           if (active && payload && payload.length) {
                             return (
-                              <div className="bg-white p-3 shadow-lg">
-                                <p className="font-medium text-gray-800">
+                              <div className="bg-white p-3 shadow-lg rounded border">
+                                <p className="font-medium text-gray-800 mb-1">
                                   {label}
                                 </p>
                                 {payload.map((entry, index) => {
@@ -165,13 +182,13 @@ export const LoanPerformaceChart = () => {
                   </ResponsiveContainer>
                 ) : (
                   <div className="flex items-center justify-center h-[350px] text-gray-500">
-                    <p>No loan data available</p>
+                    <p className=" text-slate-500">No loan data available</p>
                   </div>
                 )}
               </CardContent>
 
               <CardFooter className="items-start gap-2 text-sm">
-                <div className="flex gap-2 font-medium leading-none">
+                <div className="flex gap-2 font-medium leading-none text-slate-700">
                   {Number(trendPercentage) > 0 ? (
                     <>
                       Trending up by {trendPercentage}% this month
@@ -191,7 +208,7 @@ export const LoanPerformaceChart = () => {
                   )}
                 </div>
                 <div className="leading-none text-muted-foreground">
-                  Showing loan performance for the last {transformedData.length}{" "}
+                  Showing loan performance for the last {dataToDisplay.length}{" "}
                   months
                 </div>
               </CardFooter>

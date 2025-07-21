@@ -68,7 +68,10 @@ export const OrganisationPieChart = () => {
       {" "}
       <Card className="h-full flex flex-col">
         <CardHeader className="pb-0">
-          <CardTitle> Organisation Statistics</CardTitle>
+          <CardTitle className=" text-slate-700">
+            {" "}
+            Organisation Statistics
+          </CardTitle>
           <CardDescription>
             January -{" "}
             {new Date().toLocaleDateString("en-US", {

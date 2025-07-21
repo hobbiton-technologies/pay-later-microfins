@@ -1,5 +1,5 @@
 import { MenuProps } from "antd";
-import Icon, {
+import {
   PieChartOutlined,
   DesktopOutlined,
   ContainerOutlined,
@@ -9,10 +9,8 @@ import Icon, {
   HomeOutlined,
   UsergroupAddOutlined,
   FileProtectOutlined,
-  AreaChartOutlined,
   FolderOpenOutlined,
 } from "@ant-design/icons";
-import Tree from "antd/es/tree/Tree";
 
 type MenuItem = Required<MenuProps>["items"][number];
 

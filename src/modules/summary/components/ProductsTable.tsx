@@ -21,6 +21,8 @@ import { NewProductForm } from "./NewProductForm";
 
 export const ProductsTable = () => {
   const [id, setSearchId] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [searchInput, setSearchInput] = useState<string>("");
   const [pageNumber, setPageNumber] = useState<number | null>(1);
   const [pageSize, setPageSize] = useState(10);
   const [products, setProducts] = useState<ProductsData[]>([]);
@@ -43,9 +45,13 @@ export const ProductsTable = () => {
 
   // const [loanProducts, setLoanProducts] = useState<ProductsData[]>([]);
 
-  const { data: productsResponse, isFetching } = useGetLoanProductRequestQuery({
+  const {
+    data: productsResponse,
+    isFetching,
+    refetch,
+  } = useGetLoanProductRequestQuery({
     id: id,
-    searchQuery: "",
+    searchQuery: searchQuery,
     pageNumber: pageNumber ?? 1,
     pageSize: pageSize,
   });
@@ -58,8 +64,12 @@ export const ProductsTable = () => {
     }
   }, [productsResponse]);
 
+  useEffect(() => {
+    refetch();
+  }, [searchQuery, pageSize, pageAmount]);
+
   const handleSearch = () => {
-    setSearchId(id);
+    setSearchQuery(searchInput);
   };
 
   const handleSearchClear = () => {
