@@ -77,7 +77,7 @@ export function DisbursedLoansChart() {
                 cursor={false}
                 content={<ChartTooltipContent hideLabel />}
               />
-              <Bar dataKey="desktop" fill="var(--color-desktop)" radius={5} />
+              <Bar dataKey="desktop" fill="var(--color-desktop)" radius={4} />
             </BarChart>
           </ChartContainer>
         </CardContent>
@@ -85,7 +85,7 @@ export function DisbursedLoansChart() {
           <div className="flex gap-2 leading-none font-medium">
             {/* Trending up by 5.2% this month <TrendingUp className="h-4 w-4" /> */}
           </div>
-          <div className="text-xs text-muted-foreground leading-none">
+          <div className="text-xs text-muted-foreground leading-none ">
             Showing total visitors for the last 6 months
           </div>
         </CardFooter>

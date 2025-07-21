@@ -34,6 +34,13 @@ export const LoanPerformaceChart = () => {
     { month: "Apr", loansTotal: 173000, repaymentsTotal: 190000 },
     { month: "May", loansTotal: 209000, repaymentsTotal: 130000 },
     { month: "Jun", loansTotal: 214000, repaymentsTotal: 140000 },
+
+    { month: "Jul", loansTotal: 86000, repaymentsTotal: 82000 },
+    { month: "Aug", loansTotal: 305000, repaymentsTotal: 200000 },
+    { month: "Sep", loansTotal: 237000, repaymentsTotal: 120000 },
+    { month: "Oct", loansTotal: 173000, repaymentsTotal: 190000 },
+    { month: "Nov", loansTotal: 209000, repaymentsTotal: 130000 },
+    { month: "Dec", loansTotal: 214000, repaymentsTotal: 140000 },
   ];
 
   const chartConfig = {
@@ -43,7 +50,7 @@ export const LoanPerformaceChart = () => {
     },
     repaymentsTotal: {
       label: "Total Repayments",
-      color: "hsl(var(--chart-2))",
+      color: "#008000",
     },
   } satisfies ChartConfig;
 
@@ -102,7 +109,7 @@ export const LoanPerformaceChart = () => {
   return (
     <div className="">
       <Card className="h-full flex flex-col">
-        <CardHeader className=" items-center">
+        <CardHeader className=" items-start">
           <CardTitle className=" text-slate-700">
             Loan Performance by Month
           </CardTitle>
@@ -120,7 +127,7 @@ export const LoanPerformaceChart = () => {
               </h1>
             </div>
           ) : (
-            <div className="h-full flex flex-col justify-center items-center w-full">
+            <div className="h-full flex flex-col justify-center items-start w-full">
               <CardContent className="flex-1 w-full border-none p-0">
                 {dataToDisplay.length > 0 ? (
                   <ResponsiveContainer width="100%" height={200}>
@@ -188,7 +195,7 @@ export const LoanPerformaceChart = () => {
               </CardContent>
 
               <CardFooter className="items-start gap-2 text-sm">
-                <div className="flex gap-2 font-medium leading-none text-slate-700">
+                {/* <div className="flex gap-2 font-medium leading-none text-slate-700">
                   {Number(trendPercentage) > 0 ? (
                     <>
                       Trending up by {trendPercentage}% this month
@@ -206,8 +213,8 @@ export const LoanPerformaceChart = () => {
                       <div className="h-4 w-4 bg-gray-400 rounded-full"></div>
                     </>
                   )}
-                </div>
-                <div className="leading-none text-muted-foreground">
+                </div> */}
+                <div className="leading-none text-muted-foreground items-start">
                   Showing loan performance for the last {dataToDisplay.length}{" "}
                   months
                 </div>

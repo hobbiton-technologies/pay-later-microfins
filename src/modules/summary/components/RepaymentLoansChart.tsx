@@ -39,7 +39,7 @@ const chartConfig = {
   },
   mobile: {
     label: "Mobile",
-    color: "var(--chart-2)",
+    color: "#008000",
     icon: TrendingUp,
   },
 } satisfies ChartConfig;

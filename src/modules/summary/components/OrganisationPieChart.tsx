@@ -45,7 +45,7 @@ export const OrganisationPieChart = () => {
     },
     withMou: {
       label: "With MOU",
-      color: "#000090",
+      color: "#008000",
     },
     withoutMou: {
       label: "Without MOU",

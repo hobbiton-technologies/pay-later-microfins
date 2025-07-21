@@ -23,7 +23,7 @@ export const description = "A donut chart with text";
 
 const chartData = [
   { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
-  { browser: "safari", visitors: 200, fill: "var(--color-safari)" },
+  { browser: "safari", visitors: 200, fill: "#008000" },
   { browser: "firefox", visitors: 287, fill: "#000080" },
   { browser: "edge", visitors: 173, fill: "var(--color-edge)" },
   { browser: "other", visitors: 190, fill: "var(--color-other)" },
@@ -62,7 +62,7 @@ export function MassMarketClientChart() {
 
   return (
     <Card className="flex flex-col">
-      <CardHeader className="items-center pb-0">
+      <CardHeader className="items-start pb-0">
         <CardTitle>Mass Market Clients</CardTitle>
         <CardDescription>January - December </CardDescription>
       </CardHeader>
@@ -116,11 +116,11 @@ export function MassMarketClientChart() {
           </PieChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter className="flex-col  text-sm">
-        <div className="flex items-center  leading-none font-medium">
+      <CardFooter className="  text-sm ">
+        <div className="flex items-start  leading-none font-medium ">
           {/* Trending up by 5.2% this month <TrendingUp className="h-4 w-4" /> */}
         </div>
-        <div className=" text-xs text-muted-foreground leading-none">
+        <div className=" text-xs text-muted-foreground leading-none pt-6">
           Showing total visitors for the last 6 months
         </div>
       </CardFooter>
