@@ -162,7 +162,7 @@ export const LoanPerformaceChart = () => {
                                       className="text-sm"
                                       style={{ color: entry.color }}
                                     >
-                                      {config?.label || entry.dataKey}: $
+                                      {config?.label || entry.dataKey}: K
                                       {entry.value?.toLocaleString()}
                                     </p>
                                   );

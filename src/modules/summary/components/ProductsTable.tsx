@@ -20,7 +20,7 @@ import { ExportOutlined, EyeOutlined } from "@ant-design/icons";
 import { NewProductForm } from "./NewProductForm";
 
 export const ProductsTable = () => {
-  const [id, setSearchId] = useState<string>("");
+  const [id, setSearchId] = useState<number>(0);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [searchInput, setSearchInput] = useState<string>("");
   const [pageNumber, setPageNumber] = useState<number | null>(1);
@@ -50,8 +50,8 @@ export const ProductsTable = () => {
     isFetching,
     refetch,
   } = useGetLoanProductRequestQuery({
-    id: id,
-    searchQuery: searchQuery,
+    id: Number(localStorage.getItem("organizationId")),
+    Query: searchQuery,
     pageNumber: pageNumber ?? 1,
     pageSize: pageSize,
   });
@@ -68,12 +68,12 @@ export const ProductsTable = () => {
     refetch();
   }, [searchQuery, pageSize, pageAmount]);
 
-  const handleSearch = () => {
-    setSearchQuery(searchInput);
+  const handleSearch = (value: string) => {
+    setSearchQuery(value.trim());
   };
 
   const handleSearchClear = () => {
-    setSearchId("");
+    setSearchId(0);
   };
 
   const productsColumns = (

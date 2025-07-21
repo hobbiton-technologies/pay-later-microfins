@@ -290,21 +290,21 @@ export const SummaryRequest = Api.injectEndpoints({
     getLoanProductRequest: builder.query<
       ProductsDataResponse,
       {
-        id?: string;
-        searchQuery?: string;
+        id?: number;
+        Query?: string;
         pageNumber: number;
         pageSize: number;
       }
     >({
-      query: ({ id, searchQuery, pageNumber, pageSize }) => {
+      query: ({ id, Query, pageNumber, pageSize }) => {
         const params = new URLSearchParams();
 
         if (id) params.append("id", id.toString());
-        if (searchQuery) params.append("searchQuery", searchQuery);
+        if (Query) params.append("Query", Query);
         params.append("PageSize", pageSize.toString());
         params.append("PageNumber", pageNumber.toString());
 
-        return `/cash-loan-products?${params.toString()}`;
+        return `/microfins/${id}/products?${params.toString()}`;
       },
       providesTags: ["LoanProducsts"],
     }),

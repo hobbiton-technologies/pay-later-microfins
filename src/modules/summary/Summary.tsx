@@ -51,6 +51,7 @@ const Summary: React.FC = () => {
           <div>
             <div className=" col-span-1 w-full">
               <div className=" flex-1">
+                <p className=" py-4  font-semibold">Recent Transactions</p>
                 <MassMarketLoansTable />
               </div>
             </div>
