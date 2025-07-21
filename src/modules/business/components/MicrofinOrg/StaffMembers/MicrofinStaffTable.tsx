@@ -36,7 +36,7 @@ export const MicrofinStaffTable = () => {
 
   const { data: staffResponse, isFetching } = useGetMicrofinStaffMembersQuery({
     id: id,
-    query: searchQuery,
+    Query: searchQuery,
     organizationId: Number(localStorage.getItem("organizationId")),
     pageNumber: pageNumber ?? 1,
     pageSize: pageSize,
@@ -47,12 +47,12 @@ export const MicrofinStaffTable = () => {
     setPageSize(pagination.pageSize);
   };
 
-  const handleSearch = () => {
-    setSearchId(id);
+  const handleSearch = (value: string) => {
+    setSearchQuery(value.trim());
   };
 
   const handleSearchClear = () => {
-    setSearchId(id);
+    setSearchQuery(searchQuery);
   };
 
   useEffect(() => {

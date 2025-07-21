@@ -292,15 +292,18 @@ export const SummaryRequest = Api.injectEndpoints({
       {
         id?: number;
         Query?: string;
+        ProductStatus?: string;
         pageNumber: number;
         pageSize: number;
       }
     >({
-      query: ({ id, Query, pageNumber, pageSize }) => {
+      query: ({ id, Query, ProductStatus, pageNumber, pageSize }) => {
         const params = new URLSearchParams();
 
         if (id) params.append("id", id.toString());
         if (Query) params.append("Query", Query);
+        if (ProductStatus)
+          params.append("ProductStatus", ProductStatus.toString());
         params.append("PageSize", pageSize.toString());
         params.append("PageNumber", pageNumber.toString());
 
@@ -367,21 +370,21 @@ export const SummaryRequest = Api.injectEndpoints({
       {
         id: number;
         organizationId: number;
-        query: string;
+        Query: string;
         pageNumber: number;
         pageSize: number;
       }
     >({
-      query: ({ id, organizationId, query, pageNumber, pageSize }) => {
+      query: ({ id, organizationId, Query, pageNumber, pageSize }) => {
         const params = new URLSearchParams();
 
         if (id) params.append("id", id.toString());
-        if (query) params.append("query", query);
+        if (Query) params.append("Query", Query);
         // params.append("organizationId", organizationId.toString());
         params.append("pageNumber", pageNumber.toString());
         params.append("pageSize", pageSize.toString());
 
-        return `microfins/members?${params.toString()}`;
+        return `microfins/${organizationId}/microfin-organizations/members?${params.toString()}`;
       },
       providesTags: ["MicrofinOrgStaffMembers"],
     }),

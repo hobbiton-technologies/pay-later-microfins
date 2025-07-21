@@ -52,6 +52,7 @@ export const ProductsTable = () => {
   } = useGetLoanProductRequestQuery({
     id: Number(localStorage.getItem("organizationId")),
     Query: searchQuery,
+    ProductStatus: filteredLoanProductStatus ?? "",
     pageNumber: pageNumber ?? 1,
     pageSize: pageSize,
   });
@@ -99,8 +100,8 @@ export const ProductsTable = () => {
         { text: "Long Term Loan", value: "LongTermLoan " },
       ],
       filteredValue: filteredLoanProductType ? [filteredLoanProductType] : null,
-      onFilter: (value, record) => record.productStatus === value,
-      render: (productStatus: string) => {
+      onFilter: (value, record) => record.loanProductType === value,
+      render: (loanProductType: string) => {
         const statusColors: Record<string, string> = {
           ShortTermLoan: "blue",
           EmergencyAdvance: "green",
@@ -113,8 +114,8 @@ export const ProductsTable = () => {
           LongTermLoan: "Long Term Loan",
         };
 
-        const color = statusColors[productStatus] || "default";
-        const label = displayName[productStatus] || productStatus;
+        const color = statusColors[loanProductType] || "default";
+        const label = displayName[loanProductType] || loanProductType;
 
         return (
           <Tag color={color} style={{ fontWeight: 500 }}>
@@ -149,7 +150,7 @@ export const ProductsTable = () => {
       filteredValue: filteredLoanProductStatus
         ? [filteredLoanProductStatus]
         : null,
-      onFilter: (value, record) => record.productStatus === value,
+      // onFilter: (value, record) => record.productStatus === value,
       render: (productStatus: string) => {
         const statusColors: Record<string, string> = {
           Active: "blue",
