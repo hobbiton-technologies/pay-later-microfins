@@ -140,7 +140,9 @@ export const MicrofinStaffTable = () => {
           <Space>
             <Dropdown menu={{ items }} placement="bottomRight">
               <Button className=" dark:text-white">
-                <EyeOutlined />
+                <div className="  text-lg font-semibold  items-center pb-2">
+                  ...
+                </div>
               </Button>
             </Dropdown>
           </Space>

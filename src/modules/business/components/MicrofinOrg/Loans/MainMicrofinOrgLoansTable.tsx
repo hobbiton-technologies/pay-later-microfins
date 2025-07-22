@@ -69,6 +69,15 @@ export const MainMicrofinOrgLoansTable: React.FC<
     null
   );
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [selectedRows, setSelectedRows] = useState<GetMicrofinLoansData[]>([]);
+
+  const [isBulkApproveModalVisible, setIsBulkApproveModalVisible] =
+    useState(false);
+  const [isBulkDisburseModalVisible, setIsBulkDisburseModalVisible] =
+    useState(false);
+  const [bulkActionType, setBulkActionType] = useState<
+    "approve" | "reject" | "disburse" | null
+  >(null);
 
   const loansColumns = (
     handleViewMicrofinOrgLoans: (record: GetMicrofinLoansData) => void,
@@ -238,7 +247,9 @@ export const MainMicrofinOrgLoansTable: React.FC<
           <Space>
             <Dropdown menu={{ items }} placement="bottomRight">
               <Button className=" dark:text-white">
-                <EyeOutlined />
+                <div className="  text-lg font-semibold  items-center pb-2">
+                  ...
+                </div>
               </Button>
             </Dropdown>
           </Space>
@@ -287,7 +298,7 @@ export const MainMicrofinOrgLoansTable: React.FC<
     pageSize: pageSize,
   });
 
-  console.log(microfinOrganisationId);
+  // console.log(microfinOrganisationId);
 
   const handleViewMicrofinOrgLoans = (record: GetMicrofinLoansData) => {
     if (record) {
@@ -375,14 +386,27 @@ export const MainMicrofinOrgLoansTable: React.FC<
     }
   };
 
-  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
+  const onSelectChange = (
+    newSelectedRowKeys: React.Key[],
+    selectedRows: GetMicrofinLoansData[]
+  ) => {
     setSelectedRowKeys(newSelectedRowKeys);
+    setSelectedRows(selectedRows);
   };
 
   const rowSelection = {
     selectedRowKeys,
     onChange: onSelectChange,
   };
+
+  const loanStatuses = selectedRows.map((row) => row.loanStatus.toLowerCase());
+
+  const allUnderReview =
+    loanStatuses.length > 0 &&
+    loanStatuses.every((status) => status === "underreview");
+  const allApproved =
+    loanStatuses.length > 0 &&
+    loanStatuses.every((status) => status === "approved");
 
   return (
     <div>
@@ -397,28 +421,44 @@ export const MainMicrofinOrgLoansTable: React.FC<
         </div>
         <div className="flex gap-3 ">
           <Select
-            className=" w-32 text-start"
+            className="w-32 text-start"
             placeholder="Action"
-            disabled={selectedRowKeys.length === 0}
+            disabled={
+              selectedRowKeys.length === 0 || (!allUnderReview && !allApproved)
+            }
+            onChange={(value) => {
+              setBulkActionType(value); // track action type
+              if (value === "approve" || value === "reject") {
+                setIsBulkApproveModalVisible(true);
+              } else if (value === "disburse") {
+                setIsBulkDisburseModalVisible(true);
+              }
+            }}
           >
-            <Option>
-              <div className=" text-blue-500 flex gap-2">
-                <Check className=" w-4" /> <p>Approve</p>
-              </div>
-            </Option>
-            <Option>
-              <div className=" text-red-500 gap-2 flex items-center">
-                <StopOutlined />
-                <p> Reject</p>
-              </div>
-            </Option>
-            <Option>
-              <div className=" text-green-500 gap-2 flex items-center">
-                {" "}
-                <UpSquareOutlined />
-                <p>Disburse</p>
-              </div>
-            </Option>
+            {allUnderReview && (
+              <>
+                <Option value="approve">
+                  <div className="text-blue-500 flex gap-2 items-center">
+                    <Check className="w-4" /> <p>Approve</p>
+                  </div>
+                </Option>
+                <Option value="reject">
+                  <div className="text-red-500 gap-2 flex items-center">
+                    <StopOutlined />
+                    <p> Reject</p>
+                  </div>
+                </Option>
+              </>
+            )}
+
+            {allApproved && (
+              <Option value="disburse">
+                <div className="text-green-500 gap-2 flex items-center">
+                  <UpSquareOutlined />
+                  <p>Disburse</p>
+                </div>
+              </Option>
+            )}
           </Select>
         </div>
         {showCreateButton && (
@@ -638,6 +678,8 @@ export const MainMicrofinOrgLoansTable: React.FC<
           "Invalid process"
         )}
       </Drawer>
+
+      {/* Approval modal */}
       <Modal
         centered
         open={isLoanApproveDrawerVisible}
@@ -685,6 +727,75 @@ export const MainMicrofinOrgLoansTable: React.FC<
         </Form>
       </Modal>
 
+      {/* Bulk approval modal */}
+      <Modal
+        centered
+        open={isBulkApproveModalVisible}
+        onCancel={() => {
+          setIsBulkApproveModalVisible(false);
+          form.resetFields();
+        }}
+        confirmLoading={isLoading}
+        onOk={() => {
+          form.submit();
+        }}
+      >
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={async (values) => {
+            try {
+              await Promise.all(
+                selectedRows.map((loan) =>
+                  approveLoan({
+                    organizationId: Number(
+                      localStorage.getItem("organizationId")
+                    ),
+                    microfinOrganisationId: loan.member.organization.id,
+                    loanId: loan.id,
+                    approveLoanData: {
+                      answer: values.answer,
+                      comment: values.comment,
+                    },
+                  })
+                )
+              );
+              message.success("Bulk loan response submitted");
+              setIsBulkApproveModalVisible(false);
+              setSelectedRowKeys([]);
+              setSelectedRows([]);
+            } catch (error) {
+              message.error("Something went wrong with bulk approval");
+            }
+          }}
+        >
+          <div className="text-center py-6">
+            You're about to <i>{bulkActionType}</i> <b>{selectedRows.length}</b>{" "}
+            loans.
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <Form.Item
+              name="comment"
+              label="Comment"
+              rules={[{ required: true }]}
+            >
+              <Input.TextArea placeholder="Enter comment" />
+            </Form.Item>
+            <Form.Item
+              name="answer"
+              label="Select"
+              rules={[{ required: true }]}
+            >
+              <Select placeholder="Select decision">
+                <Option value="Accept">Approve</Option>
+                <Option value="Reject">Reject</Option>
+              </Select>
+            </Form.Item>
+          </div>
+        </Form>
+      </Modal>
+
+      {/* Disburse Modal */}
       <Modal
         centered
         open={isLoanDisburseDrawerVisible}
@@ -732,6 +843,41 @@ export const MainMicrofinOrgLoansTable: React.FC<
           {/* your loan confirmation text */}
           <div className=" grid grid-cols-2 gap-4"></div>
         </Form>
+      </Modal>
+
+      {/* Bulk Disbure Modal */}
+      <Modal
+        centered
+        open={isBulkDisburseModalVisible}
+        onCancel={() => {
+          setIsBulkDisburseModalVisible(false);
+        }}
+        confirmLoading={disbursementIsLoading}
+        onOk={async () => {
+          try {
+            await Promise.all(
+              selectedRows.map((loan) =>
+                disburseLoan({
+                  organizationId: Number(
+                    localStorage.getItem("organizationId")
+                  ),
+                  microfinOrganisationId: loan.member.organization.id,
+                  loanId: loan.id,
+                })
+              )
+            );
+            message.success("Loans disbursed successfully");
+            setIsBulkDisburseModalVisible(false);
+            setSelectedRowKeys([]);
+            setSelectedRows([]);
+          } catch (error) {
+            message.error("Something went wrong during bulk disbursement");
+          }
+        }}
+      >
+        <div className="text-center py-6">
+          You're about to <b>disburse</b> <b>{selectedRows.length}</b> loans.
+        </div>
       </Modal>
     </div>
   );
