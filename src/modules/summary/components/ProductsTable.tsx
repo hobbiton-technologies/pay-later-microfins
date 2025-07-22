@@ -237,8 +237,8 @@ export const ProductsTable = () => {
         return (
           <Space>
             <Dropdown menu={{ items }} placement="bottomRight">
-              <Button className="dark:border-gray-800  dark:text-white">
-                <EyeOutlined />
+              <Button className="dark:border-gray-800  dark:text-white ">
+                <div className="  text-lg font-bold items-center pb-2">...</div>
               </Button>
             </Dropdown>
           </Space>

@@ -257,9 +257,12 @@ export const NewProductForm = () => {
         productStatus: values.productStatus || "",
         loanDocuments: transformedLoanDocuments,
         isMouBased: Boolean(values.isMouBased),
-        microfinBranches: (values.microfinBranches || []).map((v: string) =>
-          Number(v)
-        ),
+        microfinBranches: values.microfinBranches
+          ? [Number(values.microfinBranches)]
+          : [],
+        // microfinBranches: (values.microfinBranches || []).map((v: string) =>
+        //   Number(v)
+        // ),
       };
 
       // console.log("Transformed data:", loanProductData);
@@ -480,7 +483,7 @@ export const NewProductForm = () => {
               <Form.Item
                 label="Interest Type"
                 name="interestType"
-                rules={[{ required: false }]}
+                rules={[{ required: true }]}
               >
                 <Select placeholder="Select type" id="">
                   <Option value="FlatRate">Flat Rate </Option>

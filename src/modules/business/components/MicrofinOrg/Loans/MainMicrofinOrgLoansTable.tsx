@@ -16,6 +16,7 @@ import {
 } from "antd";
 import { ColumnsType, TableProps } from "antd/es/table";
 import {
+  DownOutlined,
   ExportOutlined,
   EyeOutlined,
   StopOutlined,
@@ -29,7 +30,7 @@ import {
 } from "@/api/queries/loansQueries";
 import { customLoader } from "@/components/table-loader";
 import { formatCurrency } from "@/utils/formaters";
-import { Check } from "lucide-react";
+import { ArrowBigDown, Check } from "lucide-react";
 import {
   useApproveMicrofinOrgLoanMutation,
   useDisburseMicrofinOrgLoanMutation,
@@ -67,6 +68,7 @@ export const MainMicrofinOrgLoansTable: React.FC<
   const [filteredLoanStatus, setFilteredLoanStatus] = useState<string | null>(
     null
   );
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
   const loansColumns = (
     handleViewMicrofinOrgLoans: (record: GetMicrofinLoansData) => void,
@@ -373,6 +375,15 @@ export const MainMicrofinOrgLoansTable: React.FC<
     }
   };
 
+  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
+    setSelectedRowKeys(newSelectedRowKeys);
+  };
+
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: onSelectChange,
+  };
+
   return (
     <div>
       <section className="w-full h-full  flex   gap-2 ">
@@ -384,7 +395,32 @@ export const MainMicrofinOrgLoansTable: React.FC<
             allowClear={true}
           />
         </div>
-
+        <div className="flex gap-3 ">
+          <Select
+            className=" w-32 text-start"
+            placeholder="Action"
+            disabled={selectedRowKeys.length === 0}
+          >
+            <Option>
+              <div className=" text-blue-500 flex gap-2">
+                <Check className=" w-4" /> <p>Approve</p>
+              </div>
+            </Option>
+            <Option>
+              <div className=" text-red-500 gap-2 flex items-center">
+                <StopOutlined />
+                <p> Reject</p>
+              </div>
+            </Option>
+            <Option>
+              <div className=" text-green-500 gap-2 flex items-center">
+                {" "}
+                <UpSquareOutlined />
+                <p>Disburse</p>
+              </div>
+            </Option>
+          </Select>
+        </div>
         {showCreateButton && (
           <div className="flex gap-3">
             <Button
@@ -399,6 +435,7 @@ export const MainMicrofinOrgLoansTable: React.FC<
       </section>
       <section className="w-full h-full hidden md:flex md:flex-col">
         <Table
+          rowSelection={rowSelection}
           onChange={handleTableChange}
           dataSource={apiResponse?.data || []}
           columns={loansColumns(

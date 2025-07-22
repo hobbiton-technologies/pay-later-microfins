@@ -13,10 +13,12 @@ export const Products = () => {
     },
   ];
   return (
-    <div>
+    <div className=" ">
       <div>
         <AnimatedHeader title="Products" />
-        <p className="text-slate-500 text-xs">Customizable financial products</p>
+        <p className="text-slate-500 text-xs">
+          Customizable financial products
+        </p>
       </div>
       <div>
         <ProductStats />

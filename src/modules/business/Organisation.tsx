@@ -25,6 +25,7 @@ import { useNavigate } from "react-router-dom";
 
 const Organisation = () => {
   const [id, setSearchId] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [pageNumber, setPageNumber] = useState<number | null>(1);
   const [pageSize, setPageSize] = useState(10);
   const [isCreateDrawerVisible, setIsCreateDrawerVisible] = useState(false);
@@ -44,6 +45,7 @@ const Organisation = () => {
   const { data: organisationData, isFetching } =
     useGetOrganisationsRequestQuery({
       id: Number(localStorage.getItem("organizationId")),
+      Query: searchQuery,
       pageNumber: pageNumber ?? 1,
       pageSize: pageSize,
     });
@@ -65,12 +67,12 @@ const Organisation = () => {
     setPageSize(pagination.pageSize);
   };
 
-  const handleSearch = () => {
-    setSearchId(id);
+  const handleSearch = (value: string) => {
+    setSearchQuery(value.trim());
   };
 
   const handleSearchClear = () => {
-    setSearchId("");
+    setSearchQuery(searchQuery);
   };
 
   const handleViewOrganisations = (organisationId: number) => {
@@ -249,7 +251,7 @@ const Organisation = () => {
       <section className="w-full h-full py-3 flex   gap-2 ">
         <div className="w-full">
           <DebouncedInputField
-            placeholder="Search for Product"
+            placeholder="Search for Organisation"
             onSearch={handleSearch}
             onClear={handleSearchClear}
             allowClear={true}

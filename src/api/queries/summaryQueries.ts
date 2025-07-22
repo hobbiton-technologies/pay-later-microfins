@@ -327,10 +327,12 @@ export const SummaryRequest = Api.injectEndpoints({
 
     getOrganisationsRequest: builder.query<
       OrganisationResponse,
-      { id: number; pageNumber: number; pageSize: number }
+      { id: number; Query?: string; pageNumber: number; pageSize: number }
     >({
-      query: ({ id, pageNumber, pageSize }) => {
+      query: ({ id, Query, pageNumber, pageSize }) => {
         const params = new URLSearchParams();
+
+        if (Query) params.append("Query", Query.toString());
         params.append("PageSize", pageSize.toString());
         params.append("PageNumber", pageNumber.toString());
         return `/microfins/${id}/microfin-organizations?${params.toString()}`;

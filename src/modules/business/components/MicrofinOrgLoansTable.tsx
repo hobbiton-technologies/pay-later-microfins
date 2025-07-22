@@ -240,6 +240,7 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
   const [loans, setLoans] = useState<GetMicrofinLoansData[]>([]);
   const [selectedLoan, setSelectedLoan] = useState<GetMicrofinLoansData>();
   const [selectedMember, setSelectedMember] = useState<MicrofinOrgStaffBody>();
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
   const handleSearch = () => {
     setSearchId(id);
@@ -354,6 +355,14 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
     }
   };
 
+  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
+    setSelectedRowKeys(newSelectedRowKeys);
+  };
+
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: onSelectChange,
+  };
   return (
     <div>
       <section className="w-full h-full py-3 flex   gap-2 ">
@@ -380,6 +389,7 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
       </section>
       <section className="w-full h-full hidden md:flex md:flex-col">
         <Table
+          rowSelection={rowSelection}
           dataSource={apiResponse?.data || []}
           columns={loansColumns(
             handleViewMicrofinOrgLoans,
