@@ -273,9 +273,9 @@ export const MainMicrofinOrgLoansTable: React.FC<
       setFilteredLoanStatus(null);
     }
   };
-  const handleSearch = () => {
+  const handleSearch = (values: string) => {
     setSearchId(id);
-    setSearchQuery(searchQuery);
+    setSearchQuery(values.trim());
   };
 
   const handleSearchClear = () => {

@@ -266,9 +266,9 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
     }
   };
 
-  const handleSearch = () => {
+  const handleSearch = (values: string) => {
     setSearchId(id);
-    setSearchQuery(searchQuery);
+    setSearchQuery(values.trim());
   };
 
   const handleSearchClear = () => {

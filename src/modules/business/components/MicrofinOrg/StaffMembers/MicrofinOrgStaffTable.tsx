@@ -56,8 +56,9 @@ export const MicrofinOrgStaffTable: React.FC<StaffTableProps> = ({
     setPageSize(pagination.pageSize);
   };
 
-  const handleSearch = () => {
+  const handleSearch = (values: string) => {
     setSearchId(id);
+    setSearchQuery(values.trim());
   };
 
   const handleSearchClear = () => {
