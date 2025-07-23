@@ -2,7 +2,7 @@ import { MainMicrofinOrgLoansTable } from "@/modules/business/components/Microfi
 import { TabsProps, Tabs } from "antd";
 import { motion } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
-import { MouOrganisationOverviewPage } from "./MouOrganisationOverviewPage";
+import MouOrganisationOverviewPage from "./MouOrganisationOverviewPage";
 
 export const MouOrganisationDetailsPage = () => {
   const location = useLocation();
@@ -13,7 +13,9 @@ export const MouOrganisationDetailsPage = () => {
     {
       key: "1",
       label: "Overview",
-      children: <MouOrganisationOverviewPage />,
+      children: (
+        <MouOrganisationOverviewPage mouorganisationId={organisation} />
+      ),
     },
     {
       key: "2",
