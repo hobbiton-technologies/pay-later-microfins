@@ -196,7 +196,7 @@ export const MouOrganisationTable = () => {
         <Table
           dataSource={organisationData?.data || []}
           columns={organisationsColumns((record: MouLoansOrganisationData) =>
-            navigate(`/microfin-org-details`, {
+            navigate(`/mou-organisation-details`, {
               state: {
                 member: {
                   ...record,

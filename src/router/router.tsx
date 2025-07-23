@@ -9,8 +9,6 @@ import Layout from "../layout";
 import ProtectedRoute from "../auth/protectedRoutes";
 import Summary from "../modules/summary/Summary";
 import StaffMembers from "../modules/business/StaffMembers";
-import { Financials } from "../modules/financials/Financials";
-import { MoneyLenders } from "../modules/massmarkets/MoneyLenders";
 import { MOUs } from "../modules/business/MOUs";
 import { Clients } from "../modules/massmarkets/Clients";
 import { Loans } from "../modules/massmarkets/Loans";
@@ -26,6 +24,7 @@ import MouOrganisations from "@/modules/mous/MouOrganisations";
 import Mous from "@/modules/mous/Mous";
 import Transactions from "@/modules/mous/Transactions";
 import Receipting from "@/modules/mous/Receipting";
+import { MouOrganisationDetailsPage } from "@/modules/mous/components/organisation/MouOrganisationDetailsPage";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -135,6 +134,14 @@ export const router = createBrowserRouter(
           element={
             <ProtectedRoute>
               <MouOrganisations />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/mou-organisation-details"
+          element={
+            <ProtectedRoute>
+              <MouOrganisationDetailsPage />
             </ProtectedRoute>
           }
         />
