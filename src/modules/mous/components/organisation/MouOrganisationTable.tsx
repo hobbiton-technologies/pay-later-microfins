@@ -12,6 +12,10 @@ import { customLoader } from "@/components/table-loader";
 import { MicrofinOrgStaffMemberForm } from "@/modules/business/components/MicrofinOrg/StaffMembers/MIcrofinOrgStaffMemberForm";
 import { MicrofinOrgLoansTable } from "@/modules/business/components/MicrofinOrgLoansTable";
 import DebouncedInputField from "@/modules/components/DebouncedInput";
+import {
+  MouLoansOrganisationData,
+  useGetMouLoansOrganisationsQuery,
+} from "@/api/queries/organisationQueries";
 
 export const MouOrganisationTable = () => {
   const [id, setSearchId] = useState<string>("");
@@ -24,18 +28,20 @@ export const MouOrganisationTable = () => {
   const navigate = useNavigate();
 
   const [selectedOrganisation, setSelectedOrganisation] =
-    useState<OrganisationData>();
+    useState<MouLoansOrganisationData>();
 
   const [isOrganisationDrawerVisible, setIsOrganisationDrawerVisible] =
     useState(false);
 
   const [isLoansDrawerVisible, setIsLoansDrawerVisible] = useState(false);
 
-  const [organisations, setOrganisations] = useState<OrganisationData[]>([]);
+  const [organisations, setOrganisations] = useState<
+    MouLoansOrganisationData[]
+  >([]);
   const { data: organisationData, isFetching } =
-    useGetOrganisationsRequestQuery({
+    useGetMouLoansOrganisationsQuery({
       id: Number(localStorage.getItem("organizationId")),
-      Query: searchQuery,
+      query: searchQuery,
       pageNumber: pageNumber ?? 1,
       pageSize: pageSize,
     });
@@ -89,9 +95,9 @@ export const MouOrganisationTable = () => {
   };
 
   const organisationsColumns = (
-    handleViewOrganisations: (record: OrganisationData) => void
+    handleViewOrganisations: (record: MouLoansOrganisationData) => void
     // handleViewMicrofinOrgLoans: (id: number) => void
-  ): ColumnsType<OrganisationData> => [
+  ): ColumnsType<MouLoansOrganisationData> => [
     {
       title: "Name",
       dataIndex: "name",
@@ -106,18 +112,20 @@ export const MouOrganisationTable = () => {
       title: "Address",
       dataIndex: "address",
       key: "address",
-      render: (_, record: OrganisationData) => record.microfin?.address || "-",
+      render: (_, record: MouLoansOrganisationData) =>
+        record.address || "Not Set",
     },
     {
       title: "Email",
       dataIndex: "email",
       key: "email",
-      render: (_, record: OrganisationData) => record.microfin?.email || "-",
+      render: (_, record: MouLoansOrganisationData) =>
+        record.email || "Not Set",
     },
     {
       title: "Actions",
       key: "actions",
-      render: (record: OrganisationData) => {
+      render: (record: MouLoansOrganisationData) => {
         const items: MenuProps["items"] = [
           {
             key: "1",
@@ -264,7 +272,7 @@ export const MouOrganisationTable = () => {
       <section className="w-full h-full hidden md:flex md:flex-col">
         <Table
           dataSource={organisationData?.data || []}
-          columns={organisationsColumns((record: OrganisationData) =>
+          columns={organisationsColumns((record: MouLoansOrganisationData) =>
             navigate(`/microfin-org-details`, {
               state: {
                 member: {
@@ -381,11 +389,11 @@ export const MouOrganisationTable = () => {
             <Card title={`${selectedOrganisation.name} Loans`}>
               <div className=" pt-8">
                 {/* FIX: Check if microfin exists and has valid ID before rendering */}
-                {selectedOrganisation.microfin?.id ? (
+                {selectedOrganisation.id ? (
                   <MicrofinOrgLoansTable
                     showCreateButton={false}
                     microfinOrganisationId={selectedOrganisation.id} // Use organisation ID, not microfin ID
-                    microfinMemberId={selectedOrganisation.microfin.id}
+                    microfinMemberId={selectedOrganisation.id}
                   />
                 ) : (
                   <div className="text-center py-8 text-gray-500">
