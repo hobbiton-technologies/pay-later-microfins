@@ -139,7 +139,7 @@ export const router = createBrowserRouter(
           }
         />
         <Route
-          path="/mous"
+          path="/loans-mous"
           element={
             <ProtectedRoute>
               <Mous />

@@ -97,7 +97,7 @@ export const MenuItems: MenuItem[] = [
         icon: <HomeOutlined />,
       },
       {
-        key: "/mous",
+        key: "/loans-mous",
         label: <div className=" font-light">MOUs</div>,
         icon: <ProjectOutlined />,
       },
