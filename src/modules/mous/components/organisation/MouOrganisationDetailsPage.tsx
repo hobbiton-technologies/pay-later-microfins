@@ -3,6 +3,7 @@ import { TabsProps, Tabs } from "antd";
 import { motion } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
 import MouOrganisationOverviewPage from "./MouOrganisationOverviewPage";
+import MouOrganisationLoansTable from "./MouOrganisationLoansTable";
 
 export const MouOrganisationDetailsPage = () => {
   const location = useLocation();
@@ -21,10 +22,11 @@ export const MouOrganisationDetailsPage = () => {
       key: "2",
       label: "Loans",
       children: (
-        <MainMicrofinOrgLoansTable
-          microfinOrganisationId={organisation.id}
-          microfinMemberId={0}
-        />
+        <MouOrganisationLoansTable />
+        // <MainMicrofinOrgLoansTable
+        //   microfinOrganisationId={organisation.id}
+        //   microfinMemberId={0}
+        // />
       ),
     },
     {
