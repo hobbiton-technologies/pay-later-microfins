@@ -11,6 +11,10 @@ import {
   FileProtectOutlined,
   FolderOpenOutlined,
   AuditOutlined,
+  FileDoneOutlined,
+  ProjectOutlined,
+  CreditCardOutlined,
+  BookOutlined,
 } from "@ant-design/icons";
 
 type MenuItem = Required<MenuProps>["items"][number];
@@ -79,6 +83,33 @@ export const MenuItems: MenuItem[] = [
         key: "/organisations",
         label: <div className=" font-light">Organisations</div>,
         icon: <HomeOutlined />,
+      },
+    ],
+  },
+  {
+    key: "mouLoans",
+    label: "MOU Loans",
+    icon: <FileDoneOutlined />,
+    children: [
+      {
+        key: "/mou-organisations",
+        label: <div className=" font-light">Organisations</div>,
+        icon: <HomeOutlined />,
+      },
+      {
+        key: "/mous",
+        label: <div className=" font-light">MOUs</div>,
+        icon: <ProjectOutlined />,
+      },
+      {
+        key: "/transactions",
+        label: <div className=" font-light">Transactions</div>,
+        icon: <CreditCardOutlined />,
+      },
+      {
+        key: "/receipting",
+        label: <div className=" font-light">Receipting</div>,
+        icon: <BookOutlined />,
       },
     ],
   },

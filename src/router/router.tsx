@@ -22,6 +22,10 @@ import { SignIn } from "@/auth/pages/signIn";
 import Branches from "@/modules/business/Branches";
 import Organisation from "@/modules/business/Organisation";
 import { MicrofinOrgDetailsPage } from "@/modules/business/components/MicrofinOrgDetailsPage";
+import MouOrganisations from "@/modules/mous/MouOrganisations";
+import Mous from "@/modules/mous/Mous";
+import Transactions from "@/modules/mous/Transactions";
+import Receipting from "@/modules/mous/Receipting";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -127,18 +131,36 @@ export const router = createBrowserRouter(
           }
         />
         <Route
-          path="/"
+          path="/mou-organisations"
           element={
             <ProtectedRoute>
-              <Financials />
+              <MouOrganisations />
             </ProtectedRoute>
           }
         />
         <Route
-          path="/"
+          path="/mous"
           element={
             <ProtectedRoute>
-              <MoneyLenders />
+              <Mous />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/transactions"
+          element={
+            <ProtectedRoute>
+              <Transactions />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/receipting"
+          element={
+            <ProtectedRoute>
+              <Receipting />
             </ProtectedRoute>
           }
         />
