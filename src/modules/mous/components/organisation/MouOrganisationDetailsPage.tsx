@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
 import MouOrganisationOverviewPage from "./MouOrganisationOverviewPage";
 import MouOrganisationLoansTable from "./MouOrganisationLoansTable";
+import MouOrganisationEmployeesTable from "./MouOrganisationEmployeesTable";
+import MouOrganisationDetailsTab from "./MouOrganisationDetailsTab";
 
 export const MouOrganisationDetailsPage = () => {
   const location = useLocation();
@@ -33,21 +35,17 @@ export const MouOrganisationDetailsPage = () => {
       key: "3",
       label: "Employees",
       children: (
-        <MainMicrofinOrgLoansTable
-          microfinOrganisationId={organisation.id}
-          microfinMemberId={0}
-        />
+        <MouOrganisationEmployeesTable />
+        // <MainMicrofinOrgLoansTable
+        //   microfinOrganisationId={organisation.id}
+        //   microfinMemberId={0}
+        // />
       ),
     },
     {
       key: "4",
       label: "MOU",
-      children: (
-        <MainMicrofinOrgLoansTable
-          microfinOrganisationId={organisation.id}
-          microfinMemberId={0}
-        />
-      ),
+      children: <MouOrganisationDetailsTab />,
     },
   ];
 
