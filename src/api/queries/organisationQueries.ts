@@ -52,12 +52,12 @@ const OrganisationRequests = Api.injectEndpoints({
       query: ({ id, query, pageSize, pageNumber }) => {
         const params = new URLSearchParams();
 
-        if (id) params.append("id", id.toString());
-        if (query) params.append("query", query.toString());
-        if (pageSize) params.append("pageSize", pageSize.toString());
-        if (pageNumber) params.append("pageNumber", pageNumber.toString());
+        // if (id) params.append("id", id.toString());
+        if (query) params.append("Query", query.toString());
+        if (pageSize) params.append("PageSize", pageSize.toString());
+        if (pageNumber) params.append("PageNumber", pageNumber.toString());
 
-        return `organizations`;
+        return `organizations?${params.toString()}`;
       },
     }),
   }),
