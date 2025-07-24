@@ -81,6 +81,25 @@ export interface MouOrganisationLoanTransactionData {
   balance: number;
 }
 
+export interface MouLoansOrganisationMembers {
+  id: number;
+  user: {
+    id: number;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber: string;
+    isSystemAdmin: boolean;
+  };
+  idType: string;
+  idNumber: string;
+  employeeIdNumber: string;
+  position: string;
+  isOrganisationAdmin: boolean;
+  isEnabled: boolean;
+  maximumLoanAmountPerMonth: number;
+}
+
 export interface MouLoansOrganisationData {
   id: number;
   createdAt: string;
@@ -90,26 +109,7 @@ export interface MouLoansOrganisationData {
   address: string;
   email: string;
   tPinNumber: string;
-  members: [
-    {
-      id: number;
-      user: {
-        id: number;
-        firstName: string;
-        lastName: string;
-        email: string;
-        phoneNumber: string;
-        isSystemAdmin: boolean;
-      };
-      idType: string;
-      idNumber: string;
-      employeeIdNumber: string;
-      position: string;
-      isOrganisationAdmin: boolean;
-      isEnabled: boolean;
-      maximumLoanAmountPerMonth: number;
-    }
-  ];
+  members: MouLoansOrganisationMembers[];
   sector: string;
   isDeactivated: boolean;
 }
@@ -156,6 +156,7 @@ const OrganisationRequests = Api.injectEndpoints({
       MouOrganisationLoanTransactionResponse,
       {
         organisationId: number;
+        mouOrganisationId: number;
         memberId: number;
         loanStatus: string;
         query: string;
@@ -171,6 +172,7 @@ const OrganisationRequests = Api.injectEndpoints({
     >({
       query: ({
         organisationId,
+        mouOrganisationId,
         memberId,
         loanStatus,
         query,
@@ -196,6 +198,7 @@ const OrganisationRequests = Api.injectEndpoints({
           params.append("IsReportRequest", String(isReportRequest));
         params.append("PageSize", pageSize.toString());
         params.append("PageNumber", pageNumber.toString());
+        params.append("OrganizationId", mouOrganisationId.toString());
         if (id) params.append("id", id.toString());
 
         return `microfins/${organisationId}/transactions?${params.toString()}`;

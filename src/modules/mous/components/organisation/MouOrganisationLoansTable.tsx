@@ -32,6 +32,7 @@ export default function MouOrganisationLoansTable({
   const { data: apiResponse, isFetching } =
     useGetMouOrganisationLoanTransactionsQuery({
       organisationId: Number(localStorage.getItem("organizationId")),
+      mouOrganisationId: MouOrganisationId.id,
       memberId: memberId,
       loanStatus: loanStatus,
       query: searchQuery,
@@ -42,7 +43,7 @@ export default function MouOrganisationLoansTable({
       isReportRequest: isReportRequest,
       pageSize: pageSize ?? 10,
       pageNumber: pageNumber ?? 1,
-      id: MouOrganisationId.id,
+      id: id ?? 0,
     });
 
   const MouOrgLoansColumns: ColumnsType<MouOrganisationLoanTransactionData> = [

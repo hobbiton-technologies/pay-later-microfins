@@ -311,7 +311,6 @@ export const MouOrganisationTable = () => {
           <div>
             <Card title={`${selectedOrganisation.name} Loans`}>
               <div className=" pt-8">
-                {/* FIX: Check if microfin exists and has valid ID before rendering */}
                 {selectedOrganisation.id ? (
                   <MicrofinOrgLoansTable
                     showCreateButton={false}
