@@ -1,4 +1,5 @@
 import { Api } from "../apiSlice";
+import { MicrofinOrgStaffResponse } from "./summaryQueries";
 
 interface MouLoansOrganisationRecoveryTransactionsData {
   id: number;
@@ -163,9 +164,9 @@ const OrganisationRequests = Api.injectEndpoints({
         startRange: string;
         endRange: string;
         isReportRequest: boolean;
-        pageSize: string;
-        pageNumber: string;
-        id: string;
+        pageSize: number;
+        pageNumber: number;
+        id: number;
       }
     >({
       query: ({
@@ -184,7 +185,6 @@ const OrganisationRequests = Api.injectEndpoints({
       }) => {
         const params = new URLSearchParams();
 
-        if (organisationId) params.append("id", organisationId.toString());
         if (memberId) params.append("MemberId", memberId.toString());
         if (loanStatus) params.append("LoanStatus", loanStatus);
         if (query) params.append("Query", query);
@@ -194,14 +194,45 @@ const OrganisationRequests = Api.injectEndpoints({
         if (endRange) params.append("EndRange", endRange);
         if (isReportRequest)
           params.append("IsReportRequest", String(isReportRequest));
-        params.append("PageSize", pageSize);
-        params.append("PageNumber", pageNumber);
-        if (id) params.append("id", id);
+        params.append("PageSize", pageSize.toString());
+        params.append("PageNumber", pageNumber.toString());
+        if (id) params.append("id", id.toString());
 
         return `microfins/${organisationId}/transactions?${params.toString()}`;
       },
     }),
+
+    getMouOrgStaffMembers: builder.query<
+      MicrofinOrgStaffResponse,
+      {
+        id: number;
+        organizationId?: number;
+        query: string;
+        pageNumber: number;
+        pageSize: number;
+      }
+    >({
+      query: ({ id, organizationId, query, pageNumber, pageSize }) => {
+        const params = new URLSearchParams();
+
+        // params.append("id", id.toString());
+        if (query) params.append("query", query);
+        if (organizationId !== undefined) {
+          params.append("OrganizationId", organizationId.toString());
+        }
+
+        params.append("pageNumber", pageNumber.toString());
+        params.append("pageSize", pageSize.toString());
+
+        return `microfins/${id}/microfin-organizations/members?${params.toString()}`;
+      },
+      providesTags: ["MicrofinStaffMembers"],
+    }),
   }),
 });
 
-export const { useGetMouLoansOrganisationsQuery } = OrganisationRequests;
+export const {
+  useGetMouLoansOrganisationsQuery,
+  useGetMouOrganisationLoanTransactionsQuery,
+  useGetMouOrgStaffMembersQuery,
+} = OrganisationRequests;

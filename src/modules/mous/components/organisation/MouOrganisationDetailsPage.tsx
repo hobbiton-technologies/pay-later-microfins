@@ -24,7 +24,7 @@ export const MouOrganisationDetailsPage = () => {
       key: "2",
       label: "Loans",
       children: (
-        <MouOrganisationLoansTable />
+        <MouOrganisationLoansTable MouOrganisationId={organisation} />
         // <MainMicrofinOrgLoansTable
         //   microfinOrganisationId={organisation.id}
         //   microfinMemberId={0}
@@ -35,7 +35,7 @@ export const MouOrganisationDetailsPage = () => {
       key: "3",
       label: "Employees",
       children: (
-        <MouOrganisationEmployeesTable />
+        <MouOrganisationEmployeesTable MouOrganisationId={organisation} />
         // <MainMicrofinOrgLoansTable
         //   microfinOrganisationId={organisation.id}
         //   microfinMemberId={0}

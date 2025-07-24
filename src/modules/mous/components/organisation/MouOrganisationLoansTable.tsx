@@ -1,44 +1,156 @@
-import { MenuProps, Space, Dropdown, Button } from "antd";
+import { MenuProps, Space, Dropdown, Button, Tag } from "antd";
 import Table, { ColumnsType } from "antd/es/table";
 import { EllipsisOutlined, EyeOutlined } from "@ant-design/icons";
+import {
+  MouLoansOrganisationData,
+  MouOrganisationLoanTransactionData,
+  useGetMouOrganisationLoanTransactionsQuery,
+} from "@/api/queries/organisationQueries";
+import { useState } from "react";
+import { formatCurrency } from "@/utils/formaters";
+import { customLoader } from "@/components/table-loader";
 
-export default function MouOrganisationLoansTable() {
-  const MouOrgLoansColumns: ColumnsType = [
+type MouOrganisationProps = {
+  MouOrganisationId: MouLoansOrganisationData;
+};
+
+export default function MouOrganisationLoansTable({
+  MouOrganisationId,
+}: MouOrganisationProps) {
+  const [id, setId] = useState<number | null>(0);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [memberId, setMemberId] = useState<number>(0);
+  const [loanStatus, setloanStatus] = useState<string>("");
+  const [transactionType, setTransactionType] = useState<string>("");
+  const [status, setStatus] = useState<string>("");
+  const [startRange, setStartRange] = useState<string>("");
+  const [endRange, setendRange] = useState<string>("");
+  const [isReportRequest, setIsReportRequest] = useState<boolean>(false);
+  const [pageSize, setPageSize] = useState<number | null>(10);
+  const [pageNumber, setPageNumber] = useState<number | null>(1);
+
+  const { data: apiResponse, isFetching } =
+    useGetMouOrganisationLoanTransactionsQuery({
+      organisationId: Number(localStorage.getItem("organizationId")),
+      memberId: memberId,
+      loanStatus: loanStatus,
+      query: searchQuery,
+      transactionType: transactionType,
+      status: status,
+      startRange,
+      endRange,
+      isReportRequest: isReportRequest,
+      pageSize: pageSize ?? 10,
+      pageNumber: pageNumber ?? 1,
+      id: MouOrganisationId.id,
+    });
+
+  const MouOrgLoansColumns: ColumnsType<MouOrganisationLoanTransactionData> = [
     {
-      title: "First Name",
+      title: "Full Name",
+      dataIndex: "member",
+      key: "member",
+      render: (_, record: MouOrganisationLoanTransactionData) =>
+        `${record.member.firstName} ${record.member.lastName}`,
     },
     {
-      title: "Last Name",
+      title: "Phone ",
+      key: "member",
+      render: (_, record: MouOrganisationLoanTransactionData) =>
+        record.member.phoneNumber,
     },
     {
-      title: "Phone Number",
-    },
-    {
-      title: "Employee ID",
+      title: "Emp ID",
+      key: "member",
+      render: (_, record: MouOrganisationLoanTransactionData) =>
+        record.member.employeeId,
     },
     {
       title: "Amount",
+      dataIndex: "amount",
+      key: "member",
+      render: (_, record: MouOrganisationLoanTransactionData) =>
+        formatCurrency(record.amount),
     },
     {
       title: "Interest (%)",
+      dataIndex: "initialInterestAmount",
+      key: "member",
+      render: (_, record: MouOrganisationLoanTransactionData) =>
+        formatCurrency(record.initialInterestAmount),
     },
     {
-      title: "Entry Type",
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (status: string) => {
+        const statusColors: Record<string, string> = {
+          Pending: "orange",
+          Failed: "red",
+          Successful: "green",
+        };
+
+        const displayName: Record<string, string> = {
+          Pending: "Pending",
+          Failed: "Failed",
+          Successful: "Successful",
+        };
+
+        const color = statusColors[status] || "default";
+        const label = displayName[status] || status;
+
+        return (
+          <Tag color={color} style={{ fontWeight: 500 }}>
+            {label}
+          </Tag>
+        );
+      },
     },
     {
-      title: "Transation Type",
+      title: "Loan Status",
+      dataIndex: "loanStatus",
+      render: (status: string) => {
+        const statusColors: Record<string, string> = {
+          Open: "blue",
+          Failed: "red",
+          Successful: "green",
+        };
+
+        const displayName: Record<string, string> = {
+          Open: "Open",
+          Failed: "Failed",
+          Successful: "Successful",
+        };
+
+        const color = statusColors[status] || "default";
+        const label = displayName[status] || status;
+
+        return (
+          <Tag color={color} style={{ fontWeight: 500 }}>
+            {label}
+          </Tag>
+        );
+      },
     },
     {
-      title: "Product Name",
+      title: "Product",
+      dataIndex: "product",
+      key: "product",
+      render: (_, record: MouOrganisationLoanTransactionData) =>
+        record.product.name,
     },
     {
-      title: "Microfin Name",
+      title: "Microfin ",
+      dataIndex: "mou",
+      key: "mou",
+      render: (_, record: MouOrganisationLoanTransactionData) =>
+        record.mou.microfin.name,
     },
     {
-      title: "Organisation Name",
-    },
-    {
-      title: "Transaction Status",
+      title: "Date Created ",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (date: string) => new Date(date).toLocaleDateString(),
     },
     {
       title: "Actions",
@@ -63,7 +175,7 @@ export default function MouOrganisationLoansTable() {
           <Space>
             <Dropdown menu={{ items }} placement="bottomRight">
               <Button className=" dark:text-white">
-                <div className="  text-lg font-semibold items-center pb-2">
+                <div className="  text-lg font-semibold items-center">
                   <EllipsisOutlined />
                 </div>
               </Button>
@@ -77,14 +189,14 @@ export default function MouOrganisationLoansTable() {
     <div>
       <section className="w-full h-full hidden md:flex md:flex-col">
         <Table
-          //   dataSource={microfinBranches?.data || []}
+          dataSource={apiResponse?.data}
           columns={MouOrgLoansColumns}
           rowKey="id"
           //   onChange={handleTableChange}
-          //   loading={{
-          //     spinning: isFetching,
-          //     indicator: customLoader,
-          //   }}
+          loading={{
+            spinning: isFetching,
+            indicator: customLoader,
+          }}
           //   pagination={{
           //     current: pageNumber ?? 1,
           //     pageSize: pageSize,

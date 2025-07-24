@@ -1,4 +1,7 @@
-import { MouLoansOrganisationData } from "@/api/queries/organisationQueries";
+import {
+  MouLoansOrganisationData,
+  useGetMouOrgStaffMembersQuery,
+} from "@/api/queries/organisationQueries";
 import { Button, Dropdown, MenuProps, Space, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import {
@@ -6,11 +9,36 @@ import {
   ExportOutlined,
   EyeOutlined,
 } from "@ant-design/icons";
+import {
+  MicrofinOrgStaffMembersData,
+  useGetMicrofinOrgStaffMembersQuery,
+} from "@/api/queries/summaryQueries";
+import { useState } from "react";
 
-export default function MouOrganisationEmployeesTable() {
-  const mouOrganisationEmployees: ColumnsType = [
+type MouOrganisationEmployeesProps = {
+  MouOrganisationId: MouLoansOrganisationData;
+};
+
+export default function MouOrganisationEmployeesTable({
+  MouOrganisationId,
+}: MouOrganisationEmployeesProps) {
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [pageSize, setPageSize] = useState<number | null>(10);
+  const [pageNumber, setPageNumber] = useState<number | null>(1);
+
+  const { data: apiResponse, isFetching } = useGetMouOrgStaffMembersQuery({
+    id: Number(localStorage.getItem("organizationId")),
+    organizationId: MouOrganisationId.id,
+    query: searchQuery,
+    pageSize: pageSize ?? 10,
+    pageNumber: pageNumber ?? 1,
+  });
+
+  const mouOrganisationEmployees: ColumnsType<MicrofinOrgStaffMembersData> = [
     {
-      title: "Name",
+      title: "Full Name",
+      render: (_, record: MicrofinOrgStaffMembersData) =>
+        `${record.user.firstName} ${record.user.lastName}`,
     },
     {
       title: "Phone Number",
@@ -76,6 +104,7 @@ export default function MouOrganisationEmployeesTable() {
   return (
     <div>
       <Table
+        dataSource={apiResponse?.data || []}
         columns={mouOrganisationEmployees}
         components={{
           header: {
