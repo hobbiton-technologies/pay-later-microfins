@@ -1,6 +1,8 @@
 import AnimatedHeader from "../components/AnimatedHeader";
 
 const Transactions = () => {
+  const iten;
+
   return (
     <div>
       <div>
