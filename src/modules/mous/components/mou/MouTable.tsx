@@ -1,10 +1,6 @@
 import { Button, Dropdown, MenuProps, Space } from "antd";
 import Table, { ColumnsType } from "antd/es/table";
-import {
-  EllipsisOutlined,
-  ExportOutlined,
-  EyeOutlined,
-} from "@ant-design/icons";
+import { EllipsisOutlined, EyeOutlined } from "@ant-design/icons";
 
 export const MouTable = () => {
   const MouColumns: ColumnsType = [
