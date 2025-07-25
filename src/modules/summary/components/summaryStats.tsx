@@ -60,7 +60,9 @@ const SummaryStats = () => {
       values: {
         dtd: formatCurrency(23445),
         mtd: formatCurrency(23345677),
-        ytd: financialResponse?.data.totalInterestAmount,
+        ytd: formatCurrency(
+          Number(financialResponse?.data.totalInterestAmount)
+        ),
       },
     },
     {

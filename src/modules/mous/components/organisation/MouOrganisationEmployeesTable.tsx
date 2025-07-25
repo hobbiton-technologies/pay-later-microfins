@@ -257,7 +257,9 @@ export default function MouOrganisationEmployeesTable({
                   {mouEmployees?.members[0].isOrganisationAdmin ? "Yes" : "No"}
                 </Descriptions.Item>
                 <Descriptions.Item label="Maximun Loan Amount">
-                  {mouEmployees?.members[0].maximumLoanAmountPerMonth}
+                  {formatCurrency(
+                    Number(mouEmployees?.members[0].maximumLoanAmountPerMonth)
+                  )}
                 </Descriptions.Item>
               </Descriptions>
             </div>
