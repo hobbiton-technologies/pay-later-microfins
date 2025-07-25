@@ -1,3 +1,9 @@
+import {
+  OrganisationData,
+  ProductsData,
+  useGetLoanProductRequestQuery,
+  useGetOrganisationsRequestQuery,
+} from "@/api/queries/summaryQueries";
 import DocumentUploadComponent from "@/utils/DocumentUploadComponent";
 import {
   App,
@@ -17,6 +23,66 @@ export const MouProposalForm = () => {
   const { message } = App.useApp();
   const { RangePicker } = DatePicker;
   const [uploadedFiles, setUploadedFiles] = useState<UploadFile[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [productStatus, setproductStatus] = useState<string>("");
+  const [pageNumber] = useState<number | null>(1);
+  const [pageSize] = useState<number | null>(10);
+
+  const { data: productsResponse, isFetching } = useGetLoanProductRequestQuery({
+    id: Number(localStorage.getItem("organizationId")),
+    Query: searchQuery,
+    ProductStatus: productStatus,
+    pageNumber: pageNumber ?? 1,
+    pageSize: pageSize ?? 10,
+  });
+
+  const { data: organisationResponse, isFetching: organisationIsfetching } =
+    useGetOrganisationsRequestQuery({
+      id: Number(localStorage.getItem("organizationId")),
+      Query: searchQuery,
+      pageNumber: pageNumber ?? 1,
+      pageSize: pageSize ?? 10,
+    });
+
+  //   const handleProposeMou = async () => {
+  //     try {
+  //       const values = await form.validateFields();
+  //       const { dateRange, organisationId, loanProductIds, payrollRunDate } =
+  //         values;
+  //       const [start, end] = dateRange;
+
+  //       const payload: ProposeMouPayload = {
+  //         OrganisationId: organisationId,
+  //         LoanProductIds: loanProductIds,
+  //         PayrollRunDate: payrollRunDate,
+  //         StartDate: start.toISOString(),
+  //         EndDate: end.toISOString(),
+  //         Doc: uploadedFiles[0] as unknown as File,
+  //       };
+
+  //       console.log("MOU Payload:", payload);
+  //       const response = await proposeMou(payload);
+  //       if (response.statusCode === 200 || response.statusCode === 201) {
+  //         message.success("MOU proposed successfully!");
+  //         form.resetFields();
+  //         setUploadedFiles([]);
+  //         setOpenMousDrawer(false);
+  //       } else {
+  //         message.error(
+  //           `Failed to propose MOU: ${response.errors.map((errorMessage) => {
+  //             return errorMessage;
+  //           })}`
+  //         );
+  //         console.log(
+  //           `Failed to propose MOU: ${response.errors.map((errorMessage) => {
+  //             return errorMessage;
+  //           })}`
+  //         );
+  //       }
+  //     } catch (error: unknown) {
+  //       console.log(error);
+  //     }
+  //   };
 
   const handleSubmit = () => {};
   return (
@@ -81,49 +147,54 @@ export const MouProposalForm = () => {
           <div className="grid grid-cols-2 gap-3">
             <Form.Item
               className="w-full"
-              name="loanProductIds"
+              name=" loanProductIds"
               rules={[
                 {
                   required: true,
                   message: "Please select at least one loan product",
                 },
               ]}
-              label="Select Loan Product"
+              label=" Select Loan Product"
             >
               <Select
-                mode="multiple"
                 showSearch
                 placeholder="Search Loan Product"
                 optionFilterProp="label"
-                // loading={loadProductsIsLoading}
-                // options={loanProductOptions}
-                // filterSort={(optionA, optionB) =>
-                //   (optionA?.label ?? "")
-                //     .toLowerCase()
-                //     .localeCompare((optionB?.label ?? "").toLowerCase())
-                // }
-                style={{ flex: 1 }}
-              />
+                loading={!productsResponse}
+              >
+                {productsResponse?.data?.map((product: ProductsData) => (
+                  <Select.Option key={product.id} value={product.id}>
+                    {product.name}
+                  </Select.Option>
+                ))}
+              </Select>
             </Form.Item>
 
             <Form.Item
               className="w-full"
               name="organisationId"
               rules={[{ required: true, message: "field is required" }]}
-              label="Select Organization"
+              label=" Select Organization"
             >
               <Select
+                mode="multiple"
                 showSearch
-                placeholder="Search Organization"
+                placeholder="Search Organization "
                 optionFilterProp="label"
-                // loading={isOrganizationsLoading}
-                // options={organizationOptions}
-                // filterSort={(optionA, optionB) =>
-                //   (optionA?.label ?? "")
-                //     .toLowerCase()
-                //     .localeCompare((optionB?.label ?? "").toLowerCase())
-                // }
-              />
+                loading={organisationIsfetching}
+                style={{ flex: 1 }}
+              >
+                {organisationResponse?.data?.map(
+                  (organisation: OrganisationData) => (
+                    <Select.Option
+                      key={organisation.id}
+                      value={organisation.id}
+                    >
+                      {organisation.name}
+                    </Select.Option>
+                  )
+                )}
+              </Select>
             </Form.Item>
           </div>
 
