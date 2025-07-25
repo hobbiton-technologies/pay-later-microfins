@@ -1,83 +1,85 @@
 import { Api } from "../apiSlice";
 
+interface MouLoans {}
+
 export interface MouProductsData {
-  id: 0;
-  createdAt: "2025-07-25T08:36:34.995Z";
-  updatedAt: "2025-07-25T08:36:34.995Z";
-  mouFileId: 0;
+  id: number;
+  createdAt: string;
+  updatedAt: string;
+  mouFileId: number;
   microfin: {
-    id: 0;
-    name: "string";
-    contactNo: "string";
-    address: "string";
-    email: "string";
-    loanOperations: ["MouLoans"];
+    id: number;
+    name: string;
+    contactNo: string;
+    address: string;
+    email: string;
+    loanOperations: MouLoans[];
   };
   organization: {
-    id: 0;
-    name: "string";
-    contactNo: "string";
-    address: "string";
-    email: "string";
-    tPinNumber: "string";
-    sector: "Other";
+    id: number;
+    name: string;
+    contactNo: string;
+    address: string;
+    email: string;
+    tPinNumber: string;
+    sector: string;
     isDeactivated: true;
   };
   proposedBy: {
-    id: 0;
+    id: number;
     user: {
-      id: 0;
-      firstName: "string";
-      lastName: "string";
-      email: "string";
-      phoneNumber: "string";
+      id: number;
+      firstName: string;
+      lastName: string;
+      email: string;
+      phoneNumber: string;
     };
-    idType: "None";
-    idNumber: "string";
-    branch: "string";
-    position: "string";
+    idType: string;
+    idNumber: string;
+    branch: string;
+    position: string;
   };
   loanProducts: [
     {
-      id: 0;
-      name: "string";
-      loanProductType: "EmergencyAdvance";
-      maximumRepaymentPeriod: 0;
-      productStatus: "InActive";
-      gracePeriodInDays: 0;
-      interestRate: 0;
-      minimumLoanAmount: 0;
-      maximumLoanAmount: 0;
-      maximumLoanRate: 0;
-      insuranceRate: 0;
-      arrangementFeeRate: 0;
+      id: number;
+      name: string;
+      loanProductType: string;
+      maximumRepaymentPeriod: number;
+      productStatus: string;
+      gracePeriodInDays: number;
+      interestRate: number;
+      minimumLoanAmount: number;
+      maximumLoanAmount: number;
+      maximumLoanRate: number;
+      insuranceRate: number;
+      arrangementFeeRate: number;
       isCollateralBased: true;
     }
   ];
-  mouStatus: "Pending";
-  startDate: "2025-07-25T08:36:34.995Z";
-  endDate: "2025-07-25T08:36:34.995Z";
+  mouStatus: string;
+  startDate: string;
+  endDate: string;
   responders: [
     {
-      id: 0;
-      mouId: 0;
+      id: number;
+      mouId: number;
       responder: {
-        id: 0;
+        id: number;
         user: {
-          id: 0;
-          firstName: "string";
-          lastName: "string";
-          email: "string";
-          phoneNumber: "string";
+          id: number;
+          firstName: string;
+          lastName: string;
+          email: string;
+          phoneNumber: string;
         };
-        employeeIdNumber: "string";
-        position: "string";
-        idType: "None";
-        idNumber: "string";
+        employeeIdNumber: string;
+        position: string;
+        idType: string;
+        idNumber: string;
         isOrganizationDeactivated: true;
       };
-      response: "Accept";
-      comment: "string";
+      response: string;
+      comment: string;
     }
   ];
 }
@@ -96,6 +98,16 @@ export interface MouStatsResponse {
   errors: string[];
 }
 
+export interface MouProductsResponse {
+  pageNumber: 0;
+  pageSize: 0;
+  totalItems: 0;
+  statusCode: 0;
+  message: "string";
+  data: MouProductsData[];
+  errors: ["string"];
+}
+
 const MouRequests = Api.injectEndpoints({
   endpoints: (builder) => ({
     getMouStats: builder.query<MouStatsResponse, { id: number }>({
@@ -104,9 +116,37 @@ const MouRequests = Api.injectEndpoints({
       },
     }),
 
-    getMouProducts: builder.query<any, any>({
-      query: ({}) => {
+    getMouProducts: builder.query<
+      MouProductsResponse,
+      {
+        id: number;
+        microfinId: number;
+        organizationId: number;
+        startdate: string;
+        endDate: string;
+        pageSize: number;
+        pageNumber: number;
+      }
+    >({
+      query: ({
+        id,
+        microfinId,
+        organizationId,
+        startdate,
+        endDate,
+        pageSize,
+        pageNumber,
+      }) => {
         const params = new URLSearchParams();
+
+        if (id) params.append("id", id.toString());
+        if (microfinId) params.append("MicrofinId", microfinId.toString());
+        if (organizationId)
+          params.append("OrganizationId", organizationId.toString());
+        if (startdate) params.append("Startdate", startdate);
+        if (endDate) params.append("endDate", endDate);
+        if (pageSize) params.append("PageSize", pageSize.toString());
+        if (pageNumber) params.append("PageNumber", pageNumber.toString());
 
         return `mous/proposals?${params.toString()}`;
       },
@@ -114,4 +154,4 @@ const MouRequests = Api.injectEndpoints({
   }),
 });
 
-export const { useGetMouStatsQuery } = MouRequests;
+export const { useGetMouStatsQuery, useGetMouProductsQuery } = MouRequests;

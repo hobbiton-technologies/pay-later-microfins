@@ -1,11 +1,39 @@
 import { Button, Dropdown, MenuProps, Space } from "antd";
 import Table, { ColumnsType } from "antd/es/table";
 import { EllipsisOutlined, EyeOutlined } from "@ant-design/icons";
+import {
+  MouProductsData,
+  useGetMouProductsQuery,
+} from "@/api/queries/mouQueries";
+import { useState } from "react";
+import { number } from "framer-motion";
+import { customLoader } from "@/components/table-loader";
 
 export const MouTable = () => {
-  const MouColumns: ColumnsType = [
+  const [id, setId] = useState<number>(0);
+  const [microfinId, setMicrofinId] = useState<number>(0);
+  const [organizationId, setOrganizationId] = useState<number>(0);
+  const [startDate, setStartDate] = useState<string>("");
+  const [endDate, setEndDate] = useState<string>("");
+  const [pageSize, setPageSize] = useState<number | null>(10);
+  const [pageNumber, setPageNumber] = useState<number | null>(1);
+
+  const { data: apiResponse, isFetching } = useGetMouProductsQuery({
+    id: id,
+    microfinId: microfinId,
+    organizationId: organizationId,
+    startdate: startDate,
+    endDate: endDate,
+    pageSize: pageSize ?? 10,
+    pageNumber: pageNumber ?? 1,
+  });
+
+  const MouColumns: ColumnsType<MouProductsData> = [
     {
       title: "Organisation Name",
+      dataIndex: "organization",
+      key: "organization",
+      render: (_, record: MouProductsData) => record.organization.name,
     },
     {
       title: "Email",
@@ -48,7 +76,7 @@ export const MouTable = () => {
           <Space>
             <Dropdown menu={{ items }} placement="bottomRight">
               <Button className=" dark:text-white">
-                <div className="  text-lg font-semibold items-center pb-2">
+                <div className="  text-lg font-semibold items-center">
                   <EllipsisOutlined />
                 </div>
               </Button>
@@ -63,14 +91,14 @@ export const MouTable = () => {
     <div>
       <section className="w-full h-full hidden md:flex md:flex-col">
         <Table
-          //   dataSource={microfinBranches?.data || []}
+          dataSource={apiResponse?.data || []}
           columns={MouColumns}
           rowKey="id"
           //   onChange={handleTableChange}
-          //   loading={{
-          //     spinning: isFetching,
-          //     indicator: customLoader,
-          //   }}
+          loading={{
+            spinning: isFetching,
+            indicator: customLoader,
+          }}
           //   pagination={{
           //     current: pageNumber ?? 1,
           //     pageSize: pageSize,
