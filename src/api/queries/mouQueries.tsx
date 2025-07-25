@@ -150,6 +150,7 @@ const MouRequests = Api.injectEndpoints({
 
         return `mous/proposals?${params.toString()}`;
       },
+      providesTags: ["MouProposals"],
     }),
   }),
 });

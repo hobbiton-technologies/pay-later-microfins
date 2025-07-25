@@ -1,4 +1,8 @@
 import {
+  ProposeMouPayload,
+  useCreateMouProposalMutation,
+} from "@/api/mutations/mouMutation";
+import {
   OrganisationData,
   ProductsData,
   useGetLoanProductRequestQuery,
@@ -27,6 +31,7 @@ export const MouProposalForm = () => {
   const [productStatus, setproductStatus] = useState<string>("");
   const [pageNumber] = useState<number | null>(1);
   const [pageSize] = useState<number | null>(10);
+  const [OpenMousDrawer, setOpenMousDrawer] = useState<boolean>(false);
 
   const { data: productsResponse, isFetching } = useGetLoanProductRequestQuery({
     id: Number(localStorage.getItem("organizationId")),
@@ -44,47 +49,36 @@ export const MouProposalForm = () => {
       pageSize: pageSize ?? 10,
     });
 
-  //   const handleProposeMou = async () => {
-  //     try {
-  //       const values = await form.validateFields();
-  //       const { dateRange, organisationId, loanProductIds, payrollRunDate } =
-  //         values;
-  //       const [start, end] = dateRange;
+  const [mouProposalData] = useCreateMouProposalMutation();
 
-  //       const payload: ProposeMouPayload = {
-  //         OrganisationId: organisationId,
-  //         LoanProductIds: loanProductIds,
-  //         PayrollRunDate: payrollRunDate,
-  //         StartDate: start.toISOString(),
-  //         EndDate: end.toISOString(),
-  //         Doc: uploadedFiles[0] as unknown as File,
-  //       };
+  const handleSubmit = async () => {
+    try {
+      const values = await form.validateFields();
+      const { dateRange, organisationId, loanProductIds, payrollRunDate } =
+        values;
+      const [start, end] = dateRange;
 
-  //       console.log("MOU Payload:", payload);
-  //       const response = await proposeMou(payload);
-  //       if (response.statusCode === 200 || response.statusCode === 201) {
-  //         message.success("MOU proposed successfully!");
-  //         form.resetFields();
-  //         setUploadedFiles([]);
-  //         setOpenMousDrawer(false);
-  //       } else {
-  //         message.error(
-  //           `Failed to propose MOU: ${response.errors.map((errorMessage) => {
-  //             return errorMessage;
-  //           })}`
-  //         );
-  //         console.log(
-  //           `Failed to propose MOU: ${response.errors.map((errorMessage) => {
-  //             return errorMessage;
-  //           })}`
-  //         );
-  //       }
-  //     } catch (error: unknown) {
-  //       console.log(error);
-  //     }
-  //   };
+      const payload: ProposeMouPayload = {
+        OrganisationId: organisationId,
+        LoanProductIds: loanProductIds,
+        PayrollRunDate: payrollRunDate,
+        StartDate: start.toISOString(),
+        EndDate: end.toISOString(),
+        Doc: uploadedFiles[0] as unknown as File,
+      };
 
-  const handleSubmit = () => {};
+      console.log("MOU Payload:", payload);
+      await mouProposalData(payload);
+      message.success("MOU proposed successfully!");
+      form.resetFields();
+      setUploadedFiles([]);
+      setOpenMousDrawer(false);
+    } catch (error: unknown) {
+      console.log(error);
+      console.error("Failed to create Microfin Organisation loan ", error);
+    }
+  };
+
   return (
     <div className=" px-4">
       <Form
