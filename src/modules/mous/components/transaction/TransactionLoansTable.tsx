@@ -1,5 +1,4 @@
 import {
-  MouLoansOrganisationData,
   MouOrganisationLoanTransactionData,
   useGetMouOrganisationLoanTransactionsQuery,
 } from "@/api/queries/organisationQueries";
@@ -19,9 +18,9 @@ import { useState, useEffect } from "react";
 import { EllipsisOutlined, EyeOutlined } from "@ant-design/icons";
 import { customLoader } from "@/components/table-loader";
 
-type MouOrganisationProps = {
-  MouOrganisationId: MouLoansOrganisationData;
-};
+// type MouOrganisationProps = {
+//   MouOrganisationId: MouLoansOrganisationData;
+// };
 
 export const TransactionLoansTable = () => {
   const [id, setId] = useState<number | null>(0);

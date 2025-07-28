@@ -228,6 +228,60 @@ const OrganisationRequests = Api.injectEndpoints({
       },
     }),
 
+    getMouOrganisationRepaymentTransactions: builder.query<
+      MouOrganisationRepaymentsResponse,
+      {
+        organisationId: number;
+        mouOrganisationId: number;
+        memberId: number;
+        loanStatus: string;
+        query: string;
+        transactionType: string;
+        status: string;
+        startRange: string;
+        endRange: string;
+        isReportRequest: boolean;
+        pageSize: number;
+        pageNumber: number;
+        id: number;
+      }
+    >({
+      query: ({
+        organisationId,
+        mouOrganisationId,
+        memberId,
+        loanStatus,
+        query,
+        transactionType,
+        status,
+        startRange,
+        endRange,
+        isReportRequest,
+        pageSize,
+        pageNumber,
+        id,
+      }) => {
+        const params = new URLSearchParams();
+
+        if (memberId) params.append("MemberId", memberId.toString());
+        if (loanStatus) params.append("LoanStatus", loanStatus);
+        if (query) params.append("Query", query);
+        if (transactionType) params.append("TransactionType", transactionType);
+        if (status) params.append("Status", status);
+        if (startRange) params.append("StartRange", startRange);
+        if (endRange) params.append("EndRange", endRange);
+        if (isReportRequest)
+          params.append("IsReportRequest", String(isReportRequest));
+        params.append("PageSize", pageSize.toString());
+        params.append("PageNumber", pageNumber.toString());
+        if (mouOrganisationId)
+          params.append("OrganizationId", mouOrganisationId.toString());
+        if (id) params.append("id", id.toString());
+
+        return `microfins/${organisationId}/repayments?${params.toString()}`;
+      },
+    }),
+
     getMouOrgStaffMembers: builder.query<
       MicrofinOrgStaffResponse,
       {
@@ -261,4 +315,5 @@ export const {
   useGetMouLoansOrganisationsQuery,
   useGetMouOrganisationLoanTransactionsQuery,
   useGetMouOrgStaffMembersQuery,
+  useGetMouOrganisationRepaymentTransactionsQuery,
 } = OrganisationRequests;
