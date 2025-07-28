@@ -4,7 +4,16 @@ import {
   ExportOutlined,
   EyeOutlined,
 } from "@ant-design/icons";
-import { MenuProps, Space, Dropdown, Button, Tag } from "antd";
+import {
+  MenuProps,
+  Space,
+  Dropdown,
+  Button,
+  Tag,
+  Drawer,
+  Card,
+  Descriptions,
+} from "antd";
 import {
   MouReceiptingData,
   useGetMouReceiptingQuery,
@@ -15,12 +24,28 @@ import { formatCurrency } from "@/utils/formaters";
 export const ReceiptingTable = () => {
   const [pageSize, setPageSize] = useState<number | null>(10);
   const [pageNumber, setNumber] = useState<number | null>(1);
+  const [receipts, setReciepts] = useState<MouReceiptingData[]>([]);
+  const [selectedReceipt, setSelectedReceipt] = useState<MouReceiptingData>();
+  const [isRecieptsDrawerVisible, setIsRecieptsDrawerVisible] =
+    useState<boolean>(false);
 
   const { data: apiResponse, isFetching } = useGetMouReceiptingQuery({
     organisationId: Number(localStorage.getItem("organizationId")),
     pageSize: pageSize ?? 10,
     PageNumber: pageNumber ?? 1,
   });
+
+  const handleViewReceipting = (receiptId: number) => {
+    if (receiptId && apiResponse?.data) {
+      const receipt = receipts.find((a) => a.id == receiptId);
+      setSelectedReceipt(receipt);
+    }
+
+    if (receipts) {
+      setIsRecieptsDrawerVisible(true);
+    }
+    console.log("Selected Receipt", selectedReceipt);
+  };
 
   const ReceiptingColumns: ColumnsType<MouReceiptingData> = [
     {
@@ -92,14 +117,14 @@ export const ReceiptingTable = () => {
     {
       title: "Actions",
       key: "actions",
-      render: () => {
+      render: (record: MouReceiptingData) => {
         const items: MenuProps["items"] = [
           {
             key: "4",
             label: (
               <span
                 className="flex gap-2"
-                onClick={() => alert("View CLicked")}
+                onClick={() => handleViewReceipting(record.id)}
               >
                 <EyeOutlined />
                 View
@@ -112,7 +137,7 @@ export const ReceiptingTable = () => {
           <Space>
             <Dropdown menu={{ items }} placement="bottomRight">
               <Button className=" dark:text-white">
-                <div className="  text-lg font-semibold items-center pb-2">
+                <div className="  text-lg font-semibold items-center">
                   <EllipsisOutlined />
                 </div>
               </Button>
@@ -160,6 +185,63 @@ export const ReceiptingTable = () => {
           }}
         />
       </section>
+      <Drawer
+        title=""
+        width="45%"
+        open={isRecieptsDrawerVisible}
+        onClose={() => setIsRecieptsDrawerVisible(false)}
+      >
+        <Card>
+          <div>
+            <p className=" pb-4">Loan Details</p>
+            <Descriptions column={2} bordered={true}>
+              <Descriptions.Item label="Initial Amount">
+                {formatCurrency(Number(selectedReceipt?.initialAmount))}
+              </Descriptions.Item>
+              <Descriptions.Item label="Balance">
+                {selectedReceipt?.balance}
+              </Descriptions.Item>
+              <Descriptions.Item label="Receipt ID">
+                {selectedReceipt?.receiptId}
+              </Descriptions.Item>
+              <Descriptions.Item label="Created Date">
+                {selectedReceipt?.createdAt}
+              </Descriptions.Item>
+              <Descriptions.Item label="Name">
+                {selectedReceipt?.organization.name ?? "Not set"}
+              </Descriptions.Item>
+              <Descriptions.Item label="Email">
+                {selectedReceipt?.organization.email ?? "Not set"}
+              </Descriptions.Item>
+              <Descriptions.Item label="Physical Address">
+                {selectedReceipt?.organization.address ?? "Not set"}
+              </Descriptions.Item>
+              <Descriptions.Item label="Name">
+                {selectedReceipt?.addedBy.user.firstName ?? "Not set"}{" "}
+                {selectedReceipt?.addedBy.user.lastName ?? "Not set"}
+              </Descriptions.Item>
+              <Descriptions.Item label="Employee ID">
+                {selectedReceipt?.addedBy.employeeIdNumber ?? "Not set"}
+              </Descriptions.Item>
+              <Descriptions.Item label="Position">
+                {selectedReceipt?.addedBy.position ?? "Not set"}
+              </Descriptions.Item>
+              <Descriptions.Item label="Phone Number">
+                {selectedReceipt?.addedBy.user.phoneNumber ?? "Not set"}
+              </Descriptions.Item>
+              <Descriptions.Item label="ID Type">
+                {selectedReceipt?.addedBy.idType ?? "Not set"}
+              </Descriptions.Item>
+              <Descriptions.Item label="ID Number">
+                {selectedReceipt?.addedBy.idNumber ?? "Not set"}
+              </Descriptions.Item>
+              <Descriptions.Item label="Email">
+                {selectedReceipt?.addedBy.user.email ?? "Not set"}
+              </Descriptions.Item>
+            </Descriptions>
+          </div>
+        </Card>
+      </Drawer>
     </div>
   );
 };

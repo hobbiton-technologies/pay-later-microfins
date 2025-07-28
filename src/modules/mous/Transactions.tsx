@@ -7,11 +7,6 @@ const Transactions = () => {
   const items: TabsProps["items"] = [
     {
       key: "1",
-      label: "Transactions",
-      children: <TransactionLoansTable />,
-    },
-    {
-      key: "2",
       label: "Loans",
       children: <TransactionLoansTable />,
     },

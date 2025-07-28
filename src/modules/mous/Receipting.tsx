@@ -7,7 +7,7 @@ const Receipting = () => {
     <div>
       <div>
         <AnimatedHeader title="Receipting" />
-        <p>View and manage all receipts.</p>
+        <p className=" text-slate-500 text-xs">View and manage all receipts.</p>
       </div>
       <div className=" grid grid-cols-1 gap-6">
         <ReceiptingStats />

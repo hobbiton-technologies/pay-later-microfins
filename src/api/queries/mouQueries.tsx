@@ -1,5 +1,9 @@
 import { Api } from "../apiSlice";
 
+// export interface MouReceiptStats{
+
+// }
+
 export interface MouReceiptingData {
   id: number;
   receiptId: string;
@@ -218,6 +222,12 @@ const MouRequests = Api.injectEndpoints({
         return `microfins/${organisationId}/receipts?${params.toString()}`;
       },
     }),
+
+    // getMouReceiptingStats: builder.query<>({
+    //   query: ({}) => {
+    //     return ``;
+    //   },
+    // }),
   }),
 });
 
