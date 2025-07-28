@@ -32,8 +32,10 @@ import { customLoader } from "@/components/table-loader";
 import { formatCurrency } from "@/utils/formaters";
 import { ArrowBigDown, Check } from "lucide-react";
 import {
+  ExportMicrofinOrgLoan,
   useApproveMicrofinOrgLoanMutation,
   useDisburseMicrofinOrgLoanMutation,
+  useExportMicrofinOrgLoanMutation,
 } from "@/api/mutations/loansMutation";
 import { Option } from "antd/es/mentions";
 import { MainMicrofinOrgLoansForm } from "./MainMicrofinOrgLoansForm";
@@ -74,6 +76,8 @@ export const MainMicrofinOrgLoansTable: React.FC<
   const [isBulkApproveModalVisible, setIsBulkApproveModalVisible] =
     useState(false);
   const [isBulkDisburseModalVisible, setIsBulkDisburseModalVisible] =
+    useState(false);
+  const [isBulkExportModalVisible, setIsBulkExportModalVisible] =
     useState(false);
   const [bulkActionType, setBulkActionType] = useState<
     "approve" | "reject" | "disburse" | null
@@ -282,6 +286,8 @@ export const MainMicrofinOrgLoansTable: React.FC<
     setSearchId(id);
   };
 
+  const [exportLoan, { isLoading: exportIsLoading }] =
+    useExportMicrofinOrgLoanMutation();
   const [disburseLoan, { isLoading: disbursementIsLoading }] =
     useDisburseMicrofinOrgLoanMutation();
   const [approveLoan, { isLoading }] = useApproveMicrofinOrgLoanMutation();
@@ -331,15 +337,13 @@ export const MainMicrofinOrgLoansTable: React.FC<
     }
   };
 
-  // const handleSubmitLoan = (record: MicrofinOrgStaffMembersData) => {
+  // const handleExportLoan = (record: GetMicrofinLoansData) => {
   //   if (record) {
-  //     const members = selectedMember.find(
-  //       (a) => a.id === record.organization.id
-  //     );
-  //     setSelectedMember(members);
-  //     // if (members) {
-  //     //   setIsLoanDisburseDrawerVisible(true);
-  //     // }
+  //     const loan = loans.find((a) => a.id === record.id);
+  //     setSelectedLoan(loan);
+  //     if (loan) {
+  //       setis(true);
+  //     }
   //   }
   // };
 
@@ -437,6 +441,7 @@ export const MainMicrofinOrgLoansTable: React.FC<
               } else if (value === "disburse") {
                 setIsBulkDisburseModalVisible(true);
               } else if (value === "disbursementinitiated") {
+                setIsBulkExportModalVisible(true);
               }
             }}
           >
@@ -892,6 +897,125 @@ export const MainMicrofinOrgLoansTable: React.FC<
         <div className="text-center py-6">
           You're about to <b>disburse</b> <b>{selectedRows.length}</b> loans.
         </div>
+      </Modal>
+
+      {/* Bulk Export Modal */}
+      <Modal
+        centered
+        open={isBulkExportModalVisible}
+        onCancel={() => {
+          setIsBulkExportModalVisible(false);
+          form.resetFields();
+        }}
+        confirmLoading={exportIsLoading}
+        onOk={async () => {
+          try {
+            const payload: ExportMicrofinOrgLoan = {
+              sender: "Dalytsoul Teymbor",
+              narration: "Loan export batch",
+              spAccount: "string",
+              remmiterAccount: "string",
+              senderId: localStorage.getItem("userId") || "2271",
+              phoneNumber: "260977718789",
+              loanIds: selectedRows.map((loan) => loan.id),
+            };
+
+            await exportLoan({
+              microfinOrganisationId: microfinOrganisationId,
+              payload: payload,
+            }).unwrap();
+
+            message.success("Loan export triggered successfully");
+            setIsBulkExportModalVisible(false);
+            setSelectedRowKeys([]);
+            setSelectedRows([]);
+          } catch (err) {
+            message.error("Export failed");
+          }
+        }}
+      >
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={async (values) => {
+            try {
+              await Promise.all(
+                selectedRows.map((loan) =>
+                  approveLoan({
+                    organizationId: Number(
+                      localStorage.getItem("organizationId")
+                    ),
+                    microfinOrganisationId: loan.member.organization.id,
+                    loanId: loan.id,
+                    approveLoanData: {
+                      answer: values.answer,
+                      comment: values.comment,
+                    },
+                  })
+                )
+              );
+              message.success(
+                "Bulk loan response submitted, please wait for export"
+              );
+              setIsBulkExportModalVisible(false);
+              setSelectedRowKeys([]);
+              setSelectedRows([]);
+            } catch (error) {
+              message.error("Something went wrong with the export process");
+            }
+          }}
+        >
+          {/* <div className="text-center py-6">
+            You're about to <i>{bulkActionType}</i> <b>{selectedRows.length}</b>{" "}
+            loans.
+          </div> */}
+          <div className="grid grid-cols-2 gap-4">
+            <Form.Item
+              name="sender"
+              label="Sender"
+              rules={[{ required: true }]}
+            >
+              <Input placeholder="Enter Sender" />
+            </Form.Item>
+            <Form.Item
+              name="senderId"
+              label="Sender Id"
+              rules={[{ required: true }]}
+            >
+              <Input placeholder="Enter Sender Id" />
+            </Form.Item>
+
+            <Form.Item
+              name="spAccount"
+              label="SP Account"
+              rules={[{ required: true }]}
+            >
+              <Input placeholder="Enter SP Account" />
+            </Form.Item>
+            <Form.Item
+              name="remmiterAccount"
+              label="Remmiter Account"
+              rules={[{ required: true }]}
+            >
+              <Input placeholder="Enter Remmiter Account" />
+            </Form.Item>
+
+            <Form.Item
+              name="phoneNumber"
+              label="Phone Number"
+              rules={[{ required: true }]}
+            >
+              <Input placeholder="Enter Phone Number" />
+            </Form.Item>
+            <Form.Item
+              name="narration"
+              label="Narration"
+              rules={[{ required: true }]}
+            >
+              <Input.TextArea placeholder="Enter Narration" />
+            </Form.Item>
+          </div>
+        </Form>
       </Modal>
     </div>
   );

@@ -1,5 +1,15 @@
 import { Api } from "../apiSlice";
 
+export interface ExportMicrofinOrgLoan {
+  sender: string;
+  narration: string;
+  spAccount: string;
+  remmiterAccount: string;
+  senderId: string;
+  phoneNumber: string;
+  loanIds: number[];
+}
+
 export interface ApproveMicrofinLoansBody {
   answer: string;
   comment: string;
@@ -58,6 +68,14 @@ const LoansMutations = Api.injectEndpoints({
       }),
       invalidatesTags: ["DisburseLoan"],
     }),
+
+    ExportMicrofinOrgLoan: builder.mutation<any, any>({
+      query: ({ organizationId }) => ({
+        url: `microfins/${organizationId}/reports/bank-loans`,
+        method: "POST",
+      }),
+      invalidatesTags: ["DisburseLoan"],
+    }),
   }),
 });
 
@@ -65,4 +83,5 @@ export const {
   useCreateMicrofinOrgLoanMutation,
   useApproveMicrofinOrgLoanMutation,
   useDisburseMicrofinOrgLoanMutation,
+  useExportMicrofinOrgLoanMutation,
 } = LoansMutations;

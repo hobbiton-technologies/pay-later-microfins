@@ -268,12 +268,6 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
     pageSize: pageSize,
   });
 
-  // export
-  // const { data: apiExportResponse, isFetching: exportIsFetching } =
-  //   useGetMicrofinLoansExportQuery({
-  //     organisationId: Number(localStorage.getItem("organizationId")),
-  //   });
-
   // console.log(microfinOrganisationId);
 
   const handleViewMicrofinOrgLoans = (record: GetMicrofinLoansData) => {
