@@ -1,4 +1,3 @@
-import { MainMicrofinOrgLoansTable } from "@/modules/business/components/MicrofinOrg/Loans/MainMicrofinOrgLoansTable";
 import { TabsProps, Tabs } from "antd";
 import { motion } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";

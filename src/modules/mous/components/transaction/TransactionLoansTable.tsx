@@ -1,3 +1,3 @@
 export const TransactionLoansTable = () => {
-  return <div>Transaction Loans</div>;
+  return <div className=" px-4">Transaction Loans</div>;
 };
