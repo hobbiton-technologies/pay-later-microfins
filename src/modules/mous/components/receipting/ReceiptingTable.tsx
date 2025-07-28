@@ -5,29 +5,48 @@ import {
   EyeOutlined,
 } from "@ant-design/icons";
 import { MenuProps, Space, Dropdown, Button } from "antd";
+import { MouReceiptingData } from "@/api/queries/mouQueries";
 
 export const ReceiptingTable = () => {
-  const ReceiptingColumns: ColumnsType = [
+  const ReceiptingColumns: ColumnsType<MouReceiptingData> = [
     {
       title: "Receipt ID",
+      dataIndex: "receiptId",
+      key: "receiptId",
     },
     {
       title: "Organization Name",
+      dataIndex: "organization",
+      key: "organization",
+      render: (_, record: MouReceiptingData) => record.organization.name,
     },
     {
       title: "Added By",
+      dataIndex: "addedBy",
+      key: "addedBy",
+      render: (_, record: MouReceiptingData) =>
+        `${record.addedBy.user.firstName} ${record.addedBy.user.lastName}`,
     },
     {
       title: "Initial Amount (ZMW)",
+      dataIndex: "initialAmount",
+      key: "initialAmount",
     },
     {
       title: "Balance (ZMW)",
+      dataIndex: "balance",
+      key: "balance",
     },
     {
       title: "Status",
+      dataIndex: "status",
+      key: "status",
     },
     {
       title: "Created At",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (date: string) => new Date(date).toLocaleDateString(),
     },
     {
       title: "Actions",

@@ -1,5 +1,58 @@
 import { Api } from "../apiSlice";
 
+export interface MouReceiptingData {
+  id: number;
+  receiptId: string;
+  organization: {
+    id: number;
+    name: string;
+    contactNo: string;
+    address: string;
+    email: string;
+    tPinNumber: string;
+    sector: string;
+    isDeactivated: boolean;
+  };
+  microfin: {
+    id: number;
+    name: string;
+    contactNo: string;
+    address: string;
+    email: string;
+    loanOperations: MouLoans[];
+  };
+  addedBy: {
+    id: number;
+    user: {
+      id: number;
+      firstName: string;
+      lastName: string;
+      email: string;
+      phoneNumber: string;
+    };
+    employeeIdNumber: string;
+    position: string;
+    idType: string;
+    idNumber: string;
+    isOrganizationDeactivated: boolean;
+  };
+  initialAmount: number;
+  balance: number;
+  status: string;
+  receiptUrl: string;
+  createdAt: string;
+}
+
+export interface MouReceiptingResponse {
+  pageNumber: number;
+  pageSize: number;
+  totalItems: number;
+  statusCode: number;
+  message: string;
+  data: [];
+  errors: string[];
+}
+
 interface MouLoans {}
 
 export interface MouProductsData {
@@ -99,11 +152,11 @@ export interface MouStatsResponse {
 }
 
 export interface MouProductsResponse {
-  pageNumber: 0;
-  pageSize: 0;
-  totalItems: 0;
-  statusCode: 0;
-  message: "string";
+  pageNumber: number;
+  pageSize: number;
+  totalItems: number;
+  statusCode: number;
+  message: string;
   data: MouProductsData[];
   errors: ["string"];
 }
