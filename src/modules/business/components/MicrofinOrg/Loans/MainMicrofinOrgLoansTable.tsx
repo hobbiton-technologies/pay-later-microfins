@@ -407,6 +407,9 @@ export const MainMicrofinOrgLoansTable: React.FC<
   const allApproved =
     loanStatuses.length > 0 &&
     loanStatuses.every((status) => status === "approved");
+  const allDisbursementInitiated =
+    loanStatuses.length > 0 &&
+    loanStatuses.every((status) => status === "disbursementinitiated");
 
   return (
     <div>
@@ -424,7 +427,8 @@ export const MainMicrofinOrgLoansTable: React.FC<
             className="w-32 text-start"
             placeholder="Action"
             disabled={
-              selectedRowKeys.length === 0 || (!allUnderReview && !allApproved)
+              selectedRowKeys.length === 0 ||
+              (!allUnderReview && !allApproved && !allDisbursementInitiated)
             }
             onChange={(value) => {
               setBulkActionType(value); // track action type
@@ -432,6 +436,7 @@ export const MainMicrofinOrgLoansTable: React.FC<
                 setIsBulkApproveModalVisible(true);
               } else if (value === "disburse") {
                 setIsBulkDisburseModalVisible(true);
+              } else if (value === "disbursementinitiated") {
               }
             }}
           >
@@ -456,6 +461,15 @@ export const MainMicrofinOrgLoansTable: React.FC<
                 <div className="text-green-500 gap-2 flex items-center">
                   <UpSquareOutlined />
                   <p>Disburse</p>
+                </div>
+              </Option>
+            )}
+
+            {allDisbursementInitiated && (
+              <Option value="disbursementinitiated">
+                <div className="text-purple-500 gap-2 flex items-center">
+                  <UpSquareOutlined />
+                  <p>Export</p>
                 </div>
               </Option>
             )}

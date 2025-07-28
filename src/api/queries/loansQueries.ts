@@ -144,7 +144,16 @@ const LoansRequest = Api.injectEndpoints({
       },
       providesTags: ["ApproveLoan", "CreateLoan", "DisburseLoan"],
     }),
+
+    getMicrofinLoansExport: builder.query<any, { organisationId: number }>({
+      query: ({ organisationId }) => {
+        const params = new URLSearchParams();
+
+        return `microfins/${organisationId}/loan-exports?${params.toString()}`;
+      },
+    }),
   }),
 });
 
-export const { useGetMicrofinLoansQuery } = LoansRequest;
+export const { useGetMicrofinLoansQuery, useGetMicrofinLoansExportQuery } =
+  LoansRequest;

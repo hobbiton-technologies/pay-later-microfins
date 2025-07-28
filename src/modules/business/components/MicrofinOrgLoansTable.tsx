@@ -26,6 +26,7 @@ import { useEffect, useState } from "react";
 import { MicrofinOrgLoansForm } from "./MicrofinOrg/Loans/MicrofinOrgLoansForm";
 import {
   GetMicrofinLoansData,
+  useGetMicrofinLoansExportQuery,
   useGetMicrofinLoansQuery,
 } from "@/api/queries/loansQueries";
 import { customLoader } from "@/components/table-loader";
@@ -267,7 +268,13 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
     pageSize: pageSize,
   });
 
-  console.log(microfinOrganisationId);
+  // export
+  // const { data: apiExportResponse, isFetching: exportIsFetching } =
+  //   useGetMicrofinLoansExportQuery({
+  //     organisationId: Number(localStorage.getItem("organizationId")),
+  //   });
+
+  // console.log(microfinOrganisationId);
 
   const handleViewMicrofinOrgLoans = (record: GetMicrofinLoansData) => {
     if (record) {
@@ -299,18 +306,6 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
       }
     }
   };
-
-  // const handleSubmitLoan = (record: MicrofinOrgStaffMembersData) => {
-  //   if (record) {
-  //     const members = selectedMember.find(
-  //       (a) => a.id === record.organization.id
-  //     );
-  //     setSelectedMember(members);
-  //     // if (members) {
-  //     //   setIsLoanDisburseDrawerVisible(true);
-  //     // }
-  //   }
-  // };
 
   useEffect(() => {
     if (apiResponse?.data) {
