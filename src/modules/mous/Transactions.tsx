@@ -13,7 +13,7 @@ const Transactions = () => {
     {
       key: "2",
       label: "Loans",
-      children: <TransactionRepaymentsTable />,
+      children: <TransactionLoansTable />,
     },
     {
       key: "3",

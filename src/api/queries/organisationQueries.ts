@@ -13,6 +13,28 @@ interface MouLoansOrganisationRecoveryTransactionsData {
   createdAt: string;
 }
 
+export interface MouOrganisationRepaymentsData {
+  id: number;
+  transactionId: string;
+  organizationMemberId: number;
+  firstName: string;
+  lastName: string;
+  mouId: number;
+  amount: number;
+  transactionStatus: string;
+  createdAt: string;
+}
+
+export interface MouOrganisationRepaymentsResponse {
+  pageNumber: number;
+  pageSize: number;
+  totalItems: number;
+  statusCode: number;
+  message: string;
+  data: MouOrganisationRepaymentsData[];
+  errors: string;
+}
+
 export interface MouOrganisationLoanTransactionData {
   id: number;
   memberId: number;
@@ -125,10 +147,10 @@ export interface MouLoansOrganisationResponse {
 }
 
 export interface MouOrganisationLoanTransactionResponse {
-  pageNumber: 0;
-  pageSize: 0;
-  totalItems: 0;
-  statusCode: 0;
+  pageNumber: number;
+  pageSize: number;
+  totalItems: number;
+  statusCode: number;
   message: "string";
   data: MouOrganisationLoanTransactionData[];
   errors: ["string"];
@@ -198,7 +220,8 @@ const OrganisationRequests = Api.injectEndpoints({
           params.append("IsReportRequest", String(isReportRequest));
         params.append("PageSize", pageSize.toString());
         params.append("PageNumber", pageNumber.toString());
-        params.append("OrganizationId", mouOrganisationId.toString());
+        if (mouOrganisationId)
+          params.append("OrganizationId", mouOrganisationId.toString());
         if (id) params.append("id", id.toString());
 
         return `microfins/${organisationId}/transactions?${params.toString()}`;
