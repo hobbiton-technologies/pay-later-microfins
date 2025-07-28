@@ -205,7 +205,24 @@ const MouRequests = Api.injectEndpoints({
       },
       providesTags: ["MouProposals"],
     }),
+
+    getMouReceipting: builder.query<
+      MouReceiptingResponse,
+      { organisationId: number; pageSize: number; PageNumber: number }
+    >({
+      query: ({ organisationId, pageSize, PageNumber }) => {
+        const params = new URLSearchParams();
+        params.append("PageSize", pageSize.toString());
+        params.append("PageNumber", PageNumber.toString());
+
+        return `microfins/${organisationId}/receipts?${params.toString()}`;
+      },
+    }),
   }),
 });
 
-export const { useGetMouStatsQuery, useGetMouProductsQuery } = MouRequests;
+export const {
+  useGetMouStatsQuery,
+  useGetMouProductsQuery,
+  useGetMouReceiptingQuery,
+} = MouRequests;

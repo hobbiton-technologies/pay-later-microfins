@@ -4,10 +4,24 @@ import {
   ExportOutlined,
   EyeOutlined,
 } from "@ant-design/icons";
-import { MenuProps, Space, Dropdown, Button } from "antd";
-import { MouReceiptingData } from "@/api/queries/mouQueries";
+import { MenuProps, Space, Dropdown, Button, Tag } from "antd";
+import {
+  MouReceiptingData,
+  useGetMouReceiptingQuery,
+} from "@/api/queries/mouQueries";
+import { useState } from "react";
+import { formatCurrency } from "@/utils/formaters";
 
 export const ReceiptingTable = () => {
+  const [pageSize, setPageSize] = useState<number | null>(10);
+  const [pageNumber, setNumber] = useState<number | null>(1);
+
+  const { data: apiResponse, isFetching } = useGetMouReceiptingQuery({
+    organisationId: Number(localStorage.getItem("organizationId")),
+    pageSize: pageSize ?? 10,
+    PageNumber: pageNumber ?? 1,
+  });
+
   const ReceiptingColumns: ColumnsType<MouReceiptingData> = [
     {
       title: "Receipt ID",
@@ -31,16 +45,43 @@ export const ReceiptingTable = () => {
       title: "Initial Amount (ZMW)",
       dataIndex: "initialAmount",
       key: "initialAmount",
+      render: (_, record: MouReceiptingData) =>
+        formatCurrency(record.initialAmount),
     },
     {
       title: "Balance (ZMW)",
       dataIndex: "balance",
       key: "balance",
+      render: (_, record: MouReceiptingData) => formatCurrency(record.balance),
     },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
+      render: (status: string) => {
+        const statusColors: Record<string, string> = {
+          Open: "blue",
+          Pending: "orange",
+          Failed: "red",
+          Exhausted: "green",
+        };
+
+        const displayName: Record<string, string> = {
+          Open: "Open",
+          Pending: "Pending",
+          Failed: "Failed",
+          Exhausted: "Exhausted",
+        };
+
+        const color = statusColors[status] || "default";
+        const label = displayName[status] || status;
+
+        return (
+          <Tag color={color} style={{ fontWeight: 500 }}>
+            {label}
+          </Tag>
+        );
+      },
     },
     {
       title: "Created At",
@@ -85,7 +126,7 @@ export const ReceiptingTable = () => {
     <div>
       <section className="w-full h-full hidden md:flex md:flex-col">
         <Table
-          //   dataSource={microfinBranches?.data || []}
+          dataSource={apiResponse?.data}
           columns={ReceiptingColumns}
           rowKey="id"
           //   onChange={handleTableChange}
