@@ -38,6 +38,7 @@ import {
 } from "@/api/mutations/loansMutation";
 import { Option } from "antd/es/mentions";
 import { MainMicrofinOrgLoansForm } from "./MainMicrofinOrgLoansForm";
+import { createHandleTableChange } from "@/utils/HandleTableChange";
 
 type MicrofinOrgLoansTableProps = {
   showCreateButton?: boolean;
@@ -51,7 +52,7 @@ export const MainMicrofinOrgLoansTable: React.FC<
   const [id, setSearchId] = useState<string>("");
   const [isCreateDrawerVisible, setIsCreateDrawerVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [loanStatus, setloanStatus] = useState<string>("");
+  const [loanStatus, setLoanStatus] = useState<string>("");
   const [startDate] = useState<string>("");
   const [endDate] = useState<string>("");
   const [pageNumber, setPageNumber] = useState<number | null>(1);
@@ -262,21 +263,13 @@ export const MainMicrofinOrgLoansTable: React.FC<
     },
   ];
 
-  const handleTableChange: TableProps<GetMicrofinLoansData>["onChange"] = (
-    pagination,
-    filters
-  ) => {
-    setPageNumber(pagination.current ?? 1);
-    setPageSize(pagination.pageSize ?? 10);
+  const handleTableChange = createHandleTableChange<GetMicrofinLoansData>({
+    setPageNumber,
+    setPageSize,
+    setLoanStatus,
+    setFilteredLoanStatus,
+  });
 
-    if (filters.loanStatus && filters.loanStatus.length > 0) {
-      setloanStatus(filters.loanStatus[0] as string);
-      setFilteredLoanStatus(filters.loanStatus[0] as string);
-    } else {
-      setloanStatus("");
-      setFilteredLoanStatus(null);
-    }
-  };
   const handleSearch = (values: string) => {
     setSearchId(id);
     setSearchQuery(values.trim());

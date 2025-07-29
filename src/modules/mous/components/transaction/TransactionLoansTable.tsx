@@ -17,6 +17,8 @@ import Table, { ColumnsType } from "antd/es/table";
 import { useState, useEffect } from "react";
 import { EllipsisOutlined, EyeOutlined } from "@ant-design/icons";
 import { customLoader } from "@/components/table-loader";
+import DebouncedInputField from "@/modules/components/DebouncedInput";
+import { createHandleTableChange } from "@/utils/HandleTableChange";
 
 // type MouOrganisationProps = {
 //   MouOrganisationId: MouLoansOrganisationData;
@@ -24,7 +26,7 @@ import { customLoader } from "@/components/table-loader";
 
 export const TransactionLoansTable = () => {
   const [id] = useState<number | null>(0);
-  const [searchQuery] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [memberId] = useState<number>(0);
   const [loanStatus] = useState<string>("");
   const [transactionType] = useState<string>("");
@@ -32,9 +34,10 @@ export const TransactionLoansTable = () => {
   const [startRange] = useState<string>("");
   const [endRange] = useState<string>("");
   const [isReportRequest] = useState<boolean>(false);
-  const [pageSize] = useState<number | null>(10);
-  const [pageNumber] = useState<number | null>(1);
+  const [pageSize, setPageSize] = useState<number | null>(10);
+  const [pageNumber, setPageNumber] = useState<number | null>(1);
   const [mouOrganisationId] = useState<number>(0);
+  const [searchId, setSearchId] = useState<string>("");
 
   //states to select organisation loan
   const [mouloan, setMouloan] = useState<MouOrganisationLoanTransactionData[]>(
@@ -77,6 +80,20 @@ export const TransactionLoansTable = () => {
     if (mouloan) {
       setIsLoansDrawerVisible(true);
     }
+  };
+
+  const handleTableChange =
+    createHandleTableChange<MouOrganisationLoanTransactionData>({
+      setPageNumber,
+      setPageSize,
+    });
+
+  const handleSearch = (values: string) => {
+    setSearchId(searchId);
+    setSearchQuery(values.trim());
+  };
+  const handleSearchClear = () => {
+    setSearchId(searchId);
   };
 
   const MouOrgLoansColumns: ColumnsType<MouOrganisationLoanTransactionData> = [
@@ -145,15 +162,19 @@ export const TransactionLoansTable = () => {
       dataIndex: "loanStatus",
       render: (status: string) => {
         const statusColors: Record<string, string> = {
-          Open: "blue",
+          Open: "purple",
           Failed: "red",
           Successful: "green",
+          PartiallySettled: "orange",
+          FullySettled: "blue",
         };
 
         const displayName: Record<string, string> = {
           Open: "Open",
           Failed: "Failed",
           Successful: "Successful",
+          PartiallySettled: "PartiallySettled",
+          FullySettled: "FullySettled",
         };
 
         const color = statusColors[status] || "default";
@@ -223,20 +244,28 @@ export const TransactionLoansTable = () => {
   return (
     <div>
       <section className="w-full h-full hidden md:flex md:flex-col">
+        <div className="w-full">
+          <DebouncedInputField
+            placeholder="Search for Loan"
+            onSearch={handleSearch}
+            onClear={handleSearchClear}
+            allowClear={true}
+          />
+        </div>
         <Table
           dataSource={apiResponse?.data}
           columns={MouOrgLoansColumns}
           rowKey="id"
-          //   onChange={handleTableChange}
+          onChange={handleTableChange}
           loading={{
             spinning: isFetching,
             indicator: customLoader,
           }}
-          //   pagination={{
-          //     current: pageNumber ?? 1,
-          //     pageSize: pageSize,
-          //     total: microfinBranches?.totalItems,
-          //   }}
+          pagination={{
+            current: pageNumber ?? 1,
+            pageSize: pageSize ?? 10,
+            total: apiResponse?.totalItems,
+          }}
           components={{
             header: {
               cell: (props: any) => (

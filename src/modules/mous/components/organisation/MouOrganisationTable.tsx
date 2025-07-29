@@ -20,6 +20,7 @@ import {
   MouLoansOrganisationData,
   useGetMouLoansOrganisationsQuery,
 } from "@/api/queries/organisationQueries";
+import { createHandleTableChange } from "@/utils/HandleTableChange";
 
 export const MouOrganisationTable = () => {
   const [id, setSearchId] = useState<string>("");
@@ -62,10 +63,10 @@ export const MouOrganisationTable = () => {
     }
   }, [selectedOrganisation]);
 
-  const handleTableChange = (pagination: any) => {
-    setPageNumber(pagination.current);
-    setPageSize(pagination.pageSize);
-  };
+  const handleTableChange = createHandleTableChange<MouLoansOrganisationData>({
+    setPageNumber,
+    setPageSize,
+  });
 
   const handleSearch = (value: string) => {
     setSearchQuery(value.trim());

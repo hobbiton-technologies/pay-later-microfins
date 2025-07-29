@@ -5,26 +5,16 @@ import {
 import Table, { ColumnsType } from "antd/es/table";
 import DebouncedInputField from "../components/DebouncedInput";
 import { useEffect, useState } from "react";
-import {
-  Button,
-  Card,
-  Descriptions,
-  Drawer,
-  Dropdown,
-  MenuProps,
-  Space,
-} from "antd";
+import { Button, Card, Drawer, Dropdown, MenuProps, Space } from "antd";
 import { ExportOutlined, EyeOutlined } from "@ant-design/icons";
 import { customLoader } from "@/components/table-loader";
 import { OrganisationForm } from "./components/Organisation/OrganisationForm";
-import { MicrofinOrgStaffTable } from "./components/MicrofinOrg/StaffMembers/MicrofinOrgStaffTable";
 import { MicrofinOrgStaffMemberForm } from "./components/MicrofinOrg/StaffMembers/MIcrofinOrgStaffMemberForm";
 import { MicrofinOrgLoansTable } from "./components/MicrofinOrg/Loans/MicrofinOrgLoansTable";
-import { GetMicrofinLoansData } from "@/api/queries/loansQueries";
 import { useNavigate } from "react-router-dom";
 
 const Organisation = () => {
-  const [id, setSearchId] = useState<string>("");
+  // const [id, setSearchId] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [pageNumber, setPageNumber] = useState<number | null>(1);
   const [pageSize, setPageSize] = useState(10);
@@ -33,15 +23,13 @@ const Organisation = () => {
     useState(false);
   const navigate = useNavigate();
 
-  const [selectedOrganisation, setSelectedOrganisation] =
-    useState<OrganisationData>();
+  const [selectedOrganisation] = useState<OrganisationData>();
 
-  const [isOrganisationDrawerVisible, setIsOrganisationDrawerVisible] =
-    useState(false);
+  // const [, setIsOrganisationDrawerVisible] = useState(false);
 
   const [isLoansDrawerVisible, setIsLoansDrawerVisible] = useState(false);
 
-  const [organisations, setOrganisations] = useState<OrganisationData[]>([]);
+  const [, setOrganisations] = useState<OrganisationData[]>([]);
   const { data: organisationData, isFetching } =
     useGetOrganisationsRequestQuery({
       id: Number(localStorage.getItem("organizationId")),
@@ -75,28 +63,28 @@ const Organisation = () => {
     setSearchQuery(searchQuery);
   };
 
-  const handleViewOrganisations = (organisationId: number) => {
-    if (organisationId && organisationData) {
-      const organisation = organisations.find((a) => a.id === organisationId);
-      setSelectedOrganisation(organisation);
+  // const handleViewOrganisations = (organisationId: number) => {
+  //   if (organisationId && organisationData) {
+  //     const organisation = organisations.find((a) => a.id === organisationId);
+  //     setSelectedOrganisation(organisation);
 
-      if (organisation) {
-        setIsOrganisationDrawerVisible(true);
-      }
-      // console.log("selectedOrganisation", selectedOrganisation?.id);
-    }
-  };
+  //     if (organisation) {
+  //       setIsOrganisationDrawerVisible(true);
+  //     }
+  //     // console.log("selectedOrganisation", selectedOrganisation?.id);
+  //   }
+  // };
 
-  const handleViewMicrofinOrgLoans = (organisationId: number) => {
-    if (organisationId && organisationData) {
-      const organisation = organisations.find((a) => a.id === organisationId);
-      setSelectedOrganisation(organisation);
+  // const handleViewMicrofinOrgLoans = (organisationId: number) => {
+  //   if (organisationId && organisationData) {
+  //     const organisation = organisations.find((a) => a.id === organisationId);
+  //     setSelectedOrganisation(organisation);
 
-      if (organisation) {
-        setIsLoansDrawerVisible(true);
-      }
-    }
-  };
+  //     if (organisation) {
+  //       setIsLoansDrawerVisible(true);
+  //     }
+  //   }
+  // };
 
   const organisationsColumns = (
     handleViewOrganisations: (record: OrganisationData) => void

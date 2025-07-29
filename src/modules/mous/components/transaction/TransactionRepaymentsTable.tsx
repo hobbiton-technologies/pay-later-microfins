@@ -7,9 +7,13 @@ import { Button, Dropdown, MenuProps, Space, Table, Tag } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { EllipsisOutlined, EyeOutlined } from "@ant-design/icons";
 import { useState } from "react";
+import { createHandleTableChange } from "@/utils/HandleTableChange";
+import DebouncedInputField from "@/modules/components/DebouncedInput";
+import { formatCurrency } from "@/utils/formaters";
 
 export const TransactionRepaymentsTable = () => {
   const [id, setId] = useState<number | null>(0);
+  const [searchId, setSearchId] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [memberId, setMemberId] = useState<number>(0);
   const [loanStatus, setloanStatus] = useState<string>("");
@@ -48,6 +52,8 @@ export const TransactionRepaymentsTable = () => {
       title: "Amount",
       dataIndex: "amount",
       key: "amount",
+      render: (_, record: MouOrganisationRepaymentsData) =>
+        formatCurrency(record.amount),
     },
     {
       title: "Transaction ID ",
@@ -121,22 +127,44 @@ export const TransactionRepaymentsTable = () => {
     },
   ];
 
+  const handleTableChange =
+    createHandleTableChange<MouOrganisationRepaymentsData>({
+      setPageNumber,
+      setPageSize,
+    });
+
+  const handleSearch = (values: string) => {
+    setSearchId(searchId);
+    setSearchQuery(values.trim());
+  };
+  const handleSearchClear = () => {
+    setSearchId(searchId);
+  };
+
   return (
     <section className="w-full h-full hidden md:flex md:flex-col">
+      <div className="w-full">
+        <DebouncedInputField
+          placeholder="Search for Repayments"
+          onSearch={handleSearch}
+          onClear={handleSearchClear}
+          allowClear={true}
+        />
+      </div>
       <Table
         dataSource={apiResponse?.data}
         columns={MouRepaymensColumns}
         rowKey="id"
-        //   onChange={handleTableChange}
+        onChange={handleTableChange}
         loading={{
           spinning: isFetching,
           indicator: customLoader,
         }}
-        //   pagination={{
-        //     current: pageNumber ?? 1,
-        //     pageSize: pageSize,
-        //     total: microfinBranches?.totalItems,
-        //   }}
+        pagination={{
+          current: pageNumber ?? 1,
+          pageSize: pageSize ?? 10,
+          total: apiResponse?.totalItems,
+        }}
         components={{
           header: {
             cell: (props: any) => (

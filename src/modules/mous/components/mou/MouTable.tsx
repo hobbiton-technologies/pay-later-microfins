@@ -13,6 +13,7 @@ import { useState } from "react";
 import { customLoader } from "@/components/table-loader";
 import DebouncedInputField from "@/modules/components/DebouncedInput";
 import { MouProposalForm } from "./MouProposalForm";
+import { createHandleTableChange } from "@/utils/HandleTableChange";
 
 export const MouTable = () => {
   const [id, setId] = useState<number>(0);
@@ -22,8 +23,8 @@ export const MouTable = () => {
   const [endDate, setEndDate] = useState<string>("");
   const [pageSize, setPageSize] = useState<number | null>(10);
   const [pageNumber, setPageNumber] = useState<number | null>(1);
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const [searchInput, setSearchInput] = useState<string>("");
+  const [, setSearchQuery] = useState<string>("");
+  const [searchInput] = useState<string>("");
   const [isCreateDrawerVisible, setIsCreateDrawerVisible] = useState(false);
 
   const { data: apiResponse, isFetching } = useGetMouProductsQuery({
@@ -135,6 +136,11 @@ export const MouTable = () => {
     },
   ];
 
+  const handleTableChange = createHandleTableChange<MouProductsData>({
+    setPageNumber,
+    setPageSize,
+  });
+
   const handleSearch = (value: string) => {
     setSearchQuery(value.trim());
   };
@@ -168,16 +174,16 @@ export const MouTable = () => {
           dataSource={apiResponse?.data || []}
           columns={MouColumns}
           rowKey="id"
-          //   onChange={handleTableChange}
+          onChange={handleTableChange}
           loading={{
             spinning: isFetching,
             indicator: customLoader,
           }}
-          //   pagination={{
-          //     current: pageNumber ?? 1,
-          //     pageSize: pageSize,
-          //     total: microfinBranches?.totalItems,
-          //   }}
+          pagination={{
+            current: pageNumber ?? 1,
+            pageSize: pageSize ?? 10,
+            total: apiResponse?.totalItems,
+          }}
           components={{
             header: {
               cell: (props: any) => (

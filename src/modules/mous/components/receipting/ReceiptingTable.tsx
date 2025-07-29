@@ -1,9 +1,5 @@
 import Table, { ColumnsType } from "antd/es/table";
-import {
-  EllipsisOutlined,
-  ExportOutlined,
-  EyeOutlined,
-} from "@ant-design/icons";
+import { EllipsisOutlined, EyeOutlined } from "@ant-design/icons";
 import {
   MenuProps,
   Space,
@@ -20,14 +16,18 @@ import {
 } from "@/api/queries/mouQueries";
 import { useState } from "react";
 import { formatCurrency } from "@/utils/formaters";
+import { createHandleTableChange } from "@/utils/HandleTableChange";
+import { customLoader } from "@/components/table-loader";
 
 export const ReceiptingTable = () => {
-  const [pageSize, setPageSize] = useState<number | null>(10);
-  const [pageNumber, setNumber] = useState<number | null>(1);
-  const [receipts, setReciepts] = useState<MouReceiptingData[]>([]);
+  const [id, setSearchId] = useState<string>("");
+  const [receipts] = useState<MouReceiptingData[]>([]);
   const [selectedReceipt, setSelectedReceipt] = useState<MouReceiptingData>();
   const [isRecieptsDrawerVisible, setIsRecieptsDrawerVisible] =
     useState<boolean>(false);
+  const [pageNumber, setPageNumber] = useState<number | null>(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const { data: apiResponse, isFetching } = useGetMouReceiptingQuery({
     organisationId: Number(localStorage.getItem("organizationId")),
@@ -44,7 +44,7 @@ export const ReceiptingTable = () => {
     if (receipts) {
       setIsRecieptsDrawerVisible(true);
     }
-    console.log("Selected Receipt", selectedReceipt);
+    // console.log("Selected Receipt", selectedReceipt);
   };
 
   const ReceiptingColumns: ColumnsType<MouReceiptingData> = [
@@ -147,6 +147,19 @@ export const ReceiptingTable = () => {
       },
     },
   ];
+
+  const handleTableChange = createHandleTableChange<MouReceiptingData>({
+    setPageNumber,
+    setPageSize,
+  });
+
+  const handleSearch = (values: string) => {
+    setSearchId(id);
+    setSearchQuery(values.trim());
+  };
+  const handleSearchClear = () => {
+    setSearchId(id);
+  };
   return (
     <div>
       <section className="w-full h-full hidden md:flex md:flex-col">
@@ -154,16 +167,16 @@ export const ReceiptingTable = () => {
           dataSource={apiResponse?.data}
           columns={ReceiptingColumns}
           rowKey="id"
-          //   onChange={handleTableChange}
-          //   loading={{
-          //     spinning: isFetching,
-          //     indicator: customLoader,
-          //   }}
-          //   pagination={{
-          //     current: pageNumber ?? 1,
-          //     pageSize: pageSize,
-          //     total: microfinBranches?.totalItems,
-          //   }}
+          onChange={handleTableChange}
+          loading={{
+            spinning: isFetching,
+            indicator: customLoader,
+          }}
+          pagination={{
+            current: pageNumber ?? 1,
+            pageSize: pageSize ?? 10,
+            total: apiResponse?.totalItems,
+          }}
           components={{
             header: {
               cell: (props: any) => (
