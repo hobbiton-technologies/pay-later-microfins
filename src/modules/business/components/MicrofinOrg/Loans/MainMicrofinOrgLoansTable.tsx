@@ -129,6 +129,7 @@ export const MainMicrofinOrgLoansTable: React.FC<
         { text: "Under Review", value: "UnderReview" },
         { text: "Approved", value: "Approved" },
         { text: "Rejected", value: "Rejected" },
+        { text: "Disbursement Initiated", value: "DisbursementInitiated" },
         { text: "Disbursed", value: "Disbursed" },
         { text: "Partially Settled", value: "PartiallySettled" },
         { text: "Fully Settled", value: "FullySettled" },
@@ -281,7 +282,6 @@ export const MainMicrofinOrgLoansTable: React.FC<
     setSearchId(id);
     setSearchQuery(values.trim());
   };
-
   const handleSearchClear = () => {
     setSearchId(id);
   };
@@ -503,7 +503,6 @@ export const MainMicrofinOrgLoansTable: React.FC<
             handleDisburseLoan
           )}
           rowKey="id"
-          // onChange={handleTableChange}
           loading={{
             spinning: isFetching,
             indicator: customLoader,
@@ -697,7 +696,6 @@ export const MainMicrofinOrgLoansTable: React.FC<
           "Invalid process"
         )}
       </Drawer>
-
       {/* Approval modal */}
       <Modal
         centered
@@ -745,7 +743,6 @@ export const MainMicrofinOrgLoansTable: React.FC<
           </div>
         </Form>
       </Modal>
-
       {/* Bulk approval modal */}
       <Modal
         centered
@@ -813,7 +810,6 @@ export const MainMicrofinOrgLoansTable: React.FC<
           </div>
         </Form>
       </Modal>
-
       {/* Disburse Modal */}
       <Modal
         centered
@@ -863,7 +859,6 @@ export const MainMicrofinOrgLoansTable: React.FC<
           <div className=" grid grid-cols-2 gap-4"></div>
         </Form>
       </Modal>
-
       {/* Bulk Disbure Modal */}
       <Modal
         centered
@@ -898,7 +893,6 @@ export const MainMicrofinOrgLoansTable: React.FC<
           You're about to <b>disburse</b> <b>{selectedRows.length}</b> loans.
         </div>
       </Modal>
-
       {/* Bulk Export Modal */}
       <Modal
         centered
@@ -908,30 +902,8 @@ export const MainMicrofinOrgLoansTable: React.FC<
           form.resetFields();
         }}
         confirmLoading={exportIsLoading}
-        onOk={async () => {
-          try {
-            const payload: ExportMicrofinOrgLoan = {
-              sender: "Dalytsoul Teymbor",
-              narration: "Loan export batch",
-              spAccount: "string",
-              remmiterAccount: "string",
-              senderId: localStorage.getItem("userId") || "2271",
-              phoneNumber: "260977718789",
-              loanIds: selectedRows.map((loan) => loan.id),
-            };
-
-            await exportLoan({
-              microfinOrganisationId: microfinOrganisationId,
-              payload: payload,
-            }).unwrap();
-
-            message.success("Loan export triggered successfully");
-            setIsBulkExportModalVisible(false);
-            setSelectedRowKeys([]);
-            setSelectedRows([]);
-          } catch (err) {
-            message.error("Export failed");
-          }
+        onOk={() => {
+          form.submit();
         }}
       >
         <Form
@@ -939,48 +911,98 @@ export const MainMicrofinOrgLoansTable: React.FC<
           layout="vertical"
           onFinish={async (values) => {
             try {
-              await Promise.all(
-                selectedRows.map((loan) =>
-                  approveLoan({
-                    organizationId: Number(
-                      localStorage.getItem("organizationId")
-                    ),
-                    microfinOrganisationId: loan.member.organization.id,
-                    loanId: loan.id,
-                    approveLoanData: {
-                      answer: values.answer,
-                      comment: values.comment,
-                    },
-                  })
-                )
-              );
+              const payload: ExportMicrofinOrgLoan = {
+                sender: values.sender,
+                narration: values.narration,
+                spAccount: values.spAccount,
+                remmiterAccount: values.remmiterAccount,
+                senderId: values.senderId,
+                phoneNumber: values.phoneNumber,
+                loanIds: selectedRows.map((loan) => loan.id),
+              };
+
+              const response = await exportLoan({
+                organizationId: Number(localStorage.getItem("organizationId")),
+                payload: payload,
+              }).unwrap();
+
+              // Auto download the CSV file
+              const downloadFile = (data: any, response: any) => {
+                let blob: Blob;
+                let filename = "loan-export.csv"; // default filename
+
+                // Extract filename from response headers if available
+                if (response && response.headers) {
+                  const contentDisposition = response.headers.get(
+                    "content-disposition"
+                  );
+                  if (contentDisposition) {
+                    const filenameMatch = contentDisposition.match(
+                      /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/
+                    );
+                    if (filenameMatch && filenameMatch[1]) {
+                      filename = filenameMatch[1].replace(/['"]/g, "");
+                    }
+                  }
+                }
+
+                // Handle different response types - CSV should come as blob or text
+                if (data instanceof Blob) {
+                  blob = data;
+                } else if (typeof data === "string") {
+                  // CSV data as string
+                  blob = new Blob([data], { type: "text/csv" });
+                } else {
+                  // Fallback - convert to CSV-like format
+                  const csvString = JSON.stringify(data, null, 2);
+                  blob = new Blob([csvString], { type: "text/csv" });
+                }
+
+                // Create and trigger download
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                link.href = url;
+                link.download = filename;
+                link.style.display = "none";
+
+                // Append to body, click, and cleanup
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(url);
+              };
+
+              // Download the CSV file
+              downloadFile(response, response);
+
               message.success(
-                "Bulk loan response submitted, please wait for export"
+                "Loan export completed and downloaded successfully"
               );
               setIsBulkExportModalVisible(false);
               setSelectedRowKeys([]);
               setSelectedRows([]);
+              form.resetFields();
             } catch (error) {
-              message.error("Something went wrong with the export process");
+              console.error("Export error:", error);
+              message.error("Export failed. Please try again.");
             }
           }}
         >
-          {/* <div className="text-center py-6">
-            You're about to <i>{bulkActionType}</i> <b>{selectedRows.length}</b>{" "}
-            loans.
-          </div> */}
+          <div className="text-center py-6">
+            You're about to export <b>{selectedRows.length}</b> loans.
+          </div>
           <div className="grid grid-cols-2 gap-4">
             <Form.Item
               name="sender"
               label="Sender"
-              rules={[{ required: true }]}
+              rules={[{ required: true, message: "Please enter sender name" }]}
             >
               <Input placeholder="Enter Sender" />
             </Form.Item>
             <Form.Item
               name="senderId"
               label="Sender Id"
-              rules={[{ required: true }]}
+              rules={[{ required: true, message: "Please enter sender ID" }]}
             >
               <Input placeholder="Enter Sender Id" />
             </Form.Item>
@@ -988,29 +1010,37 @@ export const MainMicrofinOrgLoansTable: React.FC<
             <Form.Item
               name="spAccount"
               label="SP Account"
-              rules={[{ required: true }]}
+              rules={[{ required: true, message: "Please enter SP account" }]}
             >
               <Input placeholder="Enter SP Account" />
             </Form.Item>
             <Form.Item
               name="remmiterAccount"
-              label="Remmiter Account"
-              rules={[{ required: true }]}
+              label="Remitter Account"
+              rules={[
+                { required: true, message: "Please enter remitter account" },
+              ]}
             >
-              <Input placeholder="Enter Remmiter Account" />
+              <Input placeholder="Enter Remitter Account" />
             </Form.Item>
 
             <Form.Item
               name="phoneNumber"
               label="Phone Number"
-              rules={[{ required: true }]}
+              rules={[
+                { required: true, message: "Please enter phone number" },
+                {
+                  pattern: /^[0-9+\-\s]+$/,
+                  message: "Please enter a valid phone number",
+                },
+              ]}
             >
               <Input placeholder="Enter Phone Number" />
             </Form.Item>
             <Form.Item
               name="narration"
               label="Narration"
-              rules={[{ required: true }]}
+              rules={[{ required: true, message: "Please enter narration" }]}
             >
               <Input.TextArea placeholder="Enter Narration" />
             </Form.Item>
