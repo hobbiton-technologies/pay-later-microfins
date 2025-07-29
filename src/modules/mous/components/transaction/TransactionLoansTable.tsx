@@ -23,18 +23,18 @@ import { customLoader } from "@/components/table-loader";
 // };
 
 export const TransactionLoansTable = () => {
-  const [id, setId] = useState<number | null>(0);
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const [memberId, setMemberId] = useState<number>(0);
-  const [loanStatus, setloanStatus] = useState<string>("");
-  const [transactionType, setTransactionType] = useState<string>("");
-  const [status, setStatus] = useState<string>("");
-  const [startRange, setStartRange] = useState<string>("");
-  const [endRange, setendRange] = useState<string>("");
-  const [isReportRequest, setIsReportRequest] = useState<boolean>(false);
-  const [pageSize, setPageSize] = useState<number | null>(10);
-  const [pageNumber, setPageNumber] = useState<number | null>(1);
-  const [mouOrganisationId, setMouOrganisationId] = useState<number>(0);
+  const [id] = useState<number | null>(0);
+  const [searchQuery] = useState<string>("");
+  const [memberId] = useState<number>(0);
+  const [loanStatus] = useState<string>("");
+  const [transactionType] = useState<string>("");
+  const [status] = useState<string>("");
+  const [startRange] = useState<string>("");
+  const [endRange] = useState<string>("");
+  const [isReportRequest] = useState<boolean>(false);
+  const [pageSize] = useState<number | null>(10);
+  const [pageNumber] = useState<number | null>(1);
+  const [mouOrganisationId] = useState<number>(0);
 
   //states to select organisation loan
   const [mouloan, setMouloan] = useState<MouOrganisationLoanTransactionData[]>(

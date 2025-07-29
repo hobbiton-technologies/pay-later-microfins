@@ -16,7 +16,6 @@ import {
 } from "antd";
 import { ColumnsType, TableProps } from "antd/es/table";
 import {
-  DownOutlined,
   ExportOutlined,
   EyeOutlined,
   StopOutlined,
@@ -30,7 +29,7 @@ import {
 } from "@/api/queries/loansQueries";
 import { customLoader } from "@/components/table-loader";
 import { formatCurrency } from "@/utils/formaters";
-import { ArrowBigDown, Check } from "lucide-react";
+import { Check } from "lucide-react";
 import {
   ExportMicrofinOrgLoan,
   useApproveMicrofinOrgLoanMutation,
@@ -53,8 +52,8 @@ export const MainMicrofinOrgLoansTable: React.FC<
   const [isCreateDrawerVisible, setIsCreateDrawerVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [loanStatus, setloanStatus] = useState<string>("");
-  const [startDate, setstartDate] = useState<string>("");
-  const [endDate, setendDate] = useState<string>("");
+  const [startDate] = useState<string>("");
+  const [endDate] = useState<string>("");
   const [pageNumber, setPageNumber] = useState<number | null>(1);
   const [pageSize, setPageSize] = useState(10);
   const [form] = Form.useForm();
@@ -926,12 +925,10 @@ export const MainMicrofinOrgLoansTable: React.FC<
                 payload: payload,
               }).unwrap();
 
-              // Auto download the CSV file
               const downloadFile = (data: any, response: any) => {
                 let blob: Blob;
-                let filename = "loan-export.csv"; // default filename
+                let filename = "loan-export.csv";
 
-                // Extract filename from response headers if available
                 if (response && response.headers) {
                   const contentDisposition = response.headers.get(
                     "content-disposition"
@@ -946,35 +943,28 @@ export const MainMicrofinOrgLoansTable: React.FC<
                   }
                 }
 
-                // Handle different response types - CSV should come as blob or text
                 if (data instanceof Blob) {
                   blob = data;
                 } else if (typeof data === "string") {
-                  // CSV data as string
                   blob = new Blob([data], { type: "text/csv" });
                 } else {
-                  // Fallback - convert to CSV-like format
                   const csvString = JSON.stringify(data, null, 2);
                   blob = new Blob([csvString], { type: "text/csv" });
                 }
 
-                // Create and trigger download
                 const url = window.URL.createObjectURL(blob);
                 const link = document.createElement("a");
                 link.href = url;
                 link.download = filename;
                 link.style.display = "none";
 
-                // Append to body, click, and cleanup
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
                 window.URL.revokeObjectURL(url);
               };
 
-              // Download the CSV file
               downloadFile(response, response);
-
               message.success(
                 "Loan export completed and downloaded successfully"
               );
