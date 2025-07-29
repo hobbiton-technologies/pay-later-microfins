@@ -61,9 +61,6 @@ interface MouLoans {}
 
 export interface MouProductsData {
   id: number;
-  createdAt: string;
-  updatedAt: string;
-  mouFileId: number;
   microfin: {
     id: number;
     name: string;
@@ -139,6 +136,9 @@ export interface MouProductsData {
       comment: string;
     }
   ];
+  createdAt: string;
+  updatedAt: string;
+  mouFileId: number;
 }
 
 export interface MouStatsData {

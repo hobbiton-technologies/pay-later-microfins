@@ -54,7 +54,7 @@ const SignInForm = () => {
 
   return (
     <div className="flex flex-col min-h-screen items-center justify-center ">
-      <div className="relative w-full max-w-md p-8 rounded-lg shadow-sm bg-white/10 backdrop-blur-md border border-white/20">
+      <div className="relative w-full max-w-4xl p-20 rounded-lg shadow-xl bg-white/90 backdrop-blur-md border   ">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm items-center justify-center text-center">
           {/* Lipila-Later MicroFins Portal */}
           <div className=" ">
@@ -67,7 +67,7 @@ const SignInForm = () => {
             </div>
           </div>
 
-          <h2 className="mt-5 text-center text-sm font-medium leading-5 tracking-tight text-gray-700">
+          <h2 className="mt-5 text-center text-sm font-medium leading-5 tracking-tight text-gray-500">
             Sign in to your account
           </h2>
         </div>
@@ -77,7 +77,7 @@ const SignInForm = () => {
             <div>
               <label
                 htmlFor="username"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-slate-500"
               >
                 Username
               </label>
@@ -105,7 +105,7 @@ const SignInForm = () => {
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-slate-500"
               >
                 Password
               </label>
@@ -146,22 +146,22 @@ const SignInForm = () => {
 
             <div className="text-sm flex justify-start">
               <Link to="/ForgotPassword">
-                <h1 className="font-semibold text-[#711850/90] hover:text-blue-400 transition duration-200 ease-in-out">
+                <h1 className="font-light text-slate-600 hover:text-white transition duration-200 ease-in-out">
                   Forgot password?
                 </h1>
               </Link>
             </div>
+            <motion.div
+              className="w-full text-[10px] text-slate-700 flex justify-center items-center"
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.7 }}
+            >
+              © 2025 Hobbiton. All Rights Reserved.
+            </motion.div>
           </form>
         </div>
       </div>
-      <motion.div
-        className="w-full h-full min-h-10 text-[10px] text-black flex justify-center items-center"
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, delay: 0.7 }}
-      >
-        © 2025 Hobbiton. All Rights Reserved.
-      </motion.div>
     </div>
   );
 };

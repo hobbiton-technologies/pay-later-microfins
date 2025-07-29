@@ -1,4 +1,12 @@
-import { Button, Drawer, Dropdown, MenuProps, Space, Tag } from "antd";
+import {
+  Button,
+  DatePicker,
+  Drawer,
+  Dropdown,
+  MenuProps,
+  Space,
+  Tag,
+} from "antd";
 import Table, { ColumnsType } from "antd/es/table";
 import {
   EllipsisOutlined,
@@ -9,11 +17,14 @@ import {
   MouProductsData,
   useGetMouProductsQuery,
 } from "@/api/queries/mouQueries";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { customLoader } from "@/components/table-loader";
 import DebouncedInputField from "@/modules/components/DebouncedInput";
 import { MouProposalForm } from "./MouProposalForm";
 import { createHandleTableChange } from "@/utils/HandleTableChange";
+import moment from "moment";
+import Papa from "papaparse";
+import { saveAs } from "file-saver";
 
 export const MouTable = () => {
   const [id, setId] = useState<number>(0);
@@ -26,15 +37,24 @@ export const MouTable = () => {
   const [, setSearchQuery] = useState<string>("");
   const [searchInput] = useState<string>("");
   const [isCreateDrawerVisible, setIsCreateDrawerVisible] = useState(false);
+  const [dateRange, setDateRange] = useState<
+    [moment.Moment, moment.Moment] | null
+  >(null);
+  const [Proposals, setProposals] = useState<MouProductsData[]>([]);
+  const { RangePicker } = DatePicker;
 
   const { data: apiResponse, isFetching } = useGetMouProductsQuery({
     id: id,
     microfinId: microfinId,
     organizationId: organizationId,
-    startdate: startDate,
-    endDate: endDate,
+    startdate: dateRange ? dateRange[0].toISOString() : "",
+    endDate: dateRange ? dateRange[1].toISOString() : "",
     pageSize: pageSize ?? 10,
     pageNumber: pageNumber ?? 1,
+  });
+
+  useEffect(() => {
+    setProposals(apiResponse?.data || []);
   });
 
   const MouColumns: ColumnsType<MouProductsData> = [
@@ -149,6 +169,95 @@ export const MouTable = () => {
     setSearchQuery(searchInput);
   };
 
+  const exportCSV = () => {
+    if (Proposals && apiResponse?.data) {
+      const currentDate = new Date().toISOString().split("T")[0];
+
+      const modifiedCsv = Proposals.map((item) => {
+        const baseRow: any = {
+          Id: item?.id ?? "",
+          ProposalStatus: item?.mouStatus ?? "",
+          ProposalStartDate: item?.startDate ?? "",
+          ProposalEndDate: item?.endDate ?? "",
+          ProposalDate: item?.createdAt ?? "",
+          MoiFileId: item?.mouFileId ?? "",
+          MicrofinId: item?.microfin?.id ?? "",
+          MicrofinName: item?.microfin?.name ?? "",
+          MicrofinContactNo: item?.microfin?.contactNo ?? "",
+          MicrofinAddress: item?.microfin?.address ?? "",
+          MicrofinEmail: item?.microfin?.email ?? "",
+          OrganisationId: item?.organization?.id ?? "",
+          OrganisationName: item?.organization?.name ?? "",
+          OrganisationContactNo: item?.organization?.contactNo ?? "",
+          OrganisationAddress: item?.organization?.address ?? "",
+          OrganisationEmail: item?.organization?.email ?? "",
+          OrganisationTpin: item?.organization?.tPinNumber ?? "",
+          OrganisationSector: item?.organization?.sector ?? "",
+          OrganisationIsDeactived: item?.organization?.isDeactivated
+            ? "Yes"
+            : "No",
+          ProposedById: item?.proposedBy?.id ?? "",
+          ProposedByName: `${item?.proposedBy?.user?.firstName ?? ""} ${
+            item?.proposedBy?.user?.lastName ?? ""
+          }`,
+          ProposedByEmail: item?.proposedBy?.user?.email ?? "",
+          ProposedByPhone: item?.proposedBy?.user?.phoneNumber ?? "",
+          ProposedByIdType: item?.proposedBy?.idType ?? "",
+          ProposedByIdNumber: item?.proposedBy?.idNumber ?? "",
+          ProposedByBranch: item?.proposedBy?.branch ?? "",
+          ProposedByPosition: item?.proposedBy?.position ?? "",
+        };
+
+        // Add Loan Products
+        item?.loanProducts?.forEach((lp, index) => {
+          const i = index + 1;
+          baseRow[`LoanProductId #${i}`] = lp?.id ?? "";
+          baseRow[`LoanProductName #${i}`] = lp?.name ?? "";
+          baseRow[`LoanProductType #${i}`] = lp?.loanProductType ?? "";
+          baseRow[`MaxRepaymentPeriod #${i}`] =
+            lp?.maximumRepaymentPeriod ?? "";
+          baseRow[`ProductStatus #${i}`] = lp?.productStatus ?? "";
+          baseRow[`GracePeriodInDays #${i}`] = lp?.gracePeriodInDays ?? "";
+          baseRow[`InterestRate #${i}`] = lp?.interestRate ?? "";
+          baseRow[`MinLoanAmount #${i}`] = lp?.minimumLoanAmount ?? "";
+          baseRow[`MaxLoanAmount #${i}`] = lp?.maximumLoanAmount ?? "";
+          baseRow[`MaxLoanRate #${i}`] = lp?.maximumLoanRate ?? "";
+          baseRow[`InsuranceRate #${i}`] = lp?.insuranceRate ?? "";
+          baseRow[`ArrangementFeeRate #${i}`] = lp?.arrangementFeeRate ?? "";
+          baseRow[`IsCollateralBased #${i}`] = lp?.isCollateralBased
+            ? "Yes"
+            : "No";
+        });
+
+        // Add Responders
+        item?.responders?.forEach((r, index) => {
+          const i = index + 1;
+          const user = r?.responder?.user;
+          const responder = r?.responder;
+
+          baseRow[`ResponderName #${i}`] = `${user?.firstName ?? ""} ${
+            user?.lastName ?? ""
+          }`;
+          baseRow[`ResponderEmail #${i}`] = user?.email ?? "";
+          baseRow[`ResponderPhone #${i}`] = user?.phoneNumber ?? "";
+          baseRow[`ResponderEmployeeId #${i}`] =
+            responder?.employeeIdNumber ?? "";
+          baseRow[`ResponderPosition #${i}`] = responder?.position ?? "";
+          baseRow[`ResponderIdType #${i}`] = responder?.idType ?? "";
+          baseRow[`ResponderIdNumber #${i}`] = responder?.idNumber ?? "";
+          baseRow[`ResponderIsOrgDeactivated #${i}`] =
+            responder?.isOrganizationDeactivated ? "Yes" : "No";
+        });
+
+        return baseRow;
+      });
+
+      const csvMod = Papa.unparse(modifiedCsv);
+      const blob = new Blob([csvMod], { type: "text/csv;charset=utf-8;" });
+      saveAs(blob, `Proposals_Report_${currentDate}.csv`);
+    }
+  };
+
   return (
     <div>
       <section className="w-full h-full hidden md:flex md:flex-col">
@@ -159,6 +268,16 @@ export const MouTable = () => {
             onClear={handleSearchClear}
             allowClear={true}
           />
+          <RangePicker
+            className="min-w-52"
+            onChange={(dates) => {
+              setDateRange(dates as [moment.Moment, moment.Moment]);
+            }}
+          />
+          <Button onClick={exportCSV} className=" text-slate-500">
+            <ExportOutlined className=" text-slate-500" />
+            Export
+          </Button>
           <div className="">
             <Button
               type="primary"

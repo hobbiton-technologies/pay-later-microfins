@@ -17,10 +17,11 @@ import {
   BookOutlined,
   ReadOutlined,
 } from "@ant-design/icons";
+import { getUserOperations } from "@/auth/authContext";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
-export const MenuItems: MenuItem[] = [
+const baseMenuItems: MenuItem[] = [
   {
     key: "dashboard",
     label: "Dashboard",
@@ -54,12 +55,13 @@ export const MenuItems: MenuItem[] = [
         label: <div className=" font-light">Staff Members</div>,
         icon: <UserOutlined />,
       },
-
-      // { key: "/mous", label: "MOUs" },
     ],
   },
-  {
-    key: "massMarket",
+];
+
+const protectedMenuItems: Record<string, MenuItem> = {
+  MassMarketLoans: {
+    key: "MassMarketLoans",
     label: "Mass Markets",
     icon: <ContainerOutlined />,
     children: [
@@ -75,7 +77,7 @@ export const MenuItems: MenuItem[] = [
       },
     ],
   },
-  {
+  OrganisationLoans: {
     key: "organisationLoans",
     label: "Organisation Loans",
     icon: <AuditOutlined />,
@@ -87,7 +89,7 @@ export const MenuItems: MenuItem[] = [
       },
     ],
   },
-  {
+  MouLoans: {
     key: "mouLoans",
     label: "MOU Loans",
     icon: <FileDoneOutlined />,
@@ -114,8 +116,8 @@ export const MenuItems: MenuItem[] = [
       },
     ],
   },
-  {
-    key: "moneyLenders",
+  MoneyLenderLoans: {
+    key: "MoneyLenderLoans",
     label: "Money Lenders",
     icon: <ReadOutlined />,
     children: [
@@ -131,4 +133,18 @@ export const MenuItems: MenuItem[] = [
       },
     ],
   },
-];
+};
+
+export const getMenuItems = (): MenuItem[] => {
+  const userOperations = getUserOperations();
+  const menuItems: MenuItem[] = [...baseMenuItems];
+  userOperations.forEach((operation) => {
+    if (protectedMenuItems[operation]) {
+      menuItems.push(protectedMenuItems[operation]);
+    }
+  });
+
+  return menuItems;
+};
+
+export const MenuItems = getMenuItems();
