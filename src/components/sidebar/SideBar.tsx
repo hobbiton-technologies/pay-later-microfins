@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MenuItems } from "./SideBarOptions/SideBarOptions";
+// import { MenuItems } from "./SideBarOptions/SideBarOptions";
 // import { LogoutOutlined, SettingOutlined } from "@ant-design/icons";
 // import { Offline, Online } from "react-detect-offline";
 // import { useAuth } from "../../auth/authContext";
