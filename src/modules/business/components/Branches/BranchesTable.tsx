@@ -4,11 +4,12 @@ import {
 } from "@/api/queries/summaryQueries";
 import DebouncedInputField from "@/modules/components/DebouncedInput";
 import { Button, Drawer, Dropdown, MenuProps, Space, Table } from "antd";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ExportOutlined, EyeOutlined } from "@ant-design/icons";
 import { customLoader } from "@/components/table-loader";
 import { ColumnsType } from "antd/es/table";
 import { BranchesForm } from "./BranchesForm";
+import { createHandleTableChange } from "@/utils/HandleTableChange";
 
 export const branchesColumns: ColumnsType<BranchesData> = [
   {
@@ -81,16 +82,10 @@ export const BranchesTable = () => {
     });
   const [isCreateDrawerVisible, setIsCreateDrawerVisible] = useState(false);
 
-  //   useEffect(() => {
-  //     if (microfinBranches) {
-  //       setMicrofinBranches(microfinBranches?.data ?? []);
-  //     }
-  //   }, [microfinBranches]);
-
-  const handleTableChange = (pagination: any) => {
-    setPageNumber(pagination.current);
-    setPageSize(pagination.pageSize);
-  };
+  const handleTableChange = createHandleTableChange<BranchesData>({
+    setPageNumber,
+    setPageSize,
+  });
 
   const handleSearch = () => {
     setSearchId(id);

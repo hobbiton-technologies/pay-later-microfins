@@ -18,6 +18,7 @@ import { useState } from "react";
 import { formatCurrency } from "@/utils/formaters";
 import { createHandleTableChange } from "@/utils/HandleTableChange";
 import { customLoader } from "@/components/table-loader";
+import DebouncedInputField from "@/modules/components/DebouncedInput";
 
 export const ReceiptingTable = () => {
   const [id, setSearchId] = useState<string>("");
@@ -27,7 +28,7 @@ export const ReceiptingTable = () => {
     useState<boolean>(false);
   const [pageNumber, setPageNumber] = useState<number | null>(1);
   const [pageSize, setPageSize] = useState(10);
-  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [, setSearchQuery] = useState<string>("");
 
   const { data: apiResponse, isFetching } = useGetMouReceiptingQuery({
     organisationId: Number(localStorage.getItem("organizationId")),
@@ -37,14 +38,14 @@ export const ReceiptingTable = () => {
 
   const handleViewReceipting = (receiptId: number) => {
     if (receiptId && apiResponse?.data) {
-      const receipt = receipts.find((a) => a.id == receiptId);
+      const receipt = receipts.find((a) => a.id === receiptId);
       setSelectedReceipt(receipt);
     }
 
     if (receipts) {
       setIsRecieptsDrawerVisible(true);
     }
-    // console.log("Selected Receipt", selectedReceipt);
+    console.log("Selected Receipt", selectedReceipt);
   };
 
   const ReceiptingColumns: ColumnsType<MouReceiptingData> = [
@@ -147,12 +148,10 @@ export const ReceiptingTable = () => {
       },
     },
   ];
-
   const handleTableChange = createHandleTableChange<MouReceiptingData>({
     setPageNumber,
     setPageSize,
   });
-
   const handleSearch = (values: string) => {
     setSearchId(id);
     setSearchQuery(values.trim());
@@ -163,6 +162,14 @@ export const ReceiptingTable = () => {
   return (
     <div>
       <section className="w-full h-full hidden md:flex md:flex-col">
+        <div className="w-full">
+          <DebouncedInputField
+            placeholder="Search for Receipting"
+            onSearch={handleSearch}
+            onClear={handleSearchClear}
+            allowClear={true}
+          />
+        </div>
         <Table
           dataSource={apiResponse?.data}
           columns={ReceiptingColumns}

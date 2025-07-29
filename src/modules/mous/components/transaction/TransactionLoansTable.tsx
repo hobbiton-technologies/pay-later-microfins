@@ -87,7 +87,6 @@ export const TransactionLoansTable = () => {
       setPageNumber,
       setPageSize,
     });
-
   const handleSearch = (values: string) => {
     setSearchId(searchId);
     setSearchQuery(values.trim());

@@ -33,6 +33,7 @@ import {
   TenureBody,
   useCreateTenureMutation,
 } from "@/api/mutations/tenureMutation";
+import { createHandleTableChange } from "@/utils/HandleTableChange";
 
 export const MassMarketClientsTable = () => {
   const [id, setSearchId] = useState<number>(0);
@@ -80,6 +81,11 @@ export const MassMarketClientsTable = () => {
       setMassMarketClient(apiResponse?.data || []);
     }
   }, [apiResponse]);
+
+  const handleTableChange = createHandleTableChange<MassMarketClientData>({
+    setPageNumber,
+    setPageSize,
+  });
 
   const handleSearch = (value: string) => {
     setSearchQuery(value.trim());
@@ -221,16 +227,16 @@ export const MassMarketClientsTable = () => {
           dataSource={apiResponse?.data || []}
           columns={clientColumns(handleAddTenure)}
           rowKey="id"
-          // onChange={handleTableChange}
+          onChange={handleTableChange}
           loading={{
             spinning: isFetching,
             indicator: customLoader,
           }}
-          // pagination={{
-          //   current: pageNumber ?? 1,
-          //   pageSize: pageSize,
-          //   total: microfinBranches?.totalItems,
-          // }}
+          pagination={{
+            current: pageNumber ?? 1,
+            pageSize: pageSize,
+            total: apiResponse?.totalItems,
+          }}
           components={{
             header: {
               cell: (props: any) => (

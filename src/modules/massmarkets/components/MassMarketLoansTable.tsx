@@ -23,6 +23,7 @@ import DebouncedInputField from "@/modules/components/DebouncedInput";
 import { formatCurrency } from "@/utils/formaters";
 import { TimerIcon } from "lucide-react";
 import dayjs from "dayjs";
+import { createHandleTableChange } from "@/utils/HandleTableChange";
 
 export const MassMarketLoansTable = () => {
   const [id, setId] = useState<number>(1);
@@ -62,6 +63,11 @@ export const MassMarketLoansTable = () => {
       setMassMarketClient(apiResponse?.data || []);
     }
   }, [apiResponse]);
+
+  const handleTableChange = createHandleTableChange<MassMarketLoantData>({
+    setPageNumber,
+    setPageSize,
+  });
 
   const handleSearch = (value: string) => {
     setSearchQuery(value.trim());
@@ -234,16 +240,16 @@ export const MassMarketLoansTable = () => {
           dataSource={apiResponse?.data || []}
           columns={loanColumns}
           rowKey="id"
-          // onChange={handleTableChange}
+          onChange={handleTableChange}
           loading={{
             spinning: isFetching,
             indicator: customLoader,
           }}
-          // pagination={{
-          //   current: pageNumber ?? 1,
-          //   pageSize: pageSize,
-          //   total: microfinBranches?.totalItems,
-          // }}
+          pagination={{
+            current: pageNumber ?? 1,
+            pageSize: pageSize,
+            total: apiResponse?.totalItems,
+          }}
           components={{
             header: {
               cell: (props: any) => (

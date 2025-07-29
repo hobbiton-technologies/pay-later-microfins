@@ -25,6 +25,8 @@ import Mous from "@/modules/mous/Mous";
 import Transactions from "@/modules/mous/Transactions";
 import Receipting from "@/modules/mous/Receipting";
 import { MouOrganisationDetailsPage } from "@/modules/mous/components/organisation/MouOrganisationDetailsPage";
+import { MoneyLendersClients } from "@/modules/moneylenders/Clients";
+import { MoneyLendersLoans } from "@/modules/moneylenders/Loans";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -154,6 +156,23 @@ export const router = createBrowserRouter(
           }
         />
 
+        <Route
+          path="/money-lender-clients"
+          element={
+            <ProtectedRoute>
+              <MoneyLendersClients />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/money-lender-loans"
+          element={
+            <ProtectedRoute>
+              <MoneyLendersLoans />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/transactions"
           element={

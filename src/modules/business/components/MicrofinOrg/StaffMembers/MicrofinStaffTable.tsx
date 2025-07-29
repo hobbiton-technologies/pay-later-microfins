@@ -19,6 +19,7 @@ import DebouncedInputField from "@/modules/components/DebouncedInput";
 import { useEffect, useState } from "react";
 import { customLoader } from "@/components/table-loader";
 import { MicrofinStaffMemberForm } from "./MicrofinStaffMemberForm";
+import { createHandleTableChange } from "@/utils/HandleTableChange";
 
 export const MicrofinStaffTable = () => {
   const [id, setSearchId] = useState<number>(0);
@@ -42,10 +43,10 @@ export const MicrofinStaffTable = () => {
     pageSize: pageSize,
   });
 
-  const handleTableChange = (pagination: any) => {
-    setPageNumber(pagination.current);
-    setPageSize(pagination.pageSize);
-  };
+  const handleTableChange = createHandleTableChange<MicrofinStaffMembersData>({
+    setPageNumber,
+    setPageSize,
+  });
 
   const handleSearch = (value: string) => {
     setSearchQuery(value.trim());

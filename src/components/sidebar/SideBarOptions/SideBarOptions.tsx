@@ -15,6 +15,7 @@ import {
   ProjectOutlined,
   CreditCardOutlined,
   BookOutlined,
+  ReadOutlined,
 } from "@ant-design/icons";
 
 type MenuItem = Required<MenuProps>["items"][number];
@@ -113,14 +114,21 @@ export const MenuItems: MenuItem[] = [
       },
     ],
   },
-  // {
-  //   key: "financials",
-  //   label: "Financials",
-  //   icon: <BarChartOutlined />,
-  //   children: [
-  //     { key: "/salary-loans", label: "Salary Loans" },
-  //     { key: "/recovery-schedules", label: "Recovery Schedules" },
-  //     { key: "/reporting", label: "Reporting" },
-  //   ],
-  // },
+  {
+    key: "moneyLenders",
+    label: "Money Lenders",
+    icon: <ReadOutlined />,
+    children: [
+      {
+        key: "/money-lender-clients",
+        label: <div className=" font-light">Clients</div>,
+        icon: <UsergroupAddOutlined />,
+      },
+      {
+        key: "/money-lender-loans",
+        label: <div className=" font-light">Loans</div>,
+        icon: <FileProtectOutlined />,
+      },
+    ],
+  },
 ];
