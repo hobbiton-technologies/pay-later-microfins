@@ -57,6 +57,24 @@ const baseMenuItems: MenuItem[] = [
       },
     ],
   },
+  // {
+  //   key: "reports",
+  //   label: "Reports",
+  //   icon: <SnippetsOutlined />,
+  //   children: [
+  //     {
+  //       key: "/branches",
+  //       label: <div className=" font-light">Branches</div>,
+  //       style: { paddingRight: 20, backgroundImage: "inherit" },
+  //       icon: <BranchesOutlined className="w-4 text-slate-700" />,
+  //     },
+  //     {
+  //       key: "/staff-members",
+  //       label: <div className=" font-light">Staff Members</div>,
+  //       icon: <UserOutlined />,
+  //     },
+  //   ],
+  // },
 ];
 
 const protectedMenuItems: Record<string, MenuItem> = {
