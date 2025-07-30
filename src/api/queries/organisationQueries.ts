@@ -180,10 +180,10 @@ const OrganisationRequests = Api.injectEndpoints({
         organisationId: number;
         mouOrganisationId: number;
         memberId: number;
-        loanStatus: string;
+        loanStatus: string[];
         query: string;
         transactionType: string;
-        status: string;
+        status: string[];
         startRange: string;
         endRange: string;
         isReportRequest: boolean;
@@ -210,10 +210,14 @@ const OrganisationRequests = Api.injectEndpoints({
         const params = new URLSearchParams();
 
         if (memberId) params.append("MemberId", memberId.toString());
-        if (loanStatus) params.append("LoanStatus", loanStatus);
+        if (loanStatus && loanStatus.length > 0) {
+          loanStatus.forEach((s) => params.append("LoanStatus", s));
+        }
         if (query) params.append("Query", query);
         if (transactionType) params.append("TransactionType", transactionType);
-        if (status) params.append("Status", status);
+        if (status && status.length > 0) {
+          status.forEach((s) => params.append("Status", s));
+        }
         if (startRange) params.append("StartRange", startRange);
         if (endRange) params.append("EndRange", endRange);
         if (isReportRequest)
@@ -237,7 +241,7 @@ const OrganisationRequests = Api.injectEndpoints({
         loanStatus: string;
         query: string;
         transactionType: string;
-        status: string;
+        status: string[];
         startRange: string;
         endRange: string;
         isReportRequest: boolean;
@@ -267,7 +271,9 @@ const OrganisationRequests = Api.injectEndpoints({
         if (loanStatus) params.append("LoanStatus", loanStatus);
         if (query) params.append("Query", query);
         if (transactionType) params.append("TransactionType", transactionType);
-        if (status) params.append("Status", status);
+        if (status && status.length > 0) {
+          status.forEach((s) => params.append("TransactionStatus", s));
+        }
         if (startRange) params.append("StartRange", startRange);
         if (endRange) params.append("EndRange", endRange);
         if (isReportRequest)

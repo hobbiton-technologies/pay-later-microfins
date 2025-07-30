@@ -4,17 +4,20 @@ import {
   useGetMouLoansOrganisationsQuery,
   useGetMouOrgStaffMembersQuery,
 } from "@/api/queries/organisationQueries";
+
 import {
   Button,
   Card,
+  DatePicker,
   Descriptions,
   Drawer,
   Dropdown,
   MenuProps,
   Space,
   Table,
+  Tag,
 } from "antd";
-import { ColumnsType } from "antd/es/table";
+import { ColumnsType, TableProps } from "antd/es/table";
 import {
   EllipsisOutlined,
   ExportOutlined,
@@ -27,6 +30,10 @@ import {
 import { useEffect, useState } from "react";
 import { formatCurrency } from "@/utils/formaters";
 import { customLoader } from "@/components/table-loader";
+import DebouncedInputField from "@/modules/components/DebouncedInput";
+import moment from "moment";
+import Papa from "papaparse";
+import { saveAs } from "file-saver";
 
 type MouOrganisationEmployeesProps = {
   MouOrganisationId: MouLoansOrganisationData;
@@ -42,6 +49,12 @@ export default function MouOrganisationEmployeesTable({
   const [mouEmployeesarray, setmouEmployeesarray] = useState<
     MouLoansOrganisationData[]
   >([]);
+  const { RangePicker } = DatePicker;
+
+  const [searchInput] = useState<string>("");
+  const [dateRange, setDateRange] = useState<
+    [moment.Moment, moment.Moment] | null
+  >(null);
 
   const [selectedOrganisation, setSelectedOrganisation] =
     useState<MouLoansOrganisationData>();
@@ -135,15 +148,38 @@ export default function MouOrganisationEmployeesTable({
     {
       title: "Is Admin",
       render: (_, record: MouLoansOrganisationData) => {
-        const isAdmin = record.members?.[0];
-        return isAdmin ? `${isAdmin.isOrganisationAdmin ? "Yes" : "No"}` : "NA";
+        const isAdmin = record.members?.[0]?.isOrganisationAdmin;
+
+        let color = "default";
+        let text = "NA";
+
+        if (isAdmin === true) {
+          color = "green";
+          text = "Yes";
+        } else if (isAdmin === false) {
+          color = "cyan";
+          text = "No";
+        }
+
+        return <Tag color={color}>{text}</Tag>;
       },
     },
     {
       title: "Enabled",
       render: (_, record: MouLoansOrganisationData) => {
-        const enabled = record.members?.[0];
-        return enabled ? `${enabled.isEnabled ? "Yes" : "No"}` : "NA";
+        const enabled = record.members?.[0].isEnabled;
+        let color = "default";
+        let text = "NA";
+
+        if (enabled === true) {
+          color = "green";
+          text = "Yes";
+        } else if (enabled === false) {
+          color = "cyan";
+          text = "No";
+        }
+
+        return <Tag color={color}>{text}</Tag>;
       },
     },
     {
@@ -189,35 +225,84 @@ export default function MouOrganisationEmployeesTable({
     },
   ];
 
+  const handleTableChange: TableProps<MouLoansOrganisationData>["onChange"] = (
+    pagination,
+    filters,
+    sorter
+  ) => {
+    setPageNumber(pagination.current ?? 1);
+    setPageSize(pagination.pageSize ?? 10);
+  };
+
+  const handleSearch = (value: string) => {
+    setSearchQuery(value.trim());
+  };
+
+  const handleSearchClear = () => {
+    setSearchQuery(searchInput);
+  };
+
+  const exportCSV = () => {};
+
   return (
     <div>
-      <Table
-        dataSource={apiResponse?.data}
-        columns={mouOrganisationEmployees}
-        loading={{
-          spinning: isFetching,
-          indicator: customLoader,
-        }}
-        components={{
-          header: {
-            cell: (props: any) => (
-              <th
-                {...props}
-                className="border-b-2 !bg-white !text-gray-400 text-xs !font-normal "
-              >
-                {props.children}
-              </th>
-            ),
-          },
-          body: {
-            cell: (props: any) => (
-              <td {...props} className=" border-gray-300  text-xs  ">
-                {props.children}
-              </td>
-            ),
-          },
-        }}
-      />
+      <section className="w-full h-full hidden md:flex md:flex-col">
+        <div className="w-full flex gap-2">
+          <DebouncedInputField
+            placeholder="Search for Empolyee"
+            onSearch={handleSearch}
+            onClear={handleSearchClear}
+            allowClear={true}
+          />
+          <RangePicker
+            className="min-w-52"
+            onChange={(dates) => {
+              setDateRange(dates as [moment.Moment, moment.Moment]);
+            }}
+          />
+          <Button
+            type="primary"
+            onClick={exportCSV}
+            className=" text-slate-500"
+          >
+            <ExportOutlined className=" text-slate-500" />
+            Export
+          </Button>
+        </div>
+        <Table
+          dataSource={apiResponse?.data}
+          columns={mouOrganisationEmployees}
+          onChange={handleTableChange}
+          loading={{
+            spinning: isFetching,
+            indicator: customLoader,
+          }}
+          pagination={{
+            current: pageNumber ?? 1,
+            pageSize: pageSize ?? 10,
+            total: apiResponse?.totalItems,
+          }}
+          components={{
+            header: {
+              cell: (props: any) => (
+                <th
+                  {...props}
+                  className="border-b-2 !bg-white !text-gray-400 text-xs !font-normal "
+                >
+                  {props.children}
+                </th>
+              ),
+            },
+            body: {
+              cell: (props: any) => (
+                <td {...props} className=" border-gray-300  text-xs  ">
+                  {props.children}
+                </td>
+              ),
+            },
+          }}
+        />
+      </section>
 
       <Drawer
         title={`${mouEmployees?.members[0].user.firstName} ${mouEmployees?.members[0].user.lastName}`}

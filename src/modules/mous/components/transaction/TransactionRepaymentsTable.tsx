@@ -33,7 +33,8 @@ export const TransactionRepaymentsTable = () => {
   const [memberId, setMemberId] = useState<number>(0);
   const [loanStatus, setloanStatus] = useState<string>("");
   const [transactionType, setTransactionType] = useState<string>("");
-  const [status, setStatus] = useState<string>("");
+  const [status, setStatus] = useState<string[] | []>([]);
+  const [filteredStatus, setFilteredStatus] = useState<string[] | null>(null);
   const [startRange, setStartRange] = useState<string>("");
   const [endRange, setendRange] = useState<string>("");
   const [isReportRequest, setIsReportRequest] = useState<boolean>(false);
@@ -88,6 +89,11 @@ export const TransactionRepaymentsTable = () => {
       title: "Status",
       dataIndex: "transactionStatus",
       key: "status",
+      filters: [
+        { text: "Successful", value: "Successful" },
+        { text: "Pending", value: "Pending" },
+        { text: "Failed", value: "Failed" },
+      ],
       render: (status: string) => {
         const statusColors: Record<string, string> = {
           Pending: "orange",
@@ -155,6 +161,8 @@ export const TransactionRepaymentsTable = () => {
     createHandleTableChange<MouOrganisationRepaymentsData>({
       setPageNumber,
       setPageSize,
+      setStatus,
+      setFilteredStatus,
     });
 
   const handleSearch = (values: string) => {
@@ -167,7 +175,7 @@ export const TransactionRepaymentsTable = () => {
 
   useEffect(() => {
     setRepayments(apiResponse?.data || []);
-  });
+  }, [apiResponse]);
 
   const exportCSV = () => {
     const currentDate = new Date().toISOString().split("T")[0];
