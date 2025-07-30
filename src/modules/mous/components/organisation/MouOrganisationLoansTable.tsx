@@ -110,11 +110,18 @@ export default function MouOrganisationLoansTable({
     },
     {
       title: "Interest (%)",
-      dataIndex: "initialInterestAmount",
+      dataIndex: "product",
       key: "member",
       render: (_, record: MouOrganisationLoanTransactionData) =>
-        formatCurrency(record.initialInterestAmount),
+        `${record.product.interestRate}%`,
     },
+    // {
+    //   title: "Initial Interest Amount",
+    //   dataIndex: "initialInterestAmount",
+    //   key: "initialInterestAmount",
+    //   render: (_, record: MouOrganisationLoanTransactionData) =>
+    //     `${formatCurrency(record.initialInterestAmount)}`,
+    // },
     {
       title: "Status",
       dataIndex: "status",

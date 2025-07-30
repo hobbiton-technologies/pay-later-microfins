@@ -284,7 +284,7 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
     memberid: microfinMemberId,
     microfinOrganisationId: microfinOrganisationId,
     query: searchQuery,
-    loanStatus: loanStatus,
+    loanStatus: filteredLoanStatus ? [filteredLoanStatus] : [],
     startDate: startDate,
     endDate: endDate,
     pageNumber: pageNumber ?? 1,

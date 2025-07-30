@@ -58,6 +58,18 @@ const baseMenuItems: MenuItem[] = [
     ],
   },
   // {
+  //   key: "organisationLoans",
+  //   label: "Organisation Loans",
+  //   icon: <AuditOutlined />,
+  //   children: [
+  //     {
+  //       key: "/organisations",
+  //       label: <div className=" font-light">Organisations</div>,
+  //       icon: <HomeOutlined />,
+  //     },
+  //   ],
+  // },
+  // {
   //   key: "reports",
   //   label: "Reports",
   //   icon: <SnippetsOutlined />,
@@ -95,7 +107,7 @@ const protectedMenuItems: Record<string, MenuItem> = {
       },
     ],
   },
-  OrganisationLoans: {
+  OrganizationLoans: {
     key: "organisationLoans",
     label: "Organisation Loans",
     icon: <AuditOutlined />,

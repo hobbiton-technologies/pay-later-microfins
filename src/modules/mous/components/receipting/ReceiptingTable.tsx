@@ -1,5 +1,9 @@
 import Table, { ColumnsType } from "antd/es/table";
-import { EllipsisOutlined, EyeOutlined } from "@ant-design/icons";
+import {
+  EllipsisOutlined,
+  ExportOutlined,
+  EyeOutlined,
+} from "@ant-design/icons";
 import {
   MenuProps,
   Space,
@@ -9,6 +13,7 @@ import {
   Drawer,
   Card,
   Descriptions,
+  DatePicker,
 } from "antd";
 import {
   MouReceiptingData,
@@ -19,16 +24,23 @@ import { formatCurrency } from "@/utils/formaters";
 import { createHandleTableChange } from "@/utils/HandleTableChange";
 import { customLoader } from "@/components/table-loader";
 import DebouncedInputField from "@/modules/components/DebouncedInput";
+import Papa from "papaparse";
+import saveAs from "file-saver";
 
 export const ReceiptingTable = () => {
   const [id, setSearchId] = useState<string>("");
-  const [receipts] = useState<MouReceiptingData[]>([]);
+  const [receipts, setReceipts] = useState<MouReceiptingData[]>([]);
   const [selectedReceipt, setSelectedReceipt] = useState<MouReceiptingData>();
   const [isRecieptsDrawerVisible, setIsRecieptsDrawerVisible] =
     useState<boolean>(false);
   const [pageNumber, setPageNumber] = useState<number | null>(1);
   const [pageSize, setPageSize] = useState(10);
   const [, setSearchQuery] = useState<string>("");
+  const [dateRange, setDateRange] = useState<
+    [moment.Moment, moment.Moment] | null
+  >(null);
+
+  const { RangePicker } = DatePicker;
 
   const { data: apiResponse, isFetching } = useGetMouReceiptingQuery({
     organisationId: Number(localStorage.getItem("organizationId")),
@@ -148,28 +160,58 @@ export const ReceiptingTable = () => {
       },
     },
   ];
+
   const handleTableChange = createHandleTableChange<MouReceiptingData>({
     setPageNumber,
     setPageSize,
   });
+
   const handleSearch = (values: string) => {
     setSearchId(id);
     setSearchQuery(values.trim());
   };
+
   const handleSearchClear = () => {
     setSearchId(id);
+  };
+
+  const exportCSV = () => {
+    const currentDate = new Date().toISOString().split("T")[0];
+
+    const modifiedCsv = receipts.map((item) => ({
+      Id: item.id,
+    }));
+
+    const csvMod = Papa.unparse(modifiedCsv);
+    const blob = new Blob([csvMod], { type: "text/csv;charset=utf-8;" });
+    saveAs(blob, `Receipting_Report_${currentDate}`);
   };
   return (
     <div>
       <section className="w-full h-full hidden md:flex md:flex-col">
-        <div className="w-full">
+        <div className="w-full flex gap-2">
           <DebouncedInputField
             placeholder="Search for Receipting"
             onSearch={handleSearch}
             onClear={handleSearchClear}
             allowClear={true}
           />
+          <RangePicker
+            className="min-w-52"
+            onChange={(dates) => {
+              setDateRange(dates as [moment.Moment, moment.Moment]);
+            }}
+          />
+          <Button
+            type="primary"
+            onClick={exportCSV}
+            className=" text-slate-500"
+          >
+            <ExportOutlined className=" text-slate-500" />
+            Export
+          </Button>
         </div>
+
         <Table
           dataSource={apiResponse?.data}
           columns={ReceiptingColumns}

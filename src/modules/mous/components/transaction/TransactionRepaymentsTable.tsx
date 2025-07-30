@@ -205,7 +205,7 @@ export const TransactionRepaymentsTable = () => {
             setDateRange(dates as [moment.Moment, moment.Moment]);
           }}
         />
-        <Button onClick={exportCSV} className=" text-slate-500">
+        <Button type="primary" onClick={exportCSV} className=" text-slate-500">
           <ExportOutlined className=" text-slate-500" />
           Export
         </Button>

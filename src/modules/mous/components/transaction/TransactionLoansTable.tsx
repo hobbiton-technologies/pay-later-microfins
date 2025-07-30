@@ -139,11 +139,18 @@ export const TransactionLoansTable = () => {
     },
     {
       title: "Interest (%)",
-      dataIndex: "initialInterestAmount",
+      dataIndex: "product",
       key: "member",
       render: (_, record: MouOrganisationLoanTransactionData) =>
-        formatCurrency(record.initialInterestAmount),
+        `${record.product.interestRate}%`,
     },
+    // {
+    //   title: "Interest (%)",
+    //   dataIndex: "initialInterestAmount",
+    //   key: "member",
+    //   render: (_, record: MouOrganisationLoanTransactionData) =>
+    //     formatCurrency(record.initialInterestAmount),
+    // },
     {
       title: "Status",
       dataIndex: "status",
@@ -336,7 +343,11 @@ export const TransactionLoansTable = () => {
               setDateRange(dates as [moment.Moment, moment.Moment]);
             }}
           />
-          <Button onClick={exportCSV} className=" text-slate-500">
+          <Button
+            type="primary"
+            onClick={exportCSV}
+            className=" text-slate-500"
+          >
             <ExportOutlined className=" text-slate-500" />
             Export
           </Button>
