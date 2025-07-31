@@ -329,7 +329,7 @@ export const ReceiptingTable = () => {
 
             <div className=" pt-4">
               <p className=" font-semibold pb-4">Allocations</p>
-              <AllocationsTable />
+              <AllocationsTable receiptId={selectedReceipt?.id!} />{" "}
             </div>
             <div>
               <AllocationForm />

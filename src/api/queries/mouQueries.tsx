@@ -53,7 +53,7 @@ export interface MouReceiptingResponse {
   totalItems: number;
   statusCode: number;
   message: string;
-  data: [];
+  data: MouReceiptingData[];
   errors: string[];
 }
 
@@ -165,6 +165,122 @@ export interface MouProductsResponse {
   errors: ["string"];
 }
 
+export interface MouAllocationsData {
+  id: number;
+  organizationMember: {
+    id: number;
+    user: {
+      id: number;
+      firstName: string;
+      lastName: string;
+      email: string;
+      phoneNumber: string;
+      isSystemAdmin: true;
+    };
+    idType: string;
+    idNumber: string;
+    employeeIdNumber: string;
+    position: string;
+    isOrganisationAdmin: true;
+    isEnabled: true;
+    maximumLoanAmountPerMonth: number;
+  };
+  amount: number;
+  billedAccount: string;
+  bnplTransaction: {
+    id: number;
+    memberId: number;
+    mouId: number;
+    amount: number;
+    loanId: string;
+    loanStatus: string;
+    transactionId: string;
+    lipilaBusinessCode: string;
+    recipientMobileNumber: string;
+    transactionMobileNumber: string;
+    transactionType: string;
+    createdAt: string;
+    updatedAt: string;
+    status: string;
+    member: {
+      memberId: number;
+      firstName: string;
+      lastName: string;
+      employeeId: string;
+      position: string;
+      email: string;
+      phoneNumber: string;
+    };
+    mou: {
+      mouId: number;
+      organization: {
+        id: number;
+        name: string;
+        contactNo: string;
+        address: string;
+        email: string;
+        tPinNumber: string;
+        sector: string;
+        isDeactivated: true;
+      };
+      microfin: {
+        id: number;
+        name: string;
+        contactNo: string;
+        address: string;
+        email: string;
+        loanOperations: MouLoans[];
+      };
+    };
+    transactionDate: string;
+    maturityDate: string;
+    initialInterestAmount: number;
+    product: {
+      id: number;
+      name: string;
+      loanProductType: string;
+      maximumRepaymentPeriod: number;
+      productStatus: string;
+      gracePeriodInDays: number;
+      interestRate: number;
+      minimumLoanAmount: number;
+      maximumLoanAmount: number;
+      maximumLoanRate: number;
+      insuranceRate: number;
+      arrangementFeeRate: number;
+      isCollateralBased: true;
+    };
+    recoveryTransactions: [
+      {
+        id: number;
+        transactionId: string;
+        organizationMemberId: number;
+        firstName: string;
+        lastName: string;
+        mouId: number;
+        amount: number;
+        transactionStatus: string;
+        createdAt: string;
+      }
+    ];
+    amountPaid: number;
+    balance: number;
+  };
+  repaymentType: string;
+  allocationId: number;
+  status: string;
+}
+
+export interface MouAllocationsResponse {
+  pageNumber: number;
+  pageSize: number;
+  totalItems: number;
+  statusCode: number;
+  message: string;
+  data: MouAllocationsData[];
+  errors: string[];
+}
+
 const MouRequests = Api.injectEndpoints({
   endpoints: (builder) => ({
     getMouStats: builder.query<MouStatsResponse, { id: number }>({
@@ -231,6 +347,19 @@ const MouRequests = Api.injectEndpoints({
       },
     }),
 
+    getMouAllocationsStats: builder.query<
+      MouAllocationsResponse,
+      { id: number; receiptId: number; pageSize: number; pageNumber: number }
+    >({
+      query: ({ id, receiptId, pageSize, pageNumber }) => {
+        const params = new URLSearchParams();
+
+        params.append("PageSize", pageSize.toString());
+        params.append("PageNumber", pageNumber.toString());
+        return `microfins/${id}/receipts/${receiptId}/allocations`;
+      },
+    }),
+
     // getMouReceiptingStats: builder.query<>({
     //   query: ({}) => {
     //     return ``;
@@ -243,4 +372,5 @@ export const {
   useGetMouStatsQuery,
   useGetMouProductsQuery,
   useGetMouReceiptingQuery,
+  useGetMouAllocationsStatsQuery,
 } = MouRequests;
