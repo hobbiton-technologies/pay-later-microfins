@@ -1,6 +1,5 @@
 import {
   MouAllocationsData,
-  MouReceiptingData,
   useGetMouAllocationsStatsQuery,
 } from "@/api/queries/mouQueries";
 import { formatCurrency } from "@/utils/formaters";

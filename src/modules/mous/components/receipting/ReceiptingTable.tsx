@@ -332,7 +332,7 @@ export const ReceiptingTable = () => {
               <AllocationsTable receiptId={selectedReceipt?.id!} />{" "}
             </div>
             <div>
-              <AllocationForm />
+              <AllocationForm receiptId={selectedReceipt?.id!} />
             </div>
           </div>
         </Card>

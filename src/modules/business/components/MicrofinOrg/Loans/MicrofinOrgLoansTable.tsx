@@ -36,7 +36,6 @@ import {
   useDisburseMicrofinOrgLoanMutation,
 } from "@/api/mutations/loansMutation";
 import { Option } from "antd/es/mentions";
-import { MicrofinOrgStaffBody } from "@/api/mutations/staffMutation";
 
 type MicrofinOrgLoansTableProps = {
   showCreateButton?: boolean;
