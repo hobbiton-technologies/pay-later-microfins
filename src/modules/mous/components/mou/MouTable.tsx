@@ -42,6 +42,8 @@ export const MouTable = () => {
   >(null);
   const [Proposals, setProposals] = useState<MouProductsData[]>([]);
   const { RangePicker } = DatePicker;
+  const [status, setStatus] = useState<string[] | []>([]);
+  const [filteredStatus, setFilteredStatus] = useState<string[] | null>(null);
 
   const { data: apiResponse, isFetching } = useGetMouProductsQuery({
     id: id,
@@ -55,7 +57,7 @@ export const MouTable = () => {
 
   useEffect(() => {
     setProposals(apiResponse?.data || []);
-  });
+  }, [apiResponse]);
 
   const MouColumns: ColumnsType<MouProductsData> = [
     {
@@ -87,6 +89,11 @@ export const MouTable = () => {
       title: "Status",
       dataIndex: "mouStatus",
       key: "mouStatus",
+      filters: [
+        { text: "Pending", value: "Pending" },
+        { text: "Accepted", value: "Accepted" },
+        { text: "Rejected", value: "Rejected" },
+      ],
       render: (status: string) => {
         const statusColors: Record<string, string> = {
           Accepted: "blue",
@@ -159,6 +166,8 @@ export const MouTable = () => {
   const handleTableChange = createHandleTableChange<MouProductsData>({
     setPageNumber,
     setPageSize,
+    setStatus,
+    setFilteredStatus,
   });
 
   const handleSearch = (value: string) => {

@@ -19,18 +19,21 @@ import {
   MouReceiptingData,
   useGetMouReceiptingQuery,
 } from "@/api/queries/mouQueries";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { formatCurrency } from "@/utils/formaters";
 import { createHandleTableChange } from "@/utils/HandleTableChange";
 import { customLoader } from "@/components/table-loader";
 import DebouncedInputField from "@/modules/components/DebouncedInput";
 import Papa from "papaparse";
 import saveAs from "file-saver";
+import { AllocationsTable } from "./AllocationsTable";
 
 export const ReceiptingTable = () => {
   const [id, setSearchId] = useState<string>("");
   const [receipts, setReceipts] = useState<MouReceiptingData[]>([]);
-  const [selectedReceipt, setSelectedReceipt] = useState<MouReceiptingData>();
+  const [selectedReceipt, setSelectedReceipt] = useState<
+    MouReceiptingData | undefined
+  >(undefined);
   const [isRecieptsDrawerVisible, setIsRecieptsDrawerVisible] =
     useState<boolean>(false);
   const [pageNumber, setPageNumber] = useState<number | null>(1);
@@ -39,25 +42,27 @@ export const ReceiptingTable = () => {
   const [dateRange, setDateRange] = useState<
     [moment.Moment, moment.Moment] | null
   >(null);
+  const [status, setStatus] = useState<string[] | null>(null);
+  const [filteredStatus, setFilteredStatus] = useState<string[] | null>(null);
 
   const { RangePicker } = DatePicker;
 
   const { data: apiResponse, isFetching } = useGetMouReceiptingQuery({
     organisationId: Number(localStorage.getItem("organizationId")),
+    status: status ?? [],
     pageSize: pageSize ?? 10,
     PageNumber: pageNumber ?? 1,
   });
 
   const handleViewReceipting = (receiptId: number) => {
-    if (receiptId && apiResponse?.data) {
-      const receipt = receipts.find((a) => a.id === receiptId);
-      setSelectedReceipt(receipt);
-    }
+    const receipt = (apiResponse?.data as MouReceiptingData[])?.find(
+      (a) => a.id === receiptId
+    );
 
-    if (receipts) {
+    if (receipt) {
+      setSelectedReceipt(receipt);
       setIsRecieptsDrawerVisible(true);
     }
-    console.log("Selected Receipt", selectedReceipt);
   };
 
   const ReceiptingColumns: ColumnsType<MouReceiptingData> = [
@@ -96,6 +101,12 @@ export const ReceiptingTable = () => {
       title: "Status",
       dataIndex: "status",
       key: "status",
+      filters: [
+        { text: "Open", value: "Open" },
+        { text: "Exhausted", value: "Exhausted" },
+        { text: "Rejected", value: "Rejected" },
+        { text: "Pending", value: "Pending" },
+      ],
       render: (status: string) => {
         const statusColors: Record<string, string> = {
           Open: "blue",
@@ -164,6 +175,8 @@ export const ReceiptingTable = () => {
   const handleTableChange = createHandleTableChange<MouReceiptingData>({
     setPageNumber,
     setPageSize,
+    setStatus,
+    setFilteredStatus,
   });
 
   const handleSearch = (values: string) => {
@@ -186,6 +199,7 @@ export const ReceiptingTable = () => {
     const blob = new Blob([csvMod], { type: "text/csv;charset=utf-8;" });
     saveAs(blob, `Receipting_Report_${currentDate}`);
   };
+
   return (
     <div>
       <section className="w-full h-full hidden md:flex md:flex-col">
@@ -249,26 +263,32 @@ export const ReceiptingTable = () => {
       </section>
       <Drawer
         title=""
-        width="45%"
+        width="50%"
         open={isRecieptsDrawerVisible}
         onClose={() => setIsRecieptsDrawerVisible(false)}
       >
         <Card>
           <div>
-            <p className=" pb-4">Loan Details</p>
+            <p className=" pb-4 font-semibold">Receipt Details</p>
             <Descriptions column={2} bordered={true}>
               <Descriptions.Item label="Initial Amount">
                 {formatCurrency(Number(selectedReceipt?.initialAmount))}
               </Descriptions.Item>
               <Descriptions.Item label="Balance">
-                {selectedReceipt?.balance}
+                {formatCurrency(Number(selectedReceipt?.balance))}
               </Descriptions.Item>
               <Descriptions.Item label="Receipt ID">
                 {selectedReceipt?.receiptId}
               </Descriptions.Item>
               <Descriptions.Item label="Created Date">
-                {selectedReceipt?.createdAt}
+                {selectedReceipt?.createdAt
+                  ? new Date(selectedReceipt?.createdAt).toLocaleDateString()
+                  : "Not Set"}
               </Descriptions.Item>
+            </Descriptions>
+
+            <p className=" py-4 font-semibold">Organisation Details</p>
+            <Descriptions column={2} bordered={true}>
               <Descriptions.Item label="Name">
                 {selectedReceipt?.organization.name ?? "Not set"}
               </Descriptions.Item>
@@ -278,6 +298,10 @@ export const ReceiptingTable = () => {
               <Descriptions.Item label="Physical Address">
                 {selectedReceipt?.organization.address ?? "Not set"}
               </Descriptions.Item>
+            </Descriptions>
+
+            <p className=" py-4 font-semibold">Creator Details</p>
+            <Descriptions column={2} bordered={true}>
               <Descriptions.Item label="Name">
                 {selectedReceipt?.addedBy.user.firstName ?? "Not set"}{" "}
                 {selectedReceipt?.addedBy.user.lastName ?? "Not set"}
@@ -301,6 +325,10 @@ export const ReceiptingTable = () => {
                 {selectedReceipt?.addedBy.user.email ?? "Not set"}
               </Descriptions.Item>
             </Descriptions>
+
+            <div className=" pt-4">
+              <AllocationsTable />
+            </div>
           </div>
         </Card>
       </Drawer>

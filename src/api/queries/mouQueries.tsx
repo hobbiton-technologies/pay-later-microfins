@@ -212,10 +212,18 @@ const MouRequests = Api.injectEndpoints({
 
     getMouReceipting: builder.query<
       MouReceiptingResponse,
-      { organisationId: number; pageSize: number; PageNumber: number }
+      {
+        organisationId: number;
+        pageSize: number;
+        PageNumber: number;
+        status: string[];
+      }
     >({
-      query: ({ organisationId, pageSize, PageNumber }) => {
+      query: ({ organisationId, pageSize, PageNumber, status }) => {
         const params = new URLSearchParams();
+        if (status && status.length > 0) {
+          status.forEach((s) => params.append("Status", s));
+        }
         params.append("PageSize", pageSize.toString());
         params.append("PageNumber", PageNumber.toString());
 
