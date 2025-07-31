@@ -20,7 +20,28 @@ export const AllocationsTable = () => {
   ];
   return (
     <div>
-      <Table columns={allocationsTable} />
+      <Table
+        columns={allocationsTable}
+        components={{
+          header: {
+            cell: (props: any) => (
+              <th
+                {...props}
+                className="border-b-2 !bg-white !text-gray-400 text-xs !font-normal "
+              >
+                {props.children}
+              </th>
+            ),
+          },
+          body: {
+            cell: (props: any) => (
+              <td {...props} className=" border-gray-300  text-xs  ">
+                {props.children}
+              </td>
+            ),
+          },
+        }}
+      />
     </div>
   );
 };

@@ -27,6 +27,7 @@ import DebouncedInputField from "@/modules/components/DebouncedInput";
 import Papa from "papaparse";
 import saveAs from "file-saver";
 import { AllocationsTable } from "./AllocationsTable";
+import { AllocationForm } from "./AllocationForm";
 
 export const ReceiptingTable = () => {
   const [id, setSearchId] = useState<string>("");
@@ -327,7 +328,11 @@ export const ReceiptingTable = () => {
             </Descriptions>
 
             <div className=" pt-4">
+              <p className=" font-semibold pb-4">Allocations</p>
               <AllocationsTable />
+            </div>
+            <div>
+              <AllocationForm />
             </div>
           </div>
         </Card>
