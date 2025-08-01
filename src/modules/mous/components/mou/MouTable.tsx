@@ -1,4 +1,14 @@
-import { Button, Drawer, Dropdown, MenuProps, Space, Tag } from "antd";
+import {
+  Button,
+  Card,
+  DatePicker,
+  Descriptions,
+  Drawer,
+  Dropdown,
+  MenuProps,
+  Space,
+  Tag,
+} from "antd";
 import Table, { ColumnsType } from "antd/es/table";
 import {
   EllipsisOutlined,
@@ -9,33 +19,61 @@ import {
   MouProductsData,
   useGetMouProductsQuery,
 } from "@/api/queries/mouQueries";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { customLoader } from "@/components/table-loader";
 import DebouncedInputField from "@/modules/components/DebouncedInput";
 import { MouProposalForm } from "./MouProposalForm";
 import { createHandleTableChange } from "@/utils/HandleTableChange";
+import moment from "moment";
+import Papa from "papaparse";
+import { saveAs } from "file-saver";
 
 export const MouTable = () => {
-  const [id, setId] = useState<number>(0);
-  const [microfinId, setMicrofinId] = useState<number>(0);
-  const [organizationId, setOrganizationId] = useState<number>(0);
-  const [startDate, setStartDate] = useState<string>("");
-  const [endDate, setEndDate] = useState<string>("");
+  const [id] = useState<number>(0);
+  const [microfinId] = useState<number>(0);
+  const [organizationId] = useState<number>(0);
+  // const [startDate, setStartDate] = useState<string>("");
+  // const [endDate, setEndDate] = useState<string>("");
   const [pageSize, setPageSize] = useState<number | null>(10);
   const [pageNumber, setPageNumber] = useState<number | null>(1);
   const [, setSearchQuery] = useState<string>("");
   const [searchInput] = useState<string>("");
+  const [isMouDetailsVisible, setIsMouDetailsVisible] =
+    useState<boolean>(false);
   const [isCreateDrawerVisible, setIsCreateDrawerVisible] = useState(false);
+  const [dateRange, setDateRange] = useState<
+    [moment.Moment, moment.Moment] | null
+  >(null);
+  const [Proposals, setProposals] = useState<MouProductsData[]>([]);
+  const [mous, setMous] = useState<MouProductsData>();
+  const { RangePicker } = DatePicker;
+  const [, setStatus] = useState<string[] | []>([]);
+  const [, setFilteredStatus] = useState<string[] | null>(null);
 
   const { data: apiResponse, isFetching } = useGetMouProductsQuery({
     id: id,
     microfinId: microfinId,
     organizationId: organizationId,
-    startdate: startDate,
-    endDate: endDate,
+    startdate: dateRange ? dateRange[0].toISOString() : "",
+    endDate: dateRange ? dateRange[1].toISOString() : "",
     pageSize: pageSize ?? 10,
     pageNumber: pageNumber ?? 1,
   });
+
+  useEffect(() => {
+    setProposals(apiResponse?.data || []);
+  }, [apiResponse]);
+
+  const handleViewMou = (mouId: number) => {
+    if (mouId && apiResponse) {
+      const proposals = Proposals.find((a) => a.id === mouId);
+      setMous(proposals);
+    }
+
+    if (Proposals) {
+      setIsMouDetailsVisible(true);
+    }
+  };
 
   const MouColumns: ColumnsType<MouProductsData> = [
     {
@@ -67,6 +105,11 @@ export const MouTable = () => {
       title: "Status",
       dataIndex: "mouStatus",
       key: "mouStatus",
+      filters: [
+        { text: "Pending", value: "Pending" },
+        { text: "Accepted", value: "Accepted" },
+        { text: "Rejected", value: "Rejected" },
+      ],
       render: (status: string) => {
         const statusColors: Record<string, string> = {
           Accepted: "blue",
@@ -105,14 +148,14 @@ export const MouTable = () => {
     {
       title: "Actions",
       key: "actions",
-      render: () => {
+      render: (record: MouProductsData) => {
         const items: MenuProps["items"] = [
           {
             key: "4",
             label: (
               <span
                 className="flex gap-2"
-                onClick={() => alert("View CLicked")}
+                onClick={() => handleViewMou(record.id)}
               >
                 <EyeOutlined />
                 View
@@ -139,6 +182,8 @@ export const MouTable = () => {
   const handleTableChange = createHandleTableChange<MouProductsData>({
     setPageNumber,
     setPageSize,
+    setStatus,
+    setFilteredStatus,
   });
 
   const handleSearch = (value: string) => {
@@ -147,6 +192,95 @@ export const MouTable = () => {
 
   const handleSearchClear = () => {
     setSearchQuery(searchInput);
+  };
+
+  const exportCSV = () => {
+    if (Proposals && apiResponse?.data) {
+      const currentDate = new Date().toISOString().split("T")[0];
+
+      const modifiedCsv = Proposals.map((item) => {
+        const baseRow: any = {
+          Id: item?.id ?? "",
+          ProposalStatus: item?.mouStatus ?? "",
+          ProposalStartDate: item?.startDate ?? "",
+          ProposalEndDate: item?.endDate ?? "",
+          ProposalDate: item?.createdAt ?? "",
+          MoiFileId: item?.mouFileId ?? "",
+          MicrofinId: item?.microfin?.id ?? "",
+          MicrofinName: item?.microfin?.name ?? "",
+          MicrofinContactNo: item?.microfin?.contactNo ?? "",
+          MicrofinAddress: item?.microfin?.address ?? "",
+          MicrofinEmail: item?.microfin?.email ?? "",
+          OrganisationId: item?.organization?.id ?? "",
+          OrganisationName: item?.organization?.name ?? "",
+          OrganisationContactNo: item?.organization?.contactNo ?? "",
+          OrganisationAddress: item?.organization?.address ?? "",
+          OrganisationEmail: item?.organization?.email ?? "",
+          OrganisationTpin: item?.organization?.tPinNumber ?? "",
+          OrganisationSector: item?.organization?.sector ?? "",
+          OrganisationIsDeactived: item?.organization?.isDeactivated
+            ? "Yes"
+            : "No",
+          ProposedById: item?.proposedBy?.id ?? "",
+          ProposedByName: `${item?.proposedBy?.user?.firstName ?? ""} ${
+            item?.proposedBy?.user?.lastName ?? ""
+          }`,
+          ProposedByEmail: item?.proposedBy?.user?.email ?? "",
+          ProposedByPhone: item?.proposedBy?.user?.phoneNumber ?? "",
+          ProposedByIdType: item?.proposedBy?.idType ?? "",
+          ProposedByIdNumber: item?.proposedBy?.idNumber ?? "",
+          ProposedByBranch: item?.proposedBy?.branch ?? "",
+          ProposedByPosition: item?.proposedBy?.position ?? "",
+        };
+
+        // Add Loan Products
+        item?.loanProducts?.forEach((lp, index) => {
+          const i = index + 1;
+          baseRow[`LoanProductId #${i}`] = lp?.id ?? "";
+          baseRow[`LoanProductName #${i}`] = lp?.name ?? "";
+          baseRow[`LoanProductType #${i}`] = lp?.loanProductType ?? "";
+          baseRow[`MaxRepaymentPeriod #${i}`] =
+            lp?.maximumRepaymentPeriod ?? "";
+          baseRow[`ProductStatus #${i}`] = lp?.productStatus ?? "";
+          baseRow[`GracePeriodInDays #${i}`] = lp?.gracePeriodInDays ?? "";
+          baseRow[`InterestRate #${i}`] = lp?.interestRate ?? "";
+          baseRow[`MinLoanAmount #${i}`] = lp?.minimumLoanAmount ?? "";
+          baseRow[`MaxLoanAmount #${i}`] = lp?.maximumLoanAmount ?? "";
+          baseRow[`MaxLoanRate #${i}`] = lp?.maximumLoanRate ?? "";
+          baseRow[`InsuranceRate #${i}`] = lp?.insuranceRate ?? "";
+          baseRow[`ArrangementFeeRate #${i}`] = lp?.arrangementFeeRate ?? "";
+          baseRow[`IsCollateralBased #${i}`] = lp?.isCollateralBased
+            ? "Yes"
+            : "No";
+        });
+
+        // Add Responders
+        item?.responders?.forEach((r, index) => {
+          const i = index + 1;
+          const user = r?.responder?.user;
+          const responder = r?.responder;
+
+          baseRow[`ResponderName #${i}`] = `${user?.firstName ?? ""} ${
+            user?.lastName ?? ""
+          }`;
+          baseRow[`ResponderEmail #${i}`] = user?.email ?? "";
+          baseRow[`ResponderPhone #${i}`] = user?.phoneNumber ?? "";
+          baseRow[`ResponderEmployeeId #${i}`] =
+            responder?.employeeIdNumber ?? "";
+          baseRow[`ResponderPosition #${i}`] = responder?.position ?? "";
+          baseRow[`ResponderIdType #${i}`] = responder?.idType ?? "";
+          baseRow[`ResponderIdNumber #${i}`] = responder?.idNumber ?? "";
+          baseRow[`ResponderIsOrgDeactivated #${i}`] =
+            responder?.isOrganizationDeactivated ? "Yes" : "No";
+        });
+
+        return baseRow;
+      });
+
+      const csvMod = Papa.unparse(modifiedCsv);
+      const blob = new Blob([csvMod], { type: "text/csv;charset=utf-8;" });
+      saveAs(blob, `Proposals_Report_${currentDate}.csv`);
+    }
   };
 
   return (
@@ -159,6 +293,16 @@ export const MouTable = () => {
             onClear={handleSearchClear}
             allowClear={true}
           />
+          <RangePicker
+            className="min-w-52"
+            onChange={(dates) => {
+              setDateRange(dates as [moment.Moment, moment.Moment]);
+            }}
+          />
+          <Button onClick={exportCSV} className=" text-slate-500">
+            <ExportOutlined className=" text-slate-500" />
+            Export
+          </Button>
           <div className="">
             <Button
               type="primary"
@@ -205,6 +349,7 @@ export const MouTable = () => {
           }}
         />
       </section>
+
       <Drawer
         title="Propose MOU"
         open={isCreateDrawerVisible}
@@ -212,6 +357,154 @@ export const MouTable = () => {
         width="45%"
       >
         <MouProposalForm />
+      </Drawer>
+
+      <Drawer
+        title="Mou Details"
+        width="45%"
+        open={isMouDetailsVisible}
+        onClose={() => setIsMouDetailsVisible(false)}
+      >
+        <Card>
+          <div>
+            <Descriptions column={1} bordered={true}>
+              <Descriptions.Item label="MOU Status">
+                {mous?.mouStatus}
+              </Descriptions.Item>
+              <Descriptions.Item label="Start Date">
+                {mous?.startDate
+                  ? new Date(mous?.startDate).toLocaleDateString()
+                  : "Not Set"}
+              </Descriptions.Item>
+              <Descriptions.Item label="End Date">
+                {mous?.startDate
+                  ? new Date(mous?.endDate).toLocaleDateString()
+                  : "Not Set"}
+              </Descriptions.Item>
+              <Descriptions.Item label="Date">
+                {mous?.startDate
+                  ? new Date(mous?.createdAt).toLocaleDateString()
+                  : "Not Set"}
+              </Descriptions.Item>
+              <Descriptions.Item label="Document">
+                <div className=" border p-4 bg-blue-950 text-white rounded-md text-center">
+                  View Mou Document
+                </div>
+              </Descriptions.Item>
+            </Descriptions>
+          </div>
+
+          <div className=" py-4">
+            <p className=" py-2 font-semibold text-lg">Microfin Information</p>
+            <Descriptions column={1} bordered={true}>
+              <Descriptions.Item label="Microfin Name">
+                {mous?.microfin.name}
+              </Descriptions.Item>
+              <Descriptions.Item label="Phonenumber">
+                {mous?.microfin.contactNo ?? "Not Set"}
+              </Descriptions.Item>
+              <Descriptions.Item label="Email">
+                {mous?.microfin.email ?? "Not Set"}
+              </Descriptions.Item>
+              <Descriptions.Item label="Address">
+                {mous?.microfin.address ?? "Not Set"}
+              </Descriptions.Item>
+            </Descriptions>
+          </div>
+
+          <div className=" py-4">
+            <p className=" py-2 font-semibold text-lg">
+              Organisation Information
+            </p>
+            <Descriptions column={1} bordered={true}>
+              <Descriptions.Item label="Organisation Name">
+                {mous?.organization.name}
+              </Descriptions.Item>
+              <Descriptions.Item label="Phonenumber">
+                {mous?.organization.contactNo ?? "Not Set"}
+              </Descriptions.Item>
+              <Descriptions.Item label="Email">
+                {mous?.organization.email ?? "Not Set"}
+              </Descriptions.Item>
+              <Descriptions.Item label="Address">
+                {mous?.organization.address ?? "Not Set"}
+              </Descriptions.Item>
+            </Descriptions>
+          </div>
+
+          <div className=" py-4">
+            <p className=" py-2 font-semibold text-lg">Proposed By</p>
+            <Descriptions column={1} bordered={true}>
+              <Descriptions.Item label="Name">
+                {mous?.proposedBy.user.firstName +
+                  " " +
+                  mous?.proposedBy.user.lastName}
+              </Descriptions.Item>
+              <Descriptions.Item label="Phonenumber">
+                {mous?.proposedBy.user.phoneNumber ?? "Not Set"}
+              </Descriptions.Item>
+              <Descriptions.Item label="Email">
+                {mous?.proposedBy.user.email ?? "Not Set"}
+              </Descriptions.Item>
+              <Descriptions.Item label="Postion">
+                {mous?.proposedBy.position ?? "Not Set"}
+              </Descriptions.Item>
+              <Descriptions.Item label="ID Type">
+                {mous?.proposedBy.idType ?? "Not Set"}
+              </Descriptions.Item>
+              <Descriptions.Item label="ID Number">
+                {mous?.proposedBy.idNumber ?? "Not Set"}
+              </Descriptions.Item>
+            </Descriptions>
+          </div>
+
+          <div className="py-4">
+            <p className="py-4 font-semibold text-lg">Responders</p>
+            {mous?.responders && mous.responders.length > 0 ? (
+              mous.responders.map((responder, index) => (
+                <Descriptions
+                  key={responder.id}
+                  title={
+                    <span className=" font-semibold text-sm font-sans">
+                      {`Responder ${index + 1}`}
+                    </span>
+                  }
+                  column={1}
+                  bordered
+                  className="mb-8"
+                >
+                  <Descriptions.Item label="Name">
+                    {responder.responder.user.firstName}{" "}
+                    {responder.responder.user.lastName}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Phone Number">
+                    {responder.responder.user.phoneNumber ?? "Not Set"}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Email">
+                    {responder.responder.user.email ?? "Not Set"}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Position">
+                    {responder.responder.position ?? "Not Set"}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="ID Type">
+                    {responder.responder.idType ?? "Not Set"}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="ID Number">
+                    {responder.responder.idNumber ?? "Not Set"}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Response">
+                    {responder.response ?? "No response"}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Comment">
+                    {responder.comment ?? "No comment"}
+                  </Descriptions.Item>
+                </Descriptions>
+              ))
+            ) : (
+              <p className="text-gray-400 text-sm">No responders available.</p>
+            )}
+          </div>
+        </Card>
       </Drawer>
     </div>
   );

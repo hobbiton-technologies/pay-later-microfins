@@ -36,7 +36,6 @@ import {
   useDisburseMicrofinOrgLoanMutation,
 } from "@/api/mutations/loansMutation";
 import { Option } from "antd/es/mentions";
-import { MicrofinOrgStaffBody } from "@/api/mutations/staffMutation";
 
 type MicrofinOrgLoansTableProps = {
   showCreateButton?: boolean;
@@ -52,9 +51,9 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
   const [id, setSearchId] = useState<string>("");
   const [isCreateDrawerVisible, setIsCreateDrawerVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [loanStatus, setloanStatus] = useState<string>("");
-  const [startDate, setstartDate] = useState<string>("");
-  const [endDate, setendDate] = useState<string>("");
+  const [, setloanStatus] = useState<string>("");
+  const [startDate] = useState<string>("");
+  const [endDate] = useState<string>("");
   const [pageNumber, setPageNumber] = useState<number | null>(1);
   const [pageSize, setPageSize] = useState(10);
   const [form] = Form.useForm();
@@ -250,8 +249,7 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
 
   const handleTableChange: TableProps<GetMicrofinLoansData>["onChange"] = (
     pagination,
-    filters,
-    sorter
+    filters
   ) => {
     setPageNumber(pagination.current ?? 1);
     setPageSize(pagination.pageSize ?? 10);
@@ -284,7 +282,7 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
     memberid: microfinMemberId,
     microfinOrganisationId: microfinOrganisationId,
     query: searchQuery,
-    loanStatus: loanStatus,
+    loanStatus: filteredLoanStatus ? [filteredLoanStatus] : [],
     startDate: startDate,
     endDate: endDate,
     pageNumber: pageNumber ?? 1,

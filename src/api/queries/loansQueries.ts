@@ -96,7 +96,7 @@ const LoansRequest = Api.injectEndpoints({
         memberid: number;
         microfinOrganisationId: number;
         query: string;
-        loanStatus: string;
+        loanStatus: string[] | [];
         startDate: string;
         endDate: string;
         pageSize: number;

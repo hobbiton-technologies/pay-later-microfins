@@ -12,13 +12,21 @@ import {
   Card,
   Descriptions,
   Drawer,
+  DatePicker,
 } from "antd";
-import Table, { ColumnsType } from "antd/es/table";
+import Table, { ColumnsType, TableProps } from "antd/es/table";
 import { useState, useEffect } from "react";
-import { EllipsisOutlined, EyeOutlined } from "@ant-design/icons";
+import {
+  EllipsisOutlined,
+  ExportOutlined,
+  EyeOutlined,
+} from "@ant-design/icons";
 import { customLoader } from "@/components/table-loader";
 import DebouncedInputField from "@/modules/components/DebouncedInput";
 import { createHandleTableChange } from "@/utils/HandleTableChange";
+import moment from "moment";
+import Papa from "papaparse";
+import saveAs from "file-saver";
 
 // type MouOrganisationProps = {
 //   MouOrganisationId: MouLoansOrganisationData;
@@ -28,16 +36,26 @@ export const TransactionLoansTable = () => {
   const [id] = useState<number | null>(0);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [memberId] = useState<number>(0);
-  const [loanStatus] = useState<string>("");
   const [transactionType] = useState<string>("");
-  const [status] = useState<string>("");
-  const [startRange] = useState<string>("");
-  const [endRange] = useState<string>("");
   const [isReportRequest] = useState<boolean>(false);
   const [pageSize, setPageSize] = useState<number | null>(10);
   const [pageNumber, setPageNumber] = useState<number | null>(1);
   const [mouOrganisationId] = useState<number>(0);
   const [searchId, setSearchId] = useState<string>("");
+  const [status, setStatus] = useState<string[]>([]);
+  const [loanStatus, setloanStatus] = useState<string[]>([]);
+  const [filteredStatus, setFilteredStatus] = useState<string[] | null>(null);
+  const [filteredLoansStatus, setFilteredLoanStatus] = useState<
+    string[] | null
+  >(null);
+
+  const [dateRange, setDateRange] = useState<
+    [moment.Moment, moment.Moment] | null
+  >(null);
+  const [Transactions, setTransactions] = useState<
+    MouOrganisationLoanTransactionData[]
+  >([]);
+  const { RangePicker } = DatePicker;
 
   //states to select organisation loan
   const [mouloan, setMouloan] = useState<MouOrganisationLoanTransactionData[]>(
@@ -56,9 +74,9 @@ export const TransactionLoansTable = () => {
       loanStatus: loanStatus,
       query: searchQuery,
       transactionType: transactionType,
-      status: status,
-      startRange,
-      endRange,
+      status: filteredStatus ?? [],
+      startRange: dateRange ? dateRange[0].toISOString() : "",
+      endRange: dateRange ? dateRange[1].toISOString() : "",
       isReportRequest: isReportRequest,
       pageSize: pageSize ?? 10,
       pageNumber: pageNumber ?? 1,
@@ -82,15 +100,42 @@ export const TransactionLoansTable = () => {
     }
   };
 
-  const handleTableChange =
-    createHandleTableChange<MouOrganisationLoanTransactionData>({
-      setPageNumber,
-      setPageSize,
-    });
+  // const handleTableChange =
+  //   createHandleTableChange<MouOrganisationLoanTransactionData>({
+  //     setPageNumber,
+  //     setPageSize,
+  //   });
+
+  const handleTableChange: TableProps<MouOrganisationLoanTransactionData>["onChange"] =
+    (pagination, filters, sorter) => {
+      setPageNumber(pagination.current ?? 1);
+      setPageSize(pagination.pageSize ?? 10);
+
+      // Apply loanStatus filter
+      if (filters.loanStatus && filters.loanStatus.length > 0) {
+        const selectedLoanStatus = filters.loanStatus as string[];
+        setloanStatus(selectedLoanStatus);
+        setFilteredLoanStatus(selectedLoanStatus);
+      } else {
+        setloanStatus([]);
+        setFilteredLoanStatus(null);
+      }
+
+      if (filters.status && filters.status.length > 0) {
+        const selectedStatuses = filters.status as string[];
+        setStatus(selectedStatuses);
+        setFilteredStatus(selectedStatuses);
+      } else {
+        setStatus([]);
+        setFilteredStatus(null);
+      }
+    };
+
   const handleSearch = (values: string) => {
     setSearchId(searchId);
     setSearchQuery(values.trim());
   };
+
   const handleSearchClear = () => {
     setSearchId(searchId);
   };
@@ -122,58 +167,94 @@ export const TransactionLoansTable = () => {
       render: (_, record: MouOrganisationLoanTransactionData) =>
         formatCurrency(record.amount),
     },
+    // {
+    //   title: "Interest (%)",
+    //   dataIndex: "product",
+    //   key: "member",
+    //   render: (_, record: MouOrganisationLoanTransactionData) =>
+    //     `${record.product.interestRate}%`,
+    // },
     {
-      title: "Interest (%)",
+      title: "Interest",
       dataIndex: "initialInterestAmount",
       key: "member",
       render: (_, record: MouOrganisationLoanTransactionData) =>
         formatCurrency(record.initialInterestAmount),
     },
+    // {
+    //   title: "Status",
+    //   dataIndex: "status",
+    //   key: "status",
+    //   filters: [
+    //     { text: "Pending", value: "Pending" },
+    //     { text: "Failed", value: "Failed" },
+    //     { text: "Successfull", value: "Successfull" },
+    //   ],
+    //   filteredValue: filteredStatus ?? null,
+    //   onFilter: (value, record) => record.status === value,
+    //   render: (status: string) => {
+    //     const statusColors: Record<string, string> = {
+    //       Pending: "orange",
+    //       Failed: "red",
+    //       Successful: "green",
+    //     };
+
+    //     const displayName: Record<string, string> = {
+    //       Pending: "Pending",
+    //       Failed: "Failed",
+    //       Successful: "Successful",
+    //     };
+
+    //     const color = statusColors[status] || "default";
+    //     const label = displayName[status] || status;
+
+    //     return (
+    //       <Tag color={color} style={{ fontWeight: 500 }}>
+    //         {label}
+    //       </Tag>
+    //     );
+    //   },
+    // },
     {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
+      title: "Loan Status ",
+      dataIndex: "loanStatus",
+      filters: [
+        { text: "Pending", value: "Pending" },
+        { text: "Failed", value: "Failed" },
+        { text: "Open", value: "Open" },
+        { text: "Partially Settled", value: "PartiallySettled" },
+        { text: "Fully Settled", value: "FullySettled" },
+        { text: "Overdue", value: "Overdue" },
+        { text: "Defaulted", value: "Defaulted" },
+        { text: "UnderReview", value: "UnderReview" },
+        { text: "Rejected", value: "Rejected" },
+        { text: "Approved", value: "Approved" },
+      ],
       render: (status: string) => {
         const statusColors: Record<string, string> = {
-          Pending: "orange",
+          Pending: "magenta",
           Failed: "red",
-          Successful: "green",
+          Open: "purple",
+          PartiallySettled: "orange",
+          FullySettled: "green",
+          Overdue: "red",
+          Defaulted: "red",
+          UnderReview: "magenta",
+          Rejected: "red",
+          Approved: "blue",
         };
 
         const displayName: Record<string, string> = {
           Pending: "Pending",
           Failed: "Failed",
-          Successful: "Successful",
-        };
-
-        const color = statusColors[status] || "default";
-        const label = displayName[status] || status;
-
-        return (
-          <Tag color={color} style={{ fontWeight: 500 }}>
-            {label}
-          </Tag>
-        );
-      },
-    },
-    {
-      title: "Loan Status",
-      dataIndex: "loanStatus",
-      render: (status: string) => {
-        const statusColors: Record<string, string> = {
-          Open: "purple",
-          Failed: "red",
-          Successful: "green",
-          PartiallySettled: "orange",
-          FullySettled: "blue",
-        };
-
-        const displayName: Record<string, string> = {
           Open: "Open",
-          Failed: "Failed",
-          Successful: "Successful",
           PartiallySettled: "PartiallySettled",
           FullySettled: "FullySettled",
+          Overdue: "Overdue",
+          Defaulted: "Defaulted",
+          UnderReview: "UnderReview",
+          Rejected: "Rejected",
+          Approved: "Approved",
         };
 
         const color = statusColors[status] || "default";
@@ -240,16 +321,95 @@ export const TransactionLoansTable = () => {
     },
   ];
 
+  const exportCSV = () => {
+    if (Transactions && apiResponse?.data) {
+      const currentDate = new Date().toISOString().split("T")[0];
+
+      const modifiedCsv = mouloan.map((item) => ({
+        Id: item.id,
+        Amount: item.amount,
+        AmountPaid: item.amountPaid,
+        Balance: item.balance,
+        LoanStatus: item.loanStatus,
+        TransactionId: item.transactionId,
+        LipilaBusinessCode: item.lipilaBusinessCode,
+        RecipientMobileNumber: item.recipientMobileNumber,
+        TransactionMobileNumber: item.transactionMobileNumber,
+        TransactionType: item.transactionType,
+        TransactionDate: new Date(item.transactionDate)
+          .toISOString()
+          .slice(0, 19)
+          .replace("T", " "),
+        MaturityDate: new Date(item.maturityDate)
+          .toISOString()
+          .slice(0, 19)
+          .replace("T", " "),
+        InitialInterestAmount: item.initialInterestAmount,
+        LoanProductName: item.product.name,
+        LoanProductType: item.product.loanProductType,
+        LoanProductMaximumRepaymentPeriod: item.product.maximumRepaymentPeriod,
+        LoanProductStatus: item.product.productStatus,
+        LoanProductGracePeriodInDays: item.product.gracePeriodInDays,
+        LoanProductInterestRate: item.product.interestRate,
+        LoanProductMinimumLoanAmount: item.product.minimumLoanAmount,
+        LoanProductMaximumLoanAmount: item.product.maximumLoanAmount,
+        LoanProductInsuranceRate: item.product.insuranceRate,
+        LoanProductArrangementFeeRate: item.product.arrangementFeeRate,
+        LoanProductIsCollateralBased: item.product.isCollateralBased,
+        LoanProductRecoveryTransaction: "",
+        Status: item.status,
+        MemberName: item.member.firstName + " " + item.member.lastName,
+        MemberEmployeeId: item.member.employeeId,
+        MemberPosition: item.member.position,
+        MemberEmail: item.member.email,
+        MemberPhone: item.member.phoneNumber,
+        OrganisationName: item.mou.organization.name,
+        OrganisationContactNo: item.mou.organization.contactNo,
+        OrganisationAddress: item.mou.organization.address,
+        OrganisationEmail: item.mou.organization.email,
+        OrganisationTpin: item.mou.organization.tPinNumber,
+        OrganisationSector: item.mou.organization.sector,
+        OrganisationIsDeactivated: item.mou.organization.isDeactivated,
+        MicrofinName: item.mou.microfin.name,
+        MicrofinContactNo: item.mou.microfin.contactNo,
+        MicrofinAddress: item.mou.microfin.address,
+        MicrofinEmail: item.mou.microfin.email,
+        DateCreated: new Date(item.createdAt)
+          .toISOString()
+          .slice(0, 19)
+          .replace("T", ""),
+      }));
+
+      const csvMod = Papa.unparse(modifiedCsv);
+      const blob = new Blob([csvMod], { type: "text/csv;charset=utf-8;" });
+      saveAs(blob, `Transactions_Report_${currentDate}.csv`);
+    }
+  };
+
   return (
     <div>
       <section className="w-full h-full hidden md:flex md:flex-col">
-        <div className="w-full">
+        <div className="w-full flex gap-2">
           <DebouncedInputField
             placeholder="Search for Loan"
             onSearch={handleSearch}
             onClear={handleSearchClear}
             allowClear={true}
           />
+          <RangePicker
+            className="min-w-52"
+            onChange={(dates) => {
+              setDateRange(dates as [moment.Moment, moment.Moment]);
+            }}
+          />
+          <Button
+            type="primary"
+            onClick={exportCSV}
+            className=" text-slate-500"
+          >
+            <ExportOutlined className=" text-slate-500" />
+            Export
+          </Button>
         </div>
         <Table
           dataSource={apiResponse?.data}
@@ -288,7 +448,7 @@ export const TransactionLoansTable = () => {
       </section>
       <Drawer
         title={`${selectedLoan?.member.firstName} ${selectedLoan?.member.lastName}`}
-        width="45%"
+        width="50%"
         open={isLoansDrawerVisible}
         onClose={() => setIsLoansDrawerVisible(false)}
       >

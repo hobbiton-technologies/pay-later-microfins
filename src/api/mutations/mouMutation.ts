@@ -19,7 +19,31 @@ const MouMutations = Api.injectEndpoints({
       }),
       invalidatesTags: ["MouProposals"],
     }),
+
+    acceptAllocation: builder.mutation<any, any>({
+      query: ({ id, receiptId, remark }) => ({
+        url: `microfins/${id}/receipts/${receiptId}/accept?remark=${encodeURIComponent(
+          remark
+        )}`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["MouReceipts", "MouAllocations"],
+    }),
+
+    rejectAllocation: builder.mutation<any, any>({
+      query: ({ id, receiptId, remark }) => ({
+        url: `microfins/${id}/receipts/${receiptId}/reject?remark=${encodeURIComponent(
+          remark
+        )}`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["MouReceipts", "MouAllocations"],
+    }),
   }),
 });
 
-export const { useCreateMouProposalMutation } = MouMutations;
+export const {
+  useCreateMouProposalMutation,
+  useAcceptAllocationMutation,
+  useRejectAllocationMutation,
+} = MouMutations;

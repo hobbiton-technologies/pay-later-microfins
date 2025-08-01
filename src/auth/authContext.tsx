@@ -1,5 +1,6 @@
 import { useLoginUserMutation } from "@/api/mutations/authMutation";
 import { message } from "antd";
+import { jwtDecode } from "jwt-decode";
 import React, {
   createContext,
   useContext,
@@ -15,11 +16,36 @@ interface AuthContextType {
   logout: () => void;
 }
 
+interface DecodedToken {
+  FirstName: string;
+  LastName: string;
+  email: string;
+  PhoneNumber: string;
+  jti: string;
+  Id: string;
+  Operations: string;
+  exp: number;
+  iat: number;
+}
+
 const AuthContext = createContext<AuthContextType | null>(null);
 
 interface AuthProviderProps {
   children: ReactNode;
 }
+
+export const getUserOperations = (): string[] => {
+  const token = localStorage.getItem("accessToken");
+  if (!token) return [];
+
+  try {
+    const decoded: DecodedToken = jwtDecode(token);
+    return decoded.Operations?.split(",") || [];
+  } catch (err) {
+    console.error("Failed to decode token:", err);
+    return [];
+  }
+};
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
@@ -65,29 +91,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       });
     }
   };
-
-  // const login = async (values: { username: string; password: string }) => {
-  //   if (
-  //     values.username ===
-  //       "Dalytsoul0977718789231a7766-0663-4984-8fcd-03d3000ea236" &&
-  //     values.password === "12345678"
-  //   ) {
-  //     // Added token simulation here
-  //     const fakeToken =
-  //       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJGaXJzdE5hbWUiOiJEYWx5dHNvdWwiLCJMYXN0TmFtZSI6IlRleW1ib3IiLCJlbWFpbCI6InRlbWJvZGFsaXRzbzJAZ21haWwuY29tIiwiUGhvbmVOdW1iZXIiOiIyNjA5Nzc3MTg3ODkiLCJqdGkiOiJjYTliYmUxYy1iOTg3LTQxODYtYTAzOS02YTI0ZjE1MmFlNGIiLCJJZCI6IjIyNzEiLCJleGFtcGxlIjoiRXhhbXBsZSIsIm5iZiI6MTc1MTUyODczNSwiZXhwIjoxNzUxNjE1MTM1LCJpYXQiOjE3NTE1Mjg3MzV9.aNIlU9AfncTezyecjd3Fq0veVMnbNbCm08sxOD7_RWU";
-  //     const fakeOrgId = "20";
-  //     localStorage.setItem("accessToken", fakeToken);
-  //     localStorage.setItem("OrganisationId", fakeOrgId);
-  //     setIsAuthenticated(true);
-
-  //     toast.success("Login successful!", { position: "top-right" });
-  //     window.location.href = "/";
-  //   } else {
-  //     toast.error("Login failed. Incorrect credentials.", {
-  //       position: "top-right",
-  //     });
-  //   }
-  // };
 
   const logout = () => {
     localStorage.removeItem("accessToken");

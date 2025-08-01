@@ -3,13 +3,28 @@ import {
   useGetMouOrganisationRepaymentTransactionsQuery,
 } from "@/api/queries/organisationQueries";
 import { customLoader } from "@/components/table-loader";
-import { Button, Dropdown, MenuProps, Space, Table, Tag } from "antd";
+import {
+  Button,
+  DatePicker,
+  Dropdown,
+  MenuProps,
+  Space,
+  Table,
+  Tag,
+} from "antd";
 import { ColumnsType } from "antd/es/table";
-import { EllipsisOutlined, EyeOutlined } from "@ant-design/icons";
-import { useState } from "react";
+import {
+  EllipsisOutlined,
+  ExportOutlined,
+  EyeOutlined,
+} from "@ant-design/icons";
+import { useEffect, useState } from "react";
 import { createHandleTableChange } from "@/utils/HandleTableChange";
 import DebouncedInputField from "@/modules/components/DebouncedInput";
 import { formatCurrency } from "@/utils/formaters";
+import moment from "moment";
+import Papa from "papaparse";
+import saveAs from "file-saver";
 
 export const TransactionRepaymentsTable = () => {
   const [id, setId] = useState<number | null>(0);
@@ -18,13 +33,23 @@ export const TransactionRepaymentsTable = () => {
   const [memberId, setMemberId] = useState<number>(0);
   const [loanStatus, setloanStatus] = useState<string>("");
   const [transactionType, setTransactionType] = useState<string>("");
-  const [status, setStatus] = useState<string>("");
+  const [status, setStatus] = useState<string[] | []>([]);
+  const [filteredStatus, setFilteredStatus] = useState<string[] | null>(null);
   const [startRange, setStartRange] = useState<string>("");
   const [endRange, setendRange] = useState<string>("");
   const [isReportRequest, setIsReportRequest] = useState<boolean>(false);
   const [pageSize, setPageSize] = useState<number | null>(10);
   const [pageNumber, setPageNumber] = useState<number | null>(1);
   const [mouOrganisationId, setMouOrganisationId] = useState<number>(0);
+  const [dateRange, setDateRange] = useState<
+    [moment.Moment, moment.Moment] | null
+  >(null);
+
+  const { RangePicker } = DatePicker;
+
+  const [Repayments, setRepayments] = useState<MouOrganisationRepaymentsData[]>(
+    []
+  );
 
   const { data: apiResponse, isFetching } =
     useGetMouOrganisationRepaymentTransactionsQuery({
@@ -35,8 +60,8 @@ export const TransactionRepaymentsTable = () => {
       query: searchQuery,
       transactionType: transactionType,
       status: status,
-      startRange,
-      endRange,
+      startRange: dateRange ? dateRange[0].toISOString() : "",
+      endRange: dateRange ? dateRange[1].toISOString() : "",
       isReportRequest: isReportRequest,
       pageSize: pageSize ?? 10,
       pageNumber: pageNumber ?? 1,
@@ -64,6 +89,11 @@ export const TransactionRepaymentsTable = () => {
       title: "Status",
       dataIndex: "transactionStatus",
       key: "status",
+      filters: [
+        { text: "Successful", value: "Successful" },
+        { text: "Pending", value: "Pending" },
+        { text: "Failed", value: "Failed" },
+      ],
       render: (status: string) => {
         const statusColors: Record<string, string> = {
           Pending: "orange",
@@ -131,6 +161,8 @@ export const TransactionRepaymentsTable = () => {
     createHandleTableChange<MouOrganisationRepaymentsData>({
       setPageNumber,
       setPageSize,
+      setStatus,
+      setFilteredStatus,
     });
 
   const handleSearch = (values: string) => {
@@ -141,15 +173,50 @@ export const TransactionRepaymentsTable = () => {
     setSearchId(searchId);
   };
 
+  useEffect(() => {
+    setRepayments(apiResponse?.data || []);
+  }, [apiResponse]);
+
+  const exportCSV = () => {
+    const currentDate = new Date().toISOString().split("T")[0];
+
+    const modifiedCsv = Repayments.map((item) => ({
+      Id: item.id,
+      TransactionId: item.transactionId,
+      OrganisationMemberId: item.organizationMemberId,
+      FullName: item.firstName + " " + item.lastName,
+      Amount: item.amount,
+      TransactionStatus: item.transactionStatus,
+      DateCreated: new Date(item.createdAt)
+        .toISOString()
+        .slice(0, 19)
+        .replace("T", " "),
+    }));
+
+    const csvMod = Papa.unparse(modifiedCsv);
+    const blob = new Blob([csvMod], { type: "text/csv;charset=utf-8;" });
+    saveAs(blob, `Repayments_Report_${currentDate}`);
+  };
+
   return (
     <section className="w-full h-full hidden md:flex md:flex-col">
-      <div className="w-full">
+      <div className="w-full flex gap-2">
         <DebouncedInputField
           placeholder="Search for Repayments"
           onSearch={handleSearch}
           onClear={handleSearchClear}
           allowClear={true}
         />
+        <RangePicker
+          className="min-w-52"
+          onChange={(dates) => {
+            setDateRange(dates as [moment.Moment, moment.Moment]);
+          }}
+        />
+        <Button type="primary" onClick={exportCSV} className=" text-slate-500">
+          <ExportOutlined className=" text-slate-500" />
+          Export
+        </Button>
       </div>
       <Table
         dataSource={apiResponse?.data}

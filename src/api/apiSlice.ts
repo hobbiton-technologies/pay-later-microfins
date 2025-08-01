@@ -24,6 +24,8 @@ export const Api = createApi({
     "DisburseLoan",
     "ClientTenure",
     "MouProposals",
+    "MouReceipts",
+    "MouAllocations",
   ],
   endpoints: () => ({}),
 });

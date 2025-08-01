@@ -17,10 +17,11 @@ import {
   BookOutlined,
   ReadOutlined,
 } from "@ant-design/icons";
+import { getUserOperations } from "@/auth/authContext";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
-export const MenuItems: MenuItem[] = [
+const baseMenuItems: MenuItem[] = [
   {
     key: "dashboard",
     label: "Dashboard",
@@ -54,12 +55,43 @@ export const MenuItems: MenuItem[] = [
         label: <div className=" font-light">Staff Members</div>,
         icon: <UserOutlined />,
       },
-
-      // { key: "/mous", label: "MOUs" },
     ],
   },
-  {
-    key: "massMarket",
+  // {
+  //   key: "organisationLoans",
+  //   label: "Organisation Loans",
+  //   icon: <AuditOutlined />,
+  //   children: [
+  //     {
+  //       key: "/organisations",
+  //       label: <div className=" font-light">Organisations</div>,
+  //       icon: <HomeOutlined />,
+  //     },
+  //   ],
+  // },
+  // {
+  //   key: "reports",
+  //   label: "Reports",
+  //   icon: <SnippetsOutlined />,
+  //   children: [
+  //     {
+  //       key: "/branches",
+  //       label: <div className=" font-light">Branches</div>,
+  //       style: { paddingRight: 20, backgroundImage: "inherit" },
+  //       icon: <BranchesOutlined className="w-4 text-slate-700" />,
+  //     },
+  //     {
+  //       key: "/staff-members",
+  //       label: <div className=" font-light">Staff Members</div>,
+  //       icon: <UserOutlined />,
+  //     },
+  //   ],
+  // },
+];
+
+const protectedMenuItems: Record<string, MenuItem> = {
+  MassMarketLoans: {
+    key: "MassMarketLoans",
     label: "Mass Markets",
     icon: <ContainerOutlined />,
     children: [
@@ -75,7 +107,7 @@ export const MenuItems: MenuItem[] = [
       },
     ],
   },
-  {
+  OrganizationLoans: {
     key: "organisationLoans",
     label: "Organisation Loans",
     icon: <AuditOutlined />,
@@ -87,7 +119,7 @@ export const MenuItems: MenuItem[] = [
       },
     ],
   },
-  {
+  MouLoans: {
     key: "mouLoans",
     label: "MOU Loans",
     icon: <FileDoneOutlined />,
@@ -114,8 +146,8 @@ export const MenuItems: MenuItem[] = [
       },
     ],
   },
-  {
-    key: "moneyLenders",
+  MoneyLenderLoans: {
+    key: "MoneyLenderLoans",
     label: "Money Lenders",
     icon: <ReadOutlined />,
     children: [
@@ -131,4 +163,18 @@ export const MenuItems: MenuItem[] = [
       },
     ],
   },
-];
+};
+
+export const getMenuItems = (): MenuItem[] => {
+  const userOperations = getUserOperations();
+  const menuItems: MenuItem[] = [...baseMenuItems];
+  userOperations.forEach((operation) => {
+    if (protectedMenuItems[operation]) {
+      menuItems.push(protectedMenuItems[operation]);
+    }
+  });
+
+  return menuItems;
+};
+
+export const MenuItems = getMenuItems();

@@ -26,7 +26,6 @@ import { useEffect, useState } from "react";
 import { MicrofinOrgLoansForm } from "./MicrofinOrg/Loans/MicrofinOrgLoansForm";
 import {
   GetMicrofinLoansData,
-  useGetMicrofinLoansExportQuery,
   useGetMicrofinLoansQuery,
 } from "@/api/queries/loansQueries";
 import { customLoader } from "@/components/table-loader";
@@ -242,6 +241,9 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
   const [selectedLoan, setSelectedLoan] = useState<GetMicrofinLoansData>();
   const [selectedMember, setSelectedMember] = useState<MicrofinOrgStaffBody>();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [filteredLoanStatus, setFilteredLoanStatus] = useState<string | null>(
+    null
+  );
 
   const handleSearch = () => {
     setSearchId(id);
@@ -261,7 +263,7 @@ export const MicrofinOrgLoansTable: React.FC<MicrofinOrgLoansTableProps> = ({
     memberid: microfinMemberId,
     microfinOrganisationId: microfinOrganisationId,
     query: searchQuery,
-    loanStatus: loanStatus,
+    loanStatus: filteredLoanStatus ? [filteredLoanStatus] : [],
     startDate: startDate,
     endDate: endDate,
     pageNumber: pageNumber ?? 1,

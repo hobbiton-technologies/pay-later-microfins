@@ -289,7 +289,7 @@ export const MainMicrofinOrgLoansTable: React.FC<
     memberid: microfinMemberId,
     microfinOrganisationId: microfinOrganisationId,
     query: searchQuery,
-    loanStatus: loanStatus,
+    loanStatus: filteredLoanStatus ? [filteredLoanStatus] : [],
     startDate: startDate,
     endDate: endDate,
     pageNumber: pageNumber ?? 1,

@@ -1,5 +1,9 @@
 import Table, { ColumnsType } from "antd/es/table";
-import { EllipsisOutlined, EyeOutlined } from "@ant-design/icons";
+import {
+  EllipsisOutlined,
+  ExportOutlined,
+  EyeOutlined,
+} from "@ant-design/icons";
 import {
   MenuProps,
   Space,
@@ -9,6 +13,7 @@ import {
   Drawer,
   Card,
   Descriptions,
+  DatePicker,
 } from "antd";
 import {
   MouReceiptingData,
@@ -19,33 +24,46 @@ import { formatCurrency } from "@/utils/formaters";
 import { createHandleTableChange } from "@/utils/HandleTableChange";
 import { customLoader } from "@/components/table-loader";
 import DebouncedInputField from "@/modules/components/DebouncedInput";
+import Papa from "papaparse";
+import saveAs from "file-saver";
+import { AllocationsTable } from "./AllocationsTable";
+import { AllocationForm } from "./AllocationForm";
 
 export const ReceiptingTable = () => {
   const [id, setSearchId] = useState<string>("");
   const [receipts] = useState<MouReceiptingData[]>([]);
-  const [selectedReceipt, setSelectedReceipt] = useState<MouReceiptingData>();
+  const [selectedReceipt, setSelectedReceipt] = useState<
+    MouReceiptingData | undefined
+  >(undefined);
   const [isRecieptsDrawerVisible, setIsRecieptsDrawerVisible] =
     useState<boolean>(false);
   const [pageNumber, setPageNumber] = useState<number | null>(1);
   const [pageSize, setPageSize] = useState(10);
   const [, setSearchQuery] = useState<string>("");
+  const [, setDateRange] = useState<[moment.Moment, moment.Moment] | null>(
+    null
+  );
+  const [status, setStatus] = useState<string[] | null>(null);
+  const [, setFilteredStatus] = useState<string[] | null>(null);
+
+  const { RangePicker } = DatePicker;
 
   const { data: apiResponse, isFetching } = useGetMouReceiptingQuery({
     organisationId: Number(localStorage.getItem("organizationId")),
+    status: status ?? [],
     pageSize: pageSize ?? 10,
     PageNumber: pageNumber ?? 1,
   });
 
   const handleViewReceipting = (receiptId: number) => {
-    if (receiptId && apiResponse?.data) {
-      const receipt = receipts.find((a) => a.id === receiptId);
-      setSelectedReceipt(receipt);
-    }
+    const receipt = (apiResponse?.data as MouReceiptingData[])?.find(
+      (a) => a.id === receiptId
+    );
 
-    if (receipts) {
+    if (receipt) {
+      setSelectedReceipt(receipt);
       setIsRecieptsDrawerVisible(true);
     }
-    console.log("Selected Receipt", selectedReceipt);
   };
 
   const ReceiptingColumns: ColumnsType<MouReceiptingData> = [
@@ -84,6 +102,12 @@ export const ReceiptingTable = () => {
       title: "Status",
       dataIndex: "status",
       key: "status",
+      filters: [
+        { text: "Open", value: "Open" },
+        { text: "Exhausted", value: "Exhausted" },
+        { text: "Rejected", value: "Rejected" },
+        { text: "Pending", value: "Pending" },
+      ],
       render: (status: string) => {
         const statusColors: Record<string, string> = {
           Open: "blue",
@@ -148,28 +172,61 @@ export const ReceiptingTable = () => {
       },
     },
   ];
+
   const handleTableChange = createHandleTableChange<MouReceiptingData>({
     setPageNumber,
     setPageSize,
+    setStatus,
+    setFilteredStatus,
   });
+
   const handleSearch = (values: string) => {
     setSearchId(id);
     setSearchQuery(values.trim());
   };
+
   const handleSearchClear = () => {
     setSearchId(id);
   };
+
+  const exportCSV = () => {
+    const currentDate = new Date().toISOString().split("T")[0];
+
+    const modifiedCsv = receipts.map((item) => ({
+      Id: item.id,
+    }));
+
+    const csvMod = Papa.unparse(modifiedCsv);
+    const blob = new Blob([csvMod], { type: "text/csv;charset=utf-8;" });
+    saveAs(blob, `Receipting_Report_${currentDate}`);
+  };
+
   return (
     <div>
       <section className="w-full h-full hidden md:flex md:flex-col">
-        <div className="w-full">
+        <div className="w-full flex gap-2">
           <DebouncedInputField
             placeholder="Search for Receipting"
             onSearch={handleSearch}
             onClear={handleSearchClear}
             allowClear={true}
           />
+          <RangePicker
+            className="min-w-52"
+            onChange={(dates) => {
+              setDateRange(dates as [moment.Moment, moment.Moment]);
+            }}
+          />
+          <Button
+            type="primary"
+            onClick={exportCSV}
+            className=" text-slate-500"
+          >
+            <ExportOutlined className=" text-slate-500" />
+            Export
+          </Button>
         </div>
+
         <Table
           dataSource={apiResponse?.data}
           columns={ReceiptingColumns}
@@ -207,26 +264,32 @@ export const ReceiptingTable = () => {
       </section>
       <Drawer
         title=""
-        width="45%"
+        width="50%"
         open={isRecieptsDrawerVisible}
         onClose={() => setIsRecieptsDrawerVisible(false)}
       >
         <Card>
           <div>
-            <p className=" pb-4">Loan Details</p>
+            <p className=" pb-4 font-semibold">Receipt Details</p>
             <Descriptions column={2} bordered={true}>
               <Descriptions.Item label="Initial Amount">
                 {formatCurrency(Number(selectedReceipt?.initialAmount))}
               </Descriptions.Item>
               <Descriptions.Item label="Balance">
-                {selectedReceipt?.balance}
+                {formatCurrency(Number(selectedReceipt?.balance))}
               </Descriptions.Item>
               <Descriptions.Item label="Receipt ID">
                 {selectedReceipt?.receiptId}
               </Descriptions.Item>
               <Descriptions.Item label="Created Date">
-                {selectedReceipt?.createdAt}
+                {selectedReceipt?.createdAt
+                  ? new Date(selectedReceipt?.createdAt).toLocaleDateString()
+                  : "Not Set"}
               </Descriptions.Item>
+            </Descriptions>
+
+            <p className=" py-4 font-semibold">Organisation Details</p>
+            <Descriptions column={2} bordered={true}>
               <Descriptions.Item label="Name">
                 {selectedReceipt?.organization.name ?? "Not set"}
               </Descriptions.Item>
@@ -236,6 +299,10 @@ export const ReceiptingTable = () => {
               <Descriptions.Item label="Physical Address">
                 {selectedReceipt?.organization.address ?? "Not set"}
               </Descriptions.Item>
+            </Descriptions>
+
+            <p className=" py-4 font-semibold">Creator Details</p>
+            <Descriptions column={2} bordered={true}>
               <Descriptions.Item label="Name">
                 {selectedReceipt?.addedBy.user.firstName ?? "Not set"}{" "}
                 {selectedReceipt?.addedBy.user.lastName ?? "Not set"}
@@ -259,6 +326,14 @@ export const ReceiptingTable = () => {
                 {selectedReceipt?.addedBy.user.email ?? "Not set"}
               </Descriptions.Item>
             </Descriptions>
+
+            <div className=" pt-4">
+              <p className=" font-semibold pb-4">Allocations</p>
+              <AllocationsTable receiptId={selectedReceipt?.id!} />{" "}
+            </div>
+            <div>
+              <AllocationForm receiptId={selectedReceipt?.id!} />
+            </div>
           </div>
         </Card>
       </Drawer>

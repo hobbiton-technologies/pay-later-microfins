@@ -5,13 +5,21 @@ type HandleTableChangeParams<T> = {
   setPageSize: (size: number) => void;
   setLoanStatus?: (status: string) => void;
   setFilteredLoanStatus?: (status: string | null) => void;
+  setStatus?: (status: string[]) => void;
+  setFilteredStatus?: (status: string[] | null) => void;
 };
 
 export function createHandleTableChange<T>(
   params: HandleTableChangeParams<T>
 ): TableProps<T>["onChange"] {
-  const { setPageNumber, setPageSize, setLoanStatus, setFilteredLoanStatus } =
-    params;
+  const {
+    setPageNumber,
+    setPageSize,
+    setLoanStatus,
+    setFilteredLoanStatus,
+    setStatus,
+    setFilteredStatus,
+  } = params;
 
   return (pagination, filters) => {
     setPageNumber(pagination.current ?? 1);
@@ -25,6 +33,17 @@ export function createHandleTableChange<T>(
       } else {
         setLoanStatus("");
         setFilteredLoanStatus(null);
+      }
+    }
+
+    if (setStatus && setFilteredStatus) {
+      if (filters.status && filters.status.length > 0) {
+        const selectedStatuses = filters.status as string[];
+        setStatus(selectedStatuses);
+        setFilteredStatus(selectedStatuses);
+      } else {
+        setStatus([]);
+        setFilteredStatus(null);
       }
     }
   };
