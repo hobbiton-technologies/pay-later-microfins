@@ -1,6 +1,8 @@
 import {
   Button,
+  Card,
   DatePicker,
+  Descriptions,
   Drawer,
   Dropdown,
   MenuProps,
@@ -36,11 +38,14 @@ export const MouTable = () => {
   const [pageNumber, setPageNumber] = useState<number | null>(1);
   const [, setSearchQuery] = useState<string>("");
   const [searchInput] = useState<string>("");
+  const [isMouDetailsVisible, setIsMouDetailsVisible] =
+    useState<boolean>(false);
   const [isCreateDrawerVisible, setIsCreateDrawerVisible] = useState(false);
   const [dateRange, setDateRange] = useState<
     [moment.Moment, moment.Moment] | null
   >(null);
   const [Proposals, setProposals] = useState<MouProductsData[]>([]);
+  const [mous, setMous] = useState<MouProductsData>();
   const { RangePicker } = DatePicker;
   const [status, setStatus] = useState<string[] | []>([]);
   const [filteredStatus, setFilteredStatus] = useState<string[] | null>(null);
@@ -58,6 +63,17 @@ export const MouTable = () => {
   useEffect(() => {
     setProposals(apiResponse?.data || []);
   }, [apiResponse]);
+
+  const handleViewMou = (mouId: number) => {
+    if (mouId && apiResponse) {
+      const proposals = Proposals.find((a) => a.id === mouId);
+      setMous(proposals);
+    }
+
+    if (Proposals) {
+      setIsMouDetailsVisible(true);
+    }
+  };
 
   const MouColumns: ColumnsType<MouProductsData> = [
     {
@@ -132,14 +148,14 @@ export const MouTable = () => {
     {
       title: "Actions",
       key: "actions",
-      render: () => {
+      render: (record: MouProductsData) => {
         const items: MenuProps["items"] = [
           {
             key: "4",
             label: (
               <span
                 className="flex gap-2"
-                onClick={() => alert("View CLicked")}
+                onClick={() => handleViewMou(record.id)}
               >
                 <EyeOutlined />
                 View
@@ -333,6 +349,7 @@ export const MouTable = () => {
           }}
         />
       </section>
+
       <Drawer
         title="Propose MOU"
         open={isCreateDrawerVisible}
@@ -340,6 +357,154 @@ export const MouTable = () => {
         width="45%"
       >
         <MouProposalForm />
+      </Drawer>
+
+      <Drawer
+        title="Mou Details"
+        width="45%"
+        open={isMouDetailsVisible}
+        onClose={() => setIsMouDetailsVisible(false)}
+      >
+        <Card>
+          <div>
+            <Descriptions column={1} bordered={true}>
+              <Descriptions.Item label="MOU Status">
+                {mous?.mouStatus}
+              </Descriptions.Item>
+              <Descriptions.Item label="Start Date">
+                {mous?.startDate
+                  ? new Date(mous?.startDate).toLocaleDateString()
+                  : "Not Set"}
+              </Descriptions.Item>
+              <Descriptions.Item label="End Date">
+                {mous?.startDate
+                  ? new Date(mous?.endDate).toLocaleDateString()
+                  : "Not Set"}
+              </Descriptions.Item>
+              <Descriptions.Item label="Date">
+                {mous?.startDate
+                  ? new Date(mous?.createdAt).toLocaleDateString()
+                  : "Not Set"}
+              </Descriptions.Item>
+              <Descriptions.Item label="Document">
+                <div className=" border p-4 bg-blue-950 text-white rounded-md text-center">
+                  View Mou Document
+                </div>
+              </Descriptions.Item>
+            </Descriptions>
+          </div>
+
+          <div className=" py-4">
+            <p className=" py-2 font-semibold text-lg">Microfin Information</p>
+            <Descriptions column={1} bordered={true}>
+              <Descriptions.Item label="Microfin Name">
+                {mous?.microfin.name}
+              </Descriptions.Item>
+              <Descriptions.Item label="Phonenumber">
+                {mous?.microfin.contactNo ?? "Not Set"}
+              </Descriptions.Item>
+              <Descriptions.Item label="Email">
+                {mous?.microfin.email ?? "Not Set"}
+              </Descriptions.Item>
+              <Descriptions.Item label="Address">
+                {mous?.microfin.address ?? "Not Set"}
+              </Descriptions.Item>
+            </Descriptions>
+          </div>
+
+          <div className=" py-4">
+            <p className=" py-2 font-semibold text-lg">
+              Organisation Information
+            </p>
+            <Descriptions column={1} bordered={true}>
+              <Descriptions.Item label="Organisation Name">
+                {mous?.organization.name}
+              </Descriptions.Item>
+              <Descriptions.Item label="Phonenumber">
+                {mous?.organization.contactNo ?? "Not Set"}
+              </Descriptions.Item>
+              <Descriptions.Item label="Email">
+                {mous?.organization.email ?? "Not Set"}
+              </Descriptions.Item>
+              <Descriptions.Item label="Address">
+                {mous?.organization.address ?? "Not Set"}
+              </Descriptions.Item>
+            </Descriptions>
+          </div>
+
+          <div className=" py-4">
+            <p className=" py-2 font-semibold text-lg">Proposed By</p>
+            <Descriptions column={1} bordered={true}>
+              <Descriptions.Item label="Name">
+                {mous?.proposedBy.user.firstName +
+                  " " +
+                  mous?.proposedBy.user.lastName}
+              </Descriptions.Item>
+              <Descriptions.Item label="Phonenumber">
+                {mous?.proposedBy.user.phoneNumber ?? "Not Set"}
+              </Descriptions.Item>
+              <Descriptions.Item label="Email">
+                {mous?.proposedBy.user.email ?? "Not Set"}
+              </Descriptions.Item>
+              <Descriptions.Item label="Postion">
+                {mous?.proposedBy.position ?? "Not Set"}
+              </Descriptions.Item>
+              <Descriptions.Item label="ID Type">
+                {mous?.proposedBy.idType ?? "Not Set"}
+              </Descriptions.Item>
+              <Descriptions.Item label="ID Number">
+                {mous?.proposedBy.idNumber ?? "Not Set"}
+              </Descriptions.Item>
+            </Descriptions>
+          </div>
+
+          <div className="py-4">
+            <p className="py-4 font-semibold text-lg">Responders</p>
+            {mous?.responders && mous.responders.length > 0 ? (
+              mous.responders.map((responder, index) => (
+                <Descriptions
+                  key={responder.id}
+                  title={
+                    <span className=" font-semibold text-sm font-sans">
+                      {`Responder ${index + 1}`}
+                    </span>
+                  }
+                  column={1}
+                  bordered
+                  className="mb-8"
+                >
+                  <Descriptions.Item label="Name">
+                    {responder.responder.user.firstName}{" "}
+                    {responder.responder.user.lastName}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Phone Number">
+                    {responder.responder.user.phoneNumber ?? "Not Set"}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Email">
+                    {responder.responder.user.email ?? "Not Set"}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Position">
+                    {responder.responder.position ?? "Not Set"}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="ID Type">
+                    {responder.responder.idType ?? "Not Set"}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="ID Number">
+                    {responder.responder.idNumber ?? "Not Set"}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Response">
+                    {responder.response ?? "No response"}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Comment">
+                    {responder.comment ?? "No comment"}
+                  </Descriptions.Item>
+                </Descriptions>
+              ))
+            ) : (
+              <p className="text-gray-400 text-sm">No responders available.</p>
+            )}
+          </div>
+        </Card>
       </Drawer>
     </div>
   );

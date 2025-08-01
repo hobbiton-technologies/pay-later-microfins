@@ -1,6 +1,14 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../../auth/authContext";
-import { LogoutOutlined, SettingOutlined } from "@ant-design/icons";
+import {
+  ArrowRightOutlined,
+  BarChartOutlined,
+  DashOutlined,
+  HomeOutlined,
+  LogoutOutlined,
+  RightOutlined,
+  SettingOutlined,
+} from "@ant-design/icons";
 import { Popover } from "antd";
 import { Offline, Online } from "react-detect-offline";
 import { jwtDecode } from "jwt-decode";
@@ -57,7 +65,28 @@ const ProfileBar = () => {
   );
   return (
     <div className="  w-full h-[3.7rem] flex justify-between pt-3 px-8">
-      <div></div>
+      <div className=" flex px-1">
+        <div className=" flex gap-1">
+          <div className=" flex gap-1">
+            <div>
+              <HomeOutlined />
+            </div>
+            <div> Home</div>
+          </div>
+          <div>
+            <RightOutlined className=" w-3" />
+          </div>
+        </div>
+        <div className=" flex gap-1">
+          <div>
+            <BarChartOutlined />
+            Overview
+          </div>
+          <div>
+            <RightOutlined className=" w-3" />
+          </div>
+        </div>
+      </div>
       <div>
         {" "}
         {isAuthenticated && (
