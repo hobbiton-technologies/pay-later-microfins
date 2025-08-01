@@ -1,7 +1,3 @@
-import {
-  OrganisationData,
-  useGetOrganisationsRequestQuery,
-} from "@/api/queries/summaryQueries";
 import { MenuProps, Space, Dropdown, Button, Card, Drawer } from "antd";
 import Table, { ColumnsType } from "antd/es/table";
 import { useState, useEffect } from "react";
@@ -23,7 +19,7 @@ import {
 import { createHandleTableChange } from "@/utils/HandleTableChange";
 
 export const MouOrganisationTable = () => {
-  const [id, setSearchId] = useState<string>("");
+  // const [id, setSearchId] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [pageNumber, setPageNumber] = useState<number | null>(1);
   const [pageSize, setPageSize] = useState(10);
@@ -32,17 +28,14 @@ export const MouOrganisationTable = () => {
     useState(false);
   const navigate = useNavigate();
 
-  const [selectedOrganisation, setSelectedOrganisation] =
-    useState<MouLoansOrganisationData>();
+  const [selectedOrganisation] = useState<MouLoansOrganisationData>();
 
-  const [isOrganisationDrawerVisible, setIsOrganisationDrawerVisible] =
-    useState(false);
+  // const [, setIsOrganisationDrawerVisible] =
+  //   useState(false);
 
   const [isLoansDrawerVisible, setIsLoansDrawerVisible] = useState(false);
 
-  const [organisations, setOrganisations] = useState<
-    MouLoansOrganisationData[]
-  >([]);
+  const [, setOrganisations] = useState<MouLoansOrganisationData[]>([]);
   const { data: organisationData, isFetching } =
     useGetMouLoansOrganisationsQuery({
       id: Number(localStorage.getItem("organizationId")),
@@ -76,28 +69,28 @@ export const MouOrganisationTable = () => {
     setSearchQuery(searchQuery);
   };
 
-  const handleViewOrganisations = (organisationId: number) => {
-    if (organisationId && organisationData) {
-      const organisation = organisations.find((a) => a.id === organisationId);
-      setSelectedOrganisation(organisation);
+  // const handleViewOrganisations = (organisationId: number) => {
+  //   if (organisationId && organisationData) {
+  //     const organisation = organisations.find((a) => a.id === organisationId);
+  //     setSelectedOrganisation(organisation);
 
-      if (organisation) {
-        setIsOrganisationDrawerVisible(true);
-      }
-      // console.log("selectedOrganisation", selectedOrganisation?.id);
-    }
-  };
+  //     if (organisation) {
+  //       setIsOrganisationDrawerVisible(true);
+  //     }
+  //     // console.log("selectedOrganisation", selectedOrganisation?.id);
+  //   }
+  // };
 
-  const handleViewMicrofinOrgLoans = (organisationId: number) => {
-    if (organisationId && organisationData) {
-      const organisation = organisations.find((a) => a.id === organisationId);
-      setSelectedOrganisation(organisation);
+  // const handleViewMicrofinOrgLoans = (organisationId: number) => {
+  //   if (organisationId && organisationData) {
+  //     const organisation = organisations.find((a) => a.id === organisationId);
+  //     setSelectedOrganisation(organisation);
 
-      if (organisation) {
-        setIsLoansDrawerVisible(true);
-      }
-    }
-  };
+  //     if (organisation) {
+  //       setIsLoansDrawerVisible(true);
+  //     }
+  //   }
+  // };
 
   const organisationsColumns = (
     handleViewOrganisations: (record: MouLoansOrganisationData) => void
