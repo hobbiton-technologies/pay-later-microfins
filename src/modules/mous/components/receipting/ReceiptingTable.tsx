@@ -19,7 +19,7 @@ import {
   MouReceiptingData,
   useGetMouReceiptingQuery,
 } from "@/api/queries/mouQueries";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { formatCurrency } from "@/utils/formaters";
 import { createHandleTableChange } from "@/utils/HandleTableChange";
 import { customLoader } from "@/components/table-loader";
@@ -31,7 +31,7 @@ import { AllocationForm } from "./AllocationForm";
 
 export const ReceiptingTable = () => {
   const [id, setSearchId] = useState<string>("");
-  const [receipts, setReceipts] = useState<MouReceiptingData[]>([]);
+  const [receipts] = useState<MouReceiptingData[]>([]);
   const [selectedReceipt, setSelectedReceipt] = useState<
     MouReceiptingData | undefined
   >(undefined);
@@ -40,11 +40,11 @@ export const ReceiptingTable = () => {
   const [pageNumber, setPageNumber] = useState<number | null>(1);
   const [pageSize, setPageSize] = useState(10);
   const [, setSearchQuery] = useState<string>("");
-  const [dateRange, setDateRange] = useState<
-    [moment.Moment, moment.Moment] | null
-  >(null);
+  const [, setDateRange] = useState<[moment.Moment, moment.Moment] | null>(
+    null
+  );
   const [status, setStatus] = useState<string[] | null>(null);
-  const [filteredStatus, setFilteredStatus] = useState<string[] | null>(null);
+  const [, setFilteredStatus] = useState<string[] | null>(null);
 
   const { RangePicker } = DatePicker;
 

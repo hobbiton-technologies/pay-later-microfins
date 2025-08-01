@@ -29,11 +29,11 @@ import Papa from "papaparse";
 import { saveAs } from "file-saver";
 
 export const MouTable = () => {
-  const [id, setId] = useState<number>(0);
-  const [microfinId, setMicrofinId] = useState<number>(0);
-  const [organizationId, setOrganizationId] = useState<number>(0);
-  const [startDate, setStartDate] = useState<string>("");
-  const [endDate, setEndDate] = useState<string>("");
+  const [id] = useState<number>(0);
+  const [microfinId] = useState<number>(0);
+  const [organizationId] = useState<number>(0);
+  // const [startDate, setStartDate] = useState<string>("");
+  // const [endDate, setEndDate] = useState<string>("");
   const [pageSize, setPageSize] = useState<number | null>(10);
   const [pageNumber, setPageNumber] = useState<number | null>(1);
   const [, setSearchQuery] = useState<string>("");
@@ -47,8 +47,8 @@ export const MouTable = () => {
   const [Proposals, setProposals] = useState<MouProductsData[]>([]);
   const [mous, setMous] = useState<MouProductsData>();
   const { RangePicker } = DatePicker;
-  const [status, setStatus] = useState<string[] | []>([]);
-  const [filteredStatus, setFilteredStatus] = useState<string[] | null>(null);
+  const [, setStatus] = useState<string[] | []>([]);
+  const [, setFilteredStatus] = useState<string[] | null>(null);
 
   const { data: apiResponse, isFetching } = useGetMouProductsQuery({
     id: id,

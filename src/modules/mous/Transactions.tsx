@@ -17,7 +17,7 @@ const Transactions = () => {
     },
   ];
 
-  const onChange = (key: string) => {
+  const onChange = (_: string) => {
     // console.log(key);
   };
 
